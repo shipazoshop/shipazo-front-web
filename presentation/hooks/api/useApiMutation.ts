@@ -1,169 +1,121 @@
-// presentation/hooks/api/useApiMutation.ts
+import { ApiError } from '@/domain';
+import { ApiErrorHandler, ApiService, HttpClientFactory } from '@/infrastructure';
 import { useMutation, useQueryClient, UseMutationOptions } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
-import { MutationService, MutationMethod } from '@/application/services/MutationService';
-import { ApiMutations, MutationParams } from '@/infrastructure';
+import { useCallback, useMemo } from 'react';
 
-export interface MutationError {
-    response?: {
-        status: number;
-        data: { message: string };
-    };
-    message: string;
+export type HttpMethod = 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+export interface UseApiMutationConfig<TData, TVariables> {
+  service: ApiService;
+  endpoint: string;
+  method?: HttpMethod;
+  invalidateQueries?: string[][]; // Query keys a invalidar
+  updateCache?: {
+    queryKey: string[];
+    updater: (oldData: any, newData: TData) => any;
+  };
+  mutationOptions?: Omit<UseMutationOptions<TData, ApiError, TVariables>, 'mutationFn'>;
+  onSuccess?: (data: TData) => void;
+  onError?: (error: ApiError) => void;
 }
 
-interface UseApiMutationProps<TResponse, TRequest> {
-    mutationKey: string;
-    method: MutationMethod;
-    url: string;
-    params?: Record<string, any>;
-    queryParams?: Record<string, any>;
-    contentType?: string;
+export function useApiMutation<TData = unknown, TVariables = unknown>({
+  service,
+  endpoint,
+  method = 'POST',
+  invalidateQueries,
+  updateCache,
+  mutationOptions,
+  onSuccess,
+  onError,
+}: UseApiMutationConfig<TData, TVariables>) {
+  const queryClient = useQueryClient();
 
-    // Callbacks
-    onSuccess?: (data: TResponse) => void;
-    onError?: (error: MutationError) => void;
-    onMutate?: (variables: TRequest) => void;
-    onSettled?: () => void;
+  // Obtener cliente HTTP
+  const httpClient = useMemo(
+    () => HttpClientFactory.getClient(service),
+    [service]
+  );
 
-    // Cache management
-    invalidateQueries?: string[];
-    updateQueryCache?: {
-        queryKey: string;
-        updater: (oldData: any, newData: TResponse) => any;
-    };
+  // Error handler
+  const errorHandler = useMemo(
+    () => new ApiErrorHandler(
+      undefined,
+      undefined,
+      onError
+    ),
+    [onError]
+  );
 
-    // Opciones avanzadas
-    mutationOptions?: Partial<UseMutationOptions<TResponse, MutationError, TRequest>>;
-}
-
-export function useApiMutation<TResponse = any, TRequest = any>({
-    mutationKey,
-    method,
-    url,
-    params,
-    queryParams,
-    contentType = 'application/json',
-    onSuccess,
-    onError,
-    onMutate,
-    onSettled,
-    invalidateQueries,
-    updateQueryCache,
-    mutationOptions,
-}: UseApiMutationProps<TResponse, TRequest>) {
-    const queryClient = useQueryClient();
-    const [isLoadingState, setIsLoadingState] = useState(false);
-
-    // Mutation function basada en el método HTTP
-    const mutationFn = useCallback(async (variables: TRequest): Promise<TResponse> => {
-        const baseParams: MutationParams = {
-            url,
-            params,
-            queryParams,
-            contentType,
-        };
-
+  // Mutation function
+  const mutationFn = useCallback(
+    async (variables: TVariables): Promise<TData> => {
+      try {
         switch (method) {
-            case 'POST':
-                return await ApiMutations.post<TResponse, TRequest>({
-                    ...baseParams,
-                    data: variables,
-                });
-            case 'PUT':
-                return await ApiMutations.put<TResponse, TRequest>({
-                    ...baseParams,
-                    data: variables,
-                });
-            case 'PATCH':
-                return await ApiMutations.patch<TResponse, TRequest>({
-                    ...baseParams,
-                    data: variables,
-                });
-            case 'DELETE':
-                return await ApiMutations.delete<TResponse>(baseParams);
-            default:
-                throw new Error(`Unsupported method: ${method}`);
+          case 'POST':
+            return await httpClient.post<TData>(endpoint, variables);
+          case 'PUT':
+            return await httpClient.put<TData>(endpoint, variables);
+          case 'PATCH':
+            return await httpClient.put<TData>(endpoint, variables);
+          case 'DELETE':
+            return await httpClient.delete<TData>(endpoint);
+          default:
+            throw new Error(`Método HTTP no soportado: ${method}`);
         }
-    }, [method, url, params, queryParams, contentType]);
+      } catch (error) {
+        errorHandler.handle(error);
+        throw error;
+      }
+    },
+    [httpClient, endpoint, method, errorHandler]
+  );
 
-    // Configurar mutation
-    const mutation = useMutation<TResponse, MutationError, TRequest>({
-        mutationKey: MutationService.generateMutationKey(mutationKey, params),
-        mutationFn,
+  const mutation = useMutation<TData, ApiError, TVariables>({
+    mutationFn,
+    onSuccess: (data, variables, context) => {
+      // Invalidar queries relacionadas
+      if (invalidateQueries) {
+        invalidateQueries.forEach((queryKey) => {
+          queryClient.invalidateQueries({ queryKey });
+        });
+      }
 
-        onMutate: (variables) => {
-            setIsLoadingState(true);
-            onMutate?.(variables);
-        },
+      // Actualizar cache manualmente si se especifica
+      if (updateCache) {
+        const oldData = queryClient.getQueryData(updateCache.queryKey);
+        const newData = updateCache.updater(oldData, data);
+        queryClient.setQueryData(updateCache.queryKey, newData);
+      }
 
-        onSuccess: (data) => {
-            // Invalidar queries relacionadas
-            if (invalidateQueries && invalidateQueries.length > 0) {
-                invalidateQueries.forEach(queryKey => {
-                    queryClient.invalidateQueries({ queryKey: [queryKey] });
-                });
-            }
+      // Callback de éxito
+      onSuccess?.(data);
+    },
+    onError: (error, variables, context) => {
+      onError?.(error);
+    },
+    retry: false,
+    ...mutationOptions,
+  });
 
-            // Actualizar cache específico
-            if (updateQueryCache) {
-                const oldData = queryClient.getQueryData([updateQueryCache.queryKey]);
-                const newData = updateQueryCache.updater(oldData, data);
-                queryClient.setQueryData([updateQueryCache.queryKey], newData);
-            }
-
-            onSuccess?.(data);
-        },
-
-        onError: (error) => {
-            onError?.(error);
-        },
-
-        onSettled: () => {
-            setIsLoadingState(false);
-            onSettled?.();
-        },
-
-        retry: false,
-        gcTime: 1000 * 60 * 5,
-        ...mutationOptions,
+  // Utilidades adicionales
+  const invalidate = useCallback((queryKeys: string[][]) => {
+    queryKeys.forEach((queryKey) => {
+      queryClient.invalidateQueries({ queryKey });
     });
+  }, [queryClient]);
 
-    // Cleanup on unmount
-    useEffect(() => {
-        return () => {
-            setIsLoadingState(false);
-        };
-    }, []);
-
-    // Helpers para diferentes casos de uso
-    const mutate = useCallback((variables: TRequest) => {
-        return mutation.mutate(variables);
-    }, [mutation]);
-
-    const mutateAsync = useCallback(async (variables: TRequest) => {
-        return mutation.mutateAsync(variables);
-    }, [mutation]);
-
-    const reset = useCallback(() => {
-        mutation.reset();
-    }, [mutation]);
-
-    return {
-        // Main actions
-        mutate,
-        mutateAsync,
-        reset,
-
-        // State
-        data: mutation.data,
-        error: mutation.error,
-        isLoading: mutation.isPending || isLoadingState,
-        isSuccess: mutation.isSuccess,
-        isError: mutation.isError,
-
-        // Advanced info
-        status: mutation.status,
-        isPending: mutation.isPending,
-    };
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isLoading: mutation.isPending,
+    isError: mutation.isError,
+    isSuccess: mutation.isSuccess,
+    error: mutation.error,
+    data: mutation.data,
+    reset: mutation.reset,
+    invalidate,
+    // Información adicional
+    status: mutation.status,
+  };
 }

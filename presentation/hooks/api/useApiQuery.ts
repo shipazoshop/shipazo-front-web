@@ -1,114 +1,98 @@
-// presentation/hooks/api/useApiQuery.ts
+import { ApiError } from '@/domain/errors/api.errors';
+import { QueryParams } from '@/domain/repositories/base.repository';
+import { ApiService } from '@/infrastructure/config/api.config';
+import { HttpClientFactory } from '@/infrastructure/http/http-client.factory';
+import { ApiErrorHandler } from '@/infrastructure/query/error-handler';
+import { QueryKeyFactory } from '@/infrastructure/query/query-key.factory';
 import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
-import { QueryService } from '@/application/services/QueryService';
+import { useCallback, useMemo } from 'react';
 
-export interface QueryError {
-    response: {
-        status: number;
-        data: { message: string };
-    };
+export interface UseApiQueryConfig<TData> {
+  service: ApiService;
+  endpoint: string;
+  params?: QueryParams;
+  enabled?: boolean;
+  queryOptions?: Omit<UseQueryOptions<TData, ApiError>, 'queryKey' | 'queryFn'>;
+  onError?: (error: ApiError) => void;
 }
 
-interface UseApiQueryProps<TData, TParams = any> {
-    queryKey: string;
-    queryFn: (params?: TParams) => Promise<TData>;
-    params?: TParams;
-    dependencies?: any[];
-    enabled?: boolean | (() => boolean);
-    queryOptions?: Partial<UseQueryOptions<TData, QueryError>>;
-}
+export function useApiQuery<TData = unknown>({
+  service,
+  endpoint,
+  params,
+  enabled = true,
+  queryOptions,
+  onError,
+}: UseApiQueryConfig<TData>) {
+  const queryClient = useQueryClient();
+  
+  // Generar query key usando factory
+  const queryKey = useMemo(
+    () => QueryKeyFactory.create(service, endpoint, params),
+    [service, endpoint, params]
+  );
 
-export function useApiQuery<TData = any, TParams = any>({
-    queryKey: baseKey,
+  // Obtener cliente HTTP
+  const httpClient = useMemo(
+    () => HttpClientFactory.getClient(service),
+    [service]
+  );
+
+  // Error handler
+  const errorHandler = useMemo(
+    () => new ApiErrorHandler(
+      undefined, // onUnauthorized manejado globalmente
+      undefined, // onNotFound manejado globalmente
+      onError
+    ),
+    [onError]
+  );
+
+  // Query function
+  const queryFn = useCallback(async (): Promise<TData> => {
+    try {
+      return await httpClient.get<TData>(endpoint, { params });
+    } catch (error) {
+      errorHandler.handle(error);
+      throw error;
+    }
+  }, [httpClient, endpoint, params, errorHandler]);
+
+  // Configuración del query
+  const query = useQuery<TData, ApiError>({
+    queryKey,
     queryFn,
-    params,
-    dependencies = [],
-    enabled = true,
-    queryOptions,
-}: UseApiQueryProps<TData, TParams>) {
-    const client = useQueryClient();
+    enabled,
+    refetchOnWindowFocus: false,
+    retry: false,
+    ...queryOptions,
+  });
 
-    const [manualState, setManualState] = useState<{
-        isLoading: boolean;
-        error: QueryError | null;
-    }>({
-        isLoading: false,
-        error: null,
-    });
+  // Utilidades
+  const invalidate = useCallback(() => {
+    return queryClient.invalidateQueries({ queryKey });
+  }, [queryClient, queryKey]);
 
-    // Generate dynamic query key
-    const queryKey = useMemo(() =>
-        QueryService.generateQueryKey(baseKey, params, dependencies),
-        [baseKey, params, dependencies]
-    );
+  const updateCache = useCallback((updater: (old: TData | undefined) => TData) => {
+    queryClient.setQueryData<TData>(queryKey, updater);
+  }, [queryClient, queryKey]);
 
-    // Query function wrapper
-    const wrappedQueryFn = useCallback(async () => {
-        return await queryFn(params);
-    }, [queryFn, params]);
+  const removeCache = useCallback(() => {
+    queryClient.removeQueries({ queryKey });
+  }, [queryClient, queryKey]);
 
-    // Check if enabled
-    const isEnabled = useMemo(() =>
-        QueryService.isQueryEnabled(enabled),
-        [enabled]
-    );
-
-    // React Query
-    const query = useQuery<TData, QueryError>({
-        queryKey,
-        queryFn: wrappedQueryFn,
-        enabled: isEnabled,
-        refetchOnWindowFocus: false,
-        retry: false,
-        ...queryOptions,
-    });
-
-    // Manual fetch with different params
-    const fetchManual = useCallback(async (manualParams: TParams): Promise<TData> => {
-        setManualState({ isLoading: true, error: null });
-
-        try {
-            const data = await queryFn(manualParams);
-
-            // Update cache
-            client.setQueryData([baseKey], data);
-            setManualState({ isLoading: false, error: null });
-
-            return data;
-        } catch (error: any) {
-            setManualState({ isLoading: false, error });
-            throw error;
-        }
-    }, [queryFn, client, baseKey]);
-
-    // Utilities
-    const refetchWithInvalidation = useCallback(() => {
-        client.invalidateQueries({
-            predicate: (q) => Array.isArray(q.queryKey) && q.queryKey[0] === baseKey
-        });
-        return query.refetch();
-    }, [client, baseKey, query]);
-
-    const resetData = useCallback(() => {
-        client.removeQueries({ queryKey: [baseKey] });
-    }, [client, baseKey]);
-
-    return {
-        // Main data
-        data: query.data,
-        isLoading: query.isLoading || query.isFetching || manualState.isLoading,
-        isError: query.isError || manualState.error !== null,
-        error: query.error ?? manualState.error,
-
-        // Actions
-        refetch: query.refetch,
-        refetchWithInvalidation,
-        fetchManual,
-        resetData,
-        updateData: (data: TData) => client.setQueryData(queryKey, data),
-
-        queryKey,
-        status: query.status,
-    };
+  return {
+    data: query.data,
+    isLoading: query.isLoading || query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+    invalidate,
+    updateCache,
+    removeCache,
+    // Información adicional de TanStack Query
+    status: query.status,
+    fetchStatus: query.fetchStatus,
+    isStale: query.isStale,
+  };
 }
