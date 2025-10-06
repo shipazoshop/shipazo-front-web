@@ -1,5 +1,6 @@
 "use client";
-import { products20 } from "@/shared/constants/products";
+import { arrayProducts } from "@/shared/constants/productsTest";
+// import { products20 } from "@/shared/constants/products";
 import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
@@ -11,16 +12,17 @@ import AddToQuickview from "@/presentation/components/common/AddToQuickview";
 import AddToCompare from "@/presentation/components/common/AddToCompare";
 export default function Products4() {
   const [activeTab, setActiveTab] = useState("Feature");
-  const [filtered, setFiltered] = useState(products20);
+  const [filtered, setFiltered] = useState<typeof arrayProducts>(arrayProducts);
 
   const tabs = [
     { id: 1, name: "Feature" },
     { id: 2, name: "Toprate" },
     { id: 3, name: "On sale" },
   ];
-  useEffect(() => {
-    setFiltered(products20.filter((elm) => elm.filterTab.includes(activeTab)));
-  }, [activeTab]);
+
+  // useEffect(() => {
+  //   setFiltered(arrayProducts.filter((elm) => elm.filterTab.includes(activeTab)));
+  // }, [activeTab]);
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
@@ -86,55 +88,55 @@ export default function Products4() {
             }}
           >
             {filtered.map((product, index) => (
-              <SwiperSlide className="swiper-slide" key={product.id}>
+              <SwiperSlide className="swiper-slide" key={index}>
                 <div
                   className={`card-product ${
                     index < 5 ? "wow fadeInLeft" : ""
                   }`}
-                  {...(index < 5 && { "data-wow-delay": product.delay })}
+                  {...(index < 5 && { "data-wow-delay": 500 })}
                 >
                   <div className="card-product-wrapper">
                     <Link
-                      href={`/product-detail/${product.id}`}
+                      href={`/product-detail/${product.product_id}`}
                       className="product-img"
                     >
                       <Image
                         className="img-product lazyload"
-                        src={product.imgSrc}
+                        src={product.productData.images[0]}
                         alt="image-product"
-                        width={product.width}
-                        height={product.height}
+                        width={50}
+                        height={100}
                       />
-                      <Image
+                      {/* <Image
                         className="img-hover lazyload"
                         src={product.imgHover}
                         alt="image-product"
                         width={product.width}
                         height={product.height}
-                      />
+                      /> */}
                     </Link>
                     <ul className="list-product-btn">
                       <li>
                         <AddToCart
                           tooltipClass="tooltip-left"
-                          productId={product.id}
+                          productId={product.product_id}
                         />
                       </li>
                       <li className="d-none d-sm-block wishlist">
                         <AddToWishlist
                           tooltipClass="tooltip-left"
-                          productId={product.id}
+                          productId={product.product_id}
                         />
                       </li>
                       <li>
                         <AddToQuickview
-                          productId={product.id}
+                          productId={product.product_id}
                           tooltipClass="tooltip-left"
                         />
                       </li>
                       <li className="d-none d-sm-block">
                         <AddToCompare
-                          productId={product.id}
+                          productId={product.product_id}
                           tooltipClass="tooltip-left"
                         />
                       </li>
@@ -144,24 +146,24 @@ export default function Products4() {
                     <div className="box-title">
                       <div className="d-flex flex-column">
                         <p className="caption text-main-2 font-2">
-                          {product.category}
+                          {product.productData.brand}
                         </p>
                         <Link
-                          href={`/product-detail/${product.id}`}
+                          href={`/product-detail/${product.product_id}`}
                           className="name-product body-md-2 fw-semibold text-secondary link"
                         >
-                          {product.title}
+                          {product.productData.title}
                         </Link>
                       </div>
                       <p className="price-wrap fw-medium">
                         <span className="new-price price-text fw-medium mb-0">
-                          ${product.price.toFixed(3)}
+                          ${product.productData.price}
                         </span>
-                        {product.oldPrice && (
+                        {/* {product.oldPrice && (
                           <span className="old-price body-md-2 text-main-2 fw-normal">
                             ${product.oldPrice.toFixed(3)}
                           </span>
-                        )}
+                        )} */}
                       </p>
                     </div>
                   </div>

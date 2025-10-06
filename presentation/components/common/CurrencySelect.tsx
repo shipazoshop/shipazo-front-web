@@ -108,8 +108,8 @@ export default function CurrencySelect({
             role="presentation"
             style={{ marginTop: 0, marginBottom: 0 }}
           >
-            {optionsData.map((option) => (
-              <li key={option.value} onClick={() => setSelected(option)}>
+            {optionsData.map((option,index) => (
+              <li key={index} onClick={() => setSelected(option)}>
                 <a
                   className={`dropdown-item ${
                     selected === option ? "active selected" : ""
