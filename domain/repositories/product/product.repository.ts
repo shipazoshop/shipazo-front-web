@@ -3,11 +3,11 @@ import { QueryResult } from "../base.repository";
 export interface Product {
     success:     boolean;
     url:         string;
+    product_id:  string;
     productData: ProductData;
 }
 
 export interface ProductData {
-    product_id:    string;
     title:         string;
     description:   string;
     price:         string;
