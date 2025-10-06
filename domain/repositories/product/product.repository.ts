@@ -7,6 +7,7 @@ export interface Product {
 }
 
 export interface ProductData {
+    product_id:    string;
     title:         string;
     description:   string;
     price:         string;
