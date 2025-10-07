@@ -81,18 +81,14 @@ export function useApiQuery<TData = unknown>({
     queryClient.removeQueries({ queryKey });
   }, [queryClient, queryKey]);
 
+  const { isLoading, isFetching, ...rest } = query;
+
   return {
-    data: query.data,
     isLoading: query.isLoading || query.isFetching,
-    isError: query.isError,
-    error: query.error,
-    refetch: query.refetch,
     invalidate,
     updateCache,
     removeCache,
     // Información adicional de TanStack Query
-    status: query.status,
-    fetchStatus: query.fetchStatus,
-    isStale: query.isStale,
+    ...rest
   };
 }
