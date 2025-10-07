@@ -13,11 +13,15 @@ export function useProductRepository() {
     });
   };
 
-  const getProductById = (id: string, enabled = true) => {
+  const getProductByURL = (url: string, enabled = true, queryKey: string) => {
     return useApiQuery<Product>({
       service: 'products',
-      endpoint: `/products/${id}`,
-      enabled: enabled && !!id,
+      queryKey,
+      endpoint: `/products`,
+      enabled: enabled,
+      params: {
+        url
+      },
       queryOptions: {
         staleTime: 10 * 60 * 1000,
       },
@@ -72,7 +76,7 @@ export function useProductRepository() {
   return {
     // Queries
     getProducts,
-    getProductById,
+    getProductById: getProductByURL,
     // Mutations
     createProduct,
     updateProduct,
