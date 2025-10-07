@@ -11,6 +11,7 @@ export interface UseApiQueryConfig<TData> {
   service: ApiService;
   endpoint: string;
   params?: QueryParams;
+  queryKey?: string;
   enabled?: boolean;
   queryOptions?: Omit<UseQueryOptions<TData, ApiError>, 'queryKey' | 'queryFn'>;
   onError?: (error: ApiError) => void;
@@ -20,16 +21,17 @@ export function useApiQuery<TData = unknown>({
   service,
   endpoint,
   params,
+  queryKey: customQueryKey,
   enabled = true,
   queryOptions,
   onError,
 }: UseApiQueryConfig<TData>) {
   const queryClient = useQueryClient();
-  
-  // Generar query key usando factory
+
+  // Generar query key usando factory o usar el customQueryKey
   const queryKey = useMemo(
-    () => QueryKeyFactory.create(service, endpoint, params),
-    [service, endpoint, params]
+    () => QueryKeyFactory.create(service, endpoint, customQueryKey ?? params),
+    [service, endpoint, params, customQueryKey]
   );
 
   // Obtener cliente HTTP
