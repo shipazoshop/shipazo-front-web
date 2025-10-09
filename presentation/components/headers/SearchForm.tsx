@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import { useProductRepository } from "../../hooks/repositories/useProductRepository";
 const categories = [
   { rel: "", label: "All categories" },
   { rel: "apple-products", label: "Apple products" },
@@ -21,7 +22,14 @@ export default function SearchForm({
 }) {
   const [activeDropdown, setActiveDropdown] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All categories");
+  const [searchTerm, setSearchTerm] = useState("");
   const navRef = useRef(null);
+
+  const { importProductFromUrl } = useProductRepository();
+  const { mutate, isSuccess, isError, data, error } = importProductFromUrl();
+  // console.log("🚀 ~ SearchForm ~ data:", data)
+
+
   // Close when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -35,6 +43,24 @@ export default function SearchForm({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleClientScriptLoad = () => {
+    try {
+      console.log("Client script loaded successfully", searchTerm);
+      // Validar que sea una url valida
+      if (searchTerm && (searchTerm.startsWith("http://") || searchTerm.startsWith("https://"))) {
+        // mutate({ url: searchTerm });
+      } else {
+        console.log("Término de búsqueda:", searchTerm);
+      }
+      
+
+      
+    } catch (error) {
+      console.error("Error loading client script:", error);
+    }
+
+  }
 
   return (
     <form
@@ -119,9 +145,9 @@ export default function SearchForm({
       </div>
       <span className="br-line type-vertical bg-line"></span>
       <fieldset>
-        <input type="text" placeholder="Search for products" />
+        <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search for products" />
       </fieldset>
-      <button type="submit" className="btn-submit-form">
+      <button onClick={handleClientScriptLoad} className="btn-submit-form">
         <i className="icon-search"></i>
       </button>
     </form>
