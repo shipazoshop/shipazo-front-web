@@ -1,5 +1,6 @@
 ﻿"use client";
 import Context from "@/application/context/Context";
+import QueryProvider from "@/application/providers/QueryProvider";
 import Cart from "@/presentation/components/modals/Cart";
 import Compare from "@/presentation/components/modals/Compare";
 import Login from "@/presentation/components/modals/Login";
@@ -120,20 +121,22 @@ const RootLayout = ({ children }: RootLayoutProps) => {
       </head>
       <body>
         <div id="wrapper">
-          <Context>
-            {children}
-            <Login />
-            <Register />
-            <Cart />
-            <Quickview />
-            <Compare />
-            <MobileMenu />
-            <ScrollTop />
-            <Toolbar />
-            <Search />
-            <NewsLetter />
-            <AddParallax />
-          </Context>
+          <QueryProvider>
+            <Context>
+              {children}
+              <Login />
+              <Register />
+              <Cart />
+              <Quickview />
+              <Compare />
+              <MobileMenu />
+              <ScrollTop />
+              <Toolbar />
+              <Search />
+              <NewsLetter />
+              <AddParallax />
+            </Context>
+          </QueryProvider>
         </div>
       </body>
     </html>

@@ -1,4 +1,5 @@
 "use client";
+import { useProductRepository } from "@/presentation";
 import React, { useEffect, useRef, useState } from "react";
 const categories = [
   { rel: "", label: "All categories" },
@@ -21,7 +22,14 @@ export default function SearchForm({
 }) {
   const [activeDropdown, setActiveDropdown] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All categories");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navRef = useRef(null);
+
+  const { importProductFromUrl } = useProductRepository();
+  const { mutateAsync, isSuccess, isError, data, error, isLoading } = importProductFromUrl();
+
+
   // Close when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -36,11 +44,41 @@ export default function SearchForm({
     };
   }, []);
 
+  // Limpiar mensaje de error cuando el usuario cambia el término de búsqueda
+  useEffect(() => {
+    if (errorMessage) {
+      setErrorMessage("");
+    }
+  }, [searchTerm]);
+
+  const handleClientScriptLoad = async () => {
+    try {
+      setErrorMessage("");
+
+      // Validar que sea una URL válida
+      if (searchTerm && (searchTerm.startsWith("http://") || searchTerm.startsWith("https://"))) {
+        const result = await mutateAsync({ url: searchTerm });
+        console.log("✅ Producto importado:", result);
+        // Limpiar el campo después de importar exitosamente
+        setSearchTerm("");
+      } else {
+        setErrorMessage("Por favor ingresa una URL válida (debe comenzar con http:// o https://)");
+      }
+    } catch (error: any) {
+      console.error("❌ Error al importar producto:", error);
+
+      // Mostrar mensaje de error amigable al usuario
+      const errorMsg = error?.message || "Error desconocido al importar el producto";
+      setErrorMessage(errorMsg);
+    }
+  }
+
   return (
     <form
       ref={navRef}
       onSubmit={(e) => e.preventDefault()}
       className={parentClass}
+      style={{ position: 'relative' }}
     >
       <div className={`select-category ${activeDropdown ? "active" : ""}`}>
         <div
@@ -121,9 +159,50 @@ export default function SearchForm({
       <fieldset>
         <input type="text" placeholder="Search for products" />
       </fieldset>
-      <button type="submit" className="btn-submit-form">
-        <i className="icon-search"></i>
+      <button
+        onClick={handleClientScriptLoad}
+        className="btn-submit-form"
+        disabled={isLoading}
+        type="button"
+      >
+        {isLoading ? <i className="icon-spinner"></i> : <i className="icon-search"></i>}
       </button>
+      {errorMessage && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          marginTop: '8px',
+          padding: '12px',
+          backgroundColor: '#fee',
+          border: '1px solid #fcc',
+          borderRadius: '4px',
+          color: '#c33',
+          fontSize: '14px',
+          zIndex: 1000
+        }}>
+          {errorMessage}
+        </div>
+      )}
+      {isSuccess && data && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          marginTop: '8px',
+          padding: '12px',
+          backgroundColor: '#efe',
+          border: '1px solid #cfc',
+          borderRadius: '4px',
+          color: '#3c3',
+          fontSize: '14px',
+          zIndex: 1000
+        }}>
+          ✅ Producto importado exitosamente
+        </div>
+      )}
     </form>
   );
 }

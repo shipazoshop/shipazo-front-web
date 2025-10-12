@@ -1,5 +1,11 @@
 import { Product, ProductFilters } from "@/domain/repositories/product/product.repository";
 import { useApiMutation, useApiQuery } from "@/presentation";
+import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
+import { getApiConfig, URL_DICTIONARY } from "@/infrastructure";
+
+type ImportFromUrlDto = { url: string };
+
+const SCRAPER_PRODUCT_URL = getApiConfig()
 
 export function useProductRepository() {
   const getProducts = (filters?: ProductFilters) => {
@@ -13,7 +19,7 @@ export function useProductRepository() {
     });
   };
 
-  const getProductByURL = (url: string, enabled = true, queryKey: string) => {
+  const getProductByURL = (url: string, queryKey: string, enabled = true) => {
     return useApiQuery<Product>({
       service: 'products',
       queryKey,
@@ -73,10 +79,51 @@ export function useProductRepository() {
     });
   };
 
+  const importProductFromUrl = () => {
+    if (!SCRAPER_PRODUCT_URL.products) {
+      throw new Error("Falta NEXT_PUBLIC_API_SCRAPER_URL en .env");
+    }
+
+    return useApiMutation<IImportProductResponse, ImportFromUrlDto>({
+      service: "products",
+      endpoint: SCRAPER_PRODUCT_URL.products + URL_DICTIONARY.PRODUCTS,
+      method: "POST",
+      invalidateQueries: [
+        ["products", "/products"],
+      ],
+      updateCache: {
+        queryKey: ["products", "/products"],
+        updater: (old: any[] | undefined, newData: IImportProductResponse) => {
+          if (!old) return old;
+          const p = newData.productData;
+          const id = newData.product_id;
+
+          const idx = old.findIndex((x) => x.product_id === id || x?.productData?.title === p.title);
+          const normalized = {
+            product_id: id,
+            url: newData.url,
+            productData: p,
+          };
+          if (idx >= 0) {
+            const copy = old.slice();
+            copy[idx] = { ...old[idx], ...normalized };
+            return copy;
+          }
+          return [normalized, ...old];
+        },
+      },
+      onSuccess: (data) => {
+        console.log("Producto importado:", data.product_id, data.productData?.title);
+      },
+    });
+  };
+
+
+
   return {
     // Queries
     getProducts,
-    getProductById: getProductByURL,
+    getProductByURL,
     // Mutations
     createProduct,
     updateProduct,
