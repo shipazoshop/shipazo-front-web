@@ -128,5 +128,6 @@ export function useProductRepository() {
     createProduct,
     updateProduct,
     deleteProduct,
+    importProductFromUrl,
   };
 }

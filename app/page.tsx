@@ -9,7 +9,7 @@ import Hero from "@/presentation/components/homes/home-1/Hero";
 import Product2 from "@/presentation/components/common/Product3";
 import Products1 from "@/presentation/components/homes/home-1/Products1";
 import Products3 from "@/presentation/components/homes/home-1/Products3";
-import Products4 from "@/presentation/components/homes/home-1/Products4";
+import Products4 from "@/presentation/components/homes/home-5/Products4";
 import Products5 from "@/presentation/components/common/Products";
 import Products6 from "@/presentation/components/common/RecentProducts";
 

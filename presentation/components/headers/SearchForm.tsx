@@ -1,6 +1,7 @@
 "use client";
 import { useProductRepository } from "@/presentation";
 import React, { useEffect, useRef, useState } from "react";
+import { useProductRepository } from "../../hooks/repositories/useProductRepository";
 const categories = [
   { rel: "", label: "All categories" },
   { rel: "apple-products", label: "Apple products" },
@@ -157,7 +158,7 @@ export default function SearchForm({
       </div>
       <span className="br-line type-vertical bg-line"></span>
       <fieldset>
-        <input type="text" placeholder="Search for products" />
+        <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search for products" />
       </fieldset>
       <button
         onClick={handleClientScriptLoad}
