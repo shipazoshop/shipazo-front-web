@@ -1,7 +1,6 @@
 "use client";
 import { useProductRepository } from "@/presentation";
 import React, { useEffect, useRef, useState } from "react";
-import { useProductRepository } from "../../hooks/repositories/useProductRepository";
 const categories = [
   { rel: "", label: "All categories" },
   { rel: "apple-products", label: "Apple products" },
