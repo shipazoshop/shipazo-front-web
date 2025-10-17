@@ -6,19 +6,18 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import Drift from "drift-zoom";
 import Image from "next/image";
-const productImages = [
-  { src: "/images/product/product-detail-1.jpg", color: "gray" },
-  { src: "/images/product/product-detail-2.jpg", color: "gray" },
-  { src: "/images/product/product-detail-3.jpg", color: "gray" },
-  { src: "/images/product/product-detail-4.jpg", color: "gray" },
-  { src: "/images/product/product-detail-5.jpg", color: "beige" },
-  { src: "/images/product/product-detail-6.jpg", color: "beige" },
-];
+// const productImages = [
+//   { src: "/images/product/product-detail-1.jpg", color: "gray" },
+//   { src: "/images/product/product-detail-2.jpg", color: "gray" },
+//   { src: "/images/product/product-detail-3.jpg", color: "gray" },
+//   { src: "/images/product/product-detail-4.jpg", color: "gray" },
+//   { src: "/images/product/product-detail-5.jpg", color: "beige" },
+//   { src: "/images/product/product-detail-6.jpg", color: "beige" },
+// ];
 
-export default function Slider1({ firstIamge = productImages[0].src }) {
+export default function Slider1({ productImages } : Readonly<{productImages: string[]}>) {
   const [swiperThumb, setSwiperThumb] = useState(null);
   const lightboxRef = useRef(null);
-  productImages[0].src = firstIamge;
   useEffect(() => {
     // Initialize PhotoSwipeLightbox
     const lightbox = new PhotoSwipeLightbox({
@@ -98,10 +97,10 @@ export default function Slider1({ firstIamge = productImages[0].src }) {
         thumbs={{ swiper: swiperThumb }}
         modules={[Thumbs]}
       >
-        {productImages.map((item, i) => (
+        {productImages?.map((item, i) => (
           <SwiperSlide className="swiper-slide" data-color="gray">
             <a
-              href={item.src}
+              href={item}
               target="_blank"
               className="item"
               data-pswp-width="600px"
@@ -109,8 +108,8 @@ export default function Slider1({ firstIamge = productImages[0].src }) {
             >
               <Image
                 className="tf-image-zoom lazyload"
-                src={item.src}
-                data-zoom={item.src}
+                src={item}
+                data-zoom={item}
                 alt=""
                 width={652}
                 height={652}
@@ -156,9 +155,9 @@ export default function Slider1({ firstIamge = productImages[0].src }) {
               <div className="item">
                 <Image
                   className="lazyload"
-                  data-src={item.src}
+                  data-src={item}
                   alt=""
-                  src={item.src}
+                  src={item}
                   width={652}
                   height={652}
                 />

@@ -1,7 +1,7 @@
 import { Product, ProductFilters } from "@/domain/repositories/product/product.repository";
 import { useApiMutation, useApiQuery } from "@/presentation";
-import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
 import { getApiConfig, URL_DICTIONARY } from "@/infrastructure";
+import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
 
 type ImportFromUrlDto = { url: string };
 

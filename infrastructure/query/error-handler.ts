@@ -7,9 +7,9 @@ export interface ErrorHandler {
 
 export class ApiErrorHandler implements ErrorHandler {
   constructor(
-    private onUnauthorized?: () => void,
-    private onNotFound?: () => void,
-    private onServerError?: (error: ApiError) => void
+    private readonly onUnauthorized?: () => void,
+    private readonly onNotFound?: () => void,
+    private readonly onServerError?: (error: ApiError) => void
   ) {}
 
   handle(error: any): void {
