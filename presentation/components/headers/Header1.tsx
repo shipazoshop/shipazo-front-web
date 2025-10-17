@@ -17,9 +17,12 @@ export default function Header1() {
                 <Link href={`/`}>
                   <Image
                     alt="Logo"
-                    src="/images/logo/favicon-shipazo.webpshipazo.webp"
-                    width={185}
-                    height={41}
+                    src="/images/logo/horizontal-shipazo.webp"
+                    style={{
+                      aspectRatio: "185 / 41"
+                    }}
+                    width={300}
+                    height={100}
                   />
                 </Link>
               </div>
