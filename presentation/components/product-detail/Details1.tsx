@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import Slider1 from "./sliders/Slider1";
 import Link from "next/link";
 import { useContextElement } from "@/application/context/Context";
-export default function Details1({ product }) {
+import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
+export default function Details1({ product }: Readonly<{ product: IImportProductResponse}>) {
+  
   const [quantity, setQuantity] = useState(1);
   const { addProductToCart, isAddedToCartProducts } = useContextElement();
   return (
@@ -15,7 +17,7 @@ export default function Details1({ product }) {
               {/* Product Image */}
               <div className="tf-product-media-wrap thumbs-default sticky-top">
                 <div className="thumbs-slider">
-                  <Slider1 firstIamge={product.imgSrc} />
+                  <Slider1 productImages={product.productData.images ?? ['']}  />
                 </div>
               </div>
               {/* /Product Image */}
@@ -27,7 +29,7 @@ export default function Details1({ product }) {
                 <div className="tf-product-info-list other-image-zoom flex-xxl-nowrap">
                   <div className="tf-product-info-content">
                     <div className="infor-heading">
-                      <p className="caption">
+                      {/* <p className="caption">
                         Categories:
                         <Link
                           href={`/shop-default`}
@@ -35,13 +37,12 @@ export default function Details1({ product }) {
                         >
                           Consumer Electronics
                         </Link>
-                      </p>
+                      </p> */}
                       <h5 className="product-info-name fw-semibold">
-                        {product.title ??
-                          `Elite Gourmet EKT1001B Electric BPA-Free Glass Kettle,
-                        Cordless 360° Base`}
+                        {product.productData.title ??
+                          ``}
                       </h5>
-                      <ul className="product-info-rate-wrap">
+                      {/* <ul className="product-info-rate-wrap">
                         <li className="star-review">
                           <ul className="list-star">
                             <li>
@@ -67,41 +68,37 @@ export default function Details1({ product }) {
                         </li>
                         <li className="d-flex">
                           <Link
-                            href={`/shop-default`}
+                            href={`${product.url}`}
                             className="caption text-secondary link"
                           >
                             View shop
                           </Link>
                         </li>
-                      </ul>
+                      </ul> */}
                     </div>
                     <div className="infor-center">
                       <div className="product-info-price">
                         <h4 className="text-primary">
-                          ${product.price.toFixed(2)}
+                          ${product.productData.price_details.base_price_usd}
                         </h4>{" "}
-                        {product.oldPrice && (
+                        {/* {product.oldPrice && (
                           <span className="price-text text-main-2 old-price">
                             ${product.oldPrice.toFixed(2)}
                           </span>
-                        )}
+                        )} */}
                       </div>
                       <ul className="product-fearture-list">
                         <li>
                           <p className="body-md-2 fw-semibold">Brand</p>
-                          <span className="body-text-3">Elite Gourmet</span>
+                          <span className="body-text-3">{product.productData.brand ?? ''}</span>
                         </li>
                         <li>
-                          <p className="body-md-2 fw-semibold">Capacity</p>
-                          <span className="body-text-3">1 Liters</span>
+                          <p className="body-md-2 fw-semibold">Dimensions</p>
+                          <span className="body-text-3">{product.productData.dimensions ?? ''}</span>
                         </li>
                         <li>
-                          <p className="body-md-2 fw-semibold">Material</p>
-                          <span className="body-text-3">Glass</span>
-                        </li>
-                        <li>
-                          <p className="body-md-2 fw-semibold">Wattage</p>
-                          <span className="body-text-3">1100 watts</span>
+                          <p className="body-md-2 fw-semibold">Weight</p>
+                          <span className="body-text-3">{product.productData.weight}</span>
                         </li>
                       </ul>
                     </div>
@@ -110,49 +107,22 @@ export default function Details1({ product }) {
                       <ul className="product-about-list">
                         <li>
                           <p className="body-text-3">
-                            Here’s the quickest way to enjoy your delicious hot
-                            tea every single day.
+                            {product.productData.description ?? ''}
                           </p>
                         </li>
-                        <li>
-                          <p className="body-text-3">
-                            100% BPA - Free premium design meets excellent
-                          </p>
-                        </li>
-                        <li>
-                          <p className="body-text-3">
-                            No more messy accidents or spills
-                          </p>
-                        </li>
-                        <li>
-                          <p className="body-text-3">
-                            So easy &amp; convenient that everyone can use it
-                          </p>
-                        </li>
-                        <li>
-                          <p className="body-text-3">
-                            This powerful 900-1100-Watt kettle has convenient
-                            capacity markings on the body lets you accurately
-                          </p>
-                        </li>
-                        <li>
-                          <p className="body-text-3">
-                            1 year limited warranty and us-based customer
-                            support team lets you buy with confidence.
-                          </p>
-                        </li>
+
                       </ul>
                     </div>
                   </div>
                   <div className="tf-product-info-choose-option sticky-top">
                     <div className="product-delivery">
                       <p className="price-text fw-medium text-primary">
-                        ${product.price.toFixed(2)}
+                          ${product.productData.price_details.base_price_usd}
                       </p>
                       <p>
                         <i className="icon-delivery-2" /> Free shipping
                       </p>
-                      <div className="shipping-to">
+                      {/* <div className="shipping-to">
                         <p className="body-md-2">Shipping to:</p>
                         <div className="tf-cur">
                           <div className="tf-cur-item">
@@ -162,7 +132,7 @@ export default function Details1({ product }) {
                             </select>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="product-quantity">
                       <p className="title body-text-3">Quantity</p>
@@ -203,9 +173,9 @@ export default function Details1({ product }) {
                         href="#shoppingCart"
                         data-bs-toggle="offcanvas"
                         className="tf-btn text-white"
-                        onClick={() => addProductToCart(product.id, quantity)}
+                        onClick={() => addProductToCart(product, quantity)}
                       >
-                        {isAddedToCartProducts(product.id)
+                        {isAddedToCartProducts(product.product_id)
                           ? "Already Added"
                           : "Add to cart"}
                         <i className="icon-cart-2" />

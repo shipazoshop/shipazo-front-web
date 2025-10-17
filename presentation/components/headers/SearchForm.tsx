@@ -1,6 +1,9 @@
 "use client";
 import { useProductRepository } from "@/presentation";
 import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useProductStore } from "../../../application/state/product";
+
 const categories = [
   { rel: "", label: "All categories" },
   { rel: "apple-products", label: "Apple products" },
@@ -25,6 +28,9 @@ export default function SearchForm({
   const [searchTerm, setSearchTerm] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navRef = useRef(null);
+
+  const { setProduct } = useProductStore();
+  const router = useRouter();
 
   const { importProductFromUrl } = useProductRepository();
   const { mutateAsync, isSuccess, isError, data, error, isLoading } = importProductFromUrl();
@@ -58,8 +64,10 @@ export default function SearchForm({
       // Validar que sea una URL válida
       if (searchTerm && (searchTerm.startsWith("http://") || searchTerm.startsWith("https://"))) {
         const result = await mutateAsync({ url: searchTerm });
+
         console.log("✅ Producto importado:", result);
-        // Limpiar el campo después de importar exitosamente
+        setProduct(result);
+        router.push(`/product-detail/${result.product_id}`);      
         setSearchTerm("");
       } else {
         setErrorMessage("Por favor ingresa una URL válida (debe comenzar con http:// o https://)");
@@ -185,24 +193,7 @@ export default function SearchForm({
           {errorMessage}
         </div>
       )}
-      {isSuccess && data && (
-        <div style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: 0,
-          marginTop: '8px',
-          padding: '12px',
-          backgroundColor: '#efe',
-          border: '1px solid #cfc',
-          borderRadius: '4px',
-          color: '#3c3',
-          fontSize: '14px',
-          zIndex: 1000
-        }}>
-          ✅ Producto importado exitosamente
-        </div>
-      )}
+
     </form>
   );
 }

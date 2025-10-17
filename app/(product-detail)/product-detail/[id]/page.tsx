@@ -1,3 +1,4 @@
+"use client";
 import BrandsSlider from "@/presentation/components/common/BrandsSlider";
 import RecentProducts from "@/presentation/components/common/RecentProducts";
 import Footer1 from "@/presentation/components/footers/Footer1";
@@ -8,15 +9,10 @@ import Relatedproducts from "@/presentation/components/product-detail/Relatedpro
 import SimilerProducts from "@/presentation/components/product-detail/SimilerProducts";
 import React from "react";
 import Link from "next/link";
-import { allProducts } from "@/shared/constants/products";
-export const metadata = {
-  title: "Product Details || shipazoazoazos - Multipurpose React Nextjs eCommerce",
-  description: "shipazoazos - Multipurpose React Nextjs eCommerce",
-};
-export default async function ProductDetailPage({ params }) {
-  const { id } = await params;
+import { useProductStore } from "../../../../application/state/product";
 
-  const product = allProducts.filter((p) => p.id == id)[0] || allProducts[0];
+export default function ProductDetailPage({ params }) {
+  const { product } = useProductStore();
 
   return (
     <>
