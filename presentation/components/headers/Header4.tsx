@@ -17,7 +17,7 @@ export default function Header4({ fullWidth = false }) {
                 <Link href={`/`}>
                   <Image
                     alt="Logo"
-                    src="/images/logo/favicon-shipazo.webpshipazo.webp"
+                    src="/images/logo/horizontal-shipazo.webp"
                     width={185}
                     height={41}
                   />
