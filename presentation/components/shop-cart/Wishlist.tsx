@@ -8,7 +8,7 @@ export default function Wishlist() {
   const {
     wishList,
     removeFromWishlist,
-    addProductToCart,
+    addProductToCartById,
     isAddedToCartProducts,
   } = useContextElement();
   const [items, setItems] = useState(allProducts);
@@ -70,7 +70,7 @@ export default function Wishlist() {
                         <span className="new-price price-text fw-medium mb-0">
                           ${product.price.toFixed(3)}
                         </span>
-                        {product.oldPrice && (
+                        {"oldPrice" in product && product.oldPrice && (
                           <span className="old-price body-md-2 text-main-2 fw-normal">
                             ${product.oldPrice.toFixed(3)}
                           </span>
@@ -85,10 +85,10 @@ export default function Wishlist() {
                         href="#shoppingCart"
                         data-bs-toggle="offcanvas"
                         className="tf-btn btn-gray"
-                        onClick={() => addProductToCart(product.id)}
+                        onClick={() => addProductToCartById(product.id)}
                       >
                         <span className="text-white">
-                          {isAddedToCartProducts(product.id)
+                          {isAddedToCartProducts(String(product.id))
                             ? "Already Added"
                             : "Add to Cart"}
                         </span>

@@ -1,45 +1,40 @@
 "use client";
-import { products28 } from "@/shared/constants/products";
+import { products54 } from "@/shared/constants/products";
 import React from "react";
-import { Grid, Navigation, Pagination } from "swiper/modules";
-import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
-import AddToCart from "./AddToCart";
-import AddToWishlist from "./AddToWishlist";
-import AddToQuickview from "./AddToQuickview";
-import AddToCompare from "./AddToCompare";
-export default function Products5({ parentClass = "tf-sp-2 pt-0" }) {
+import Image from "next/image";
+import { Navigation, Pagination } from "swiper/modules";
+import AddToCart from "../common/AddToCart";
+import AddToWishlist from "../common/AddToWishlist";
+import AddToQuickview from "../common/AddToQuickview";
+import AddToCompare from "../common/AddToCompare";
+export default function Relatedproducts() {
   return (
-    <section className={parentClass}>
+    <section className="tf-sp-2 pt-0">
       <div className="container">
-        <div className="flat-title wow fadeInUp" data-wow-delay="0s">
-          <h5 className="fw-semibold">Best Sellers</h5>
+        <div className="flat-title">
+          <h5 className="fw-semibold">Products Related To This Item</h5>
           <div className="box-btn-slide relative">
-            <div className="swiper-button-prev nav-swiper nav-prev-products snbp10">
+            <div className="swiper-button-prev nav-swiper nav-prev-products snbp67">
               <i className="icon-arrow-left-lg" />
             </div>
-            <div className="swiper-button-next nav-swiper nav-next-products snbn10">
+            <div className="swiper-button-next nav-swiper nav-next-products snbn67">
               <i className="icon-arrow-right-lg" />
             </div>
           </div>
         </div>
         <Swiper
-          modules={[Navigation, Pagination, Grid]}
+          modules={[Navigation, Pagination]}
           pagination={{
             clickable: true,
-            el: ".spd10",
+            el: ".spd67",
           }}
           navigation={{
-            prevEl: ".snbp10",
-            nextEl: ".snbn10",
+            prevEl: ".snbp67",
+            nextEl: ".snbn67",
           }}
           className="swiper tf-sw-products"
-          grid={{
-            rows: 3,
-            fill: "row",
-          }}
-          spaceBetween={15}
           breakpoints={{
             0: { slidesPerView: 2 },
             575: {
@@ -54,13 +49,11 @@ export default function Products5({ parentClass = "tf-sp-2 pt-0" }) {
               spaceBetween: 30,
             },
           }}
+          spaceBetween={15}
         >
-          {products28.map((product) => (
-            <SwiperSlide key={product.id} className="swiper-slide">
-              <div
-                className={`card-product ${product.styleClass} wow ${product.animation}`}
-                data-wow-delay={product.delay}
-              >
+          {products54.map((product) => (
+            <SwiperSlide className="swiper-slide" key={product.id}>
+              <div className="card-product">
                 <div className="card-product-wrapper">
                   <Link
                     href={`/product-detail/${product.id}`}
@@ -69,16 +62,16 @@ export default function Products5({ parentClass = "tf-sp-2 pt-0" }) {
                     <Image
                       className="img-product lazyload"
                       src={product.imgSrc}
-                      alt="image-product"
-                      width={product.width}
-                      height={product.height}
+                      alt={product.title}
+                      width={500}
+                      height={500}
                     />
                     <Image
                       className="img-hover lazyload"
                       src={product.imgHover}
-                      alt="image-product"
-                      width={product.width}
-                      height={product.height}
+                      alt={`${product.title} hover`}
+                      width={500}
+                      height={500}
                     />
                   </Link>
                   <ul className="list-product-btn">
@@ -122,8 +115,11 @@ export default function Products5({ parentClass = "tf-sp-2 pt-0" }) {
                       </Link>
                     </div>
                     <p className="price-wrap fw-medium">
-                      <span className="new-price price-text fw-medium">
+                      <span className="new-price price-text fw-medium mb-0">
                         ${product.price.toFixed(3)}
+                      </span>
+                      <span className="old-price body-md-2 text-main-2 fw-normal">
+                        ${product.oldPrice.toFixed(3)}
                       </span>
                     </p>
                   </div>
@@ -131,7 +127,7 @@ export default function Products5({ parentClass = "tf-sp-2 pt-0" }) {
               </div>
             </SwiperSlide>
           ))}
-          <div className="d-flex d-lg-none sw-dot-default sw-pagination-products justify-content-center spd10" />
+          <div className="d-flex d-lg-none sw-dot-default sw-pagination-products justify-content-center spd67" />
         </Swiper>
       </div>
     </section>
