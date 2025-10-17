@@ -21,8 +21,8 @@ import Products7 from "@/presentation/components/homes/home-5/Products7";
 import React from "react";
 
 export const metadata = {
-  title: "Home 05 || shipazoazoazoazos - Multipurpose React Nextjs eCommerce",
-  description: "shipazoazoazoazoazos - Multipurpose React Nextjs eCommerce",
+  title: "Home || shipazo - Multipurpose React Nextjs eCommerce",
+  description: "shipazo- Multipurpose React Nextjs eCommerce",
 };
 export default function page() {
   return (
@@ -33,7 +33,6 @@ export default function page() {
         <div className="container">
           <div className="container-wrap">
             <div className="container-sidebar d-none">
-              <Categories />
               <Products />
               <Banner />
               <Products2 />
@@ -42,10 +41,7 @@ export default function page() {
               <Blogs />
             </div>
             <div className="container-main">
-              <Collections />
-              <Features hacontainer={false} />
-              <Products3 />
-              <Banner3 />
+
               <Products4 />
               <Products5 />
               <Banner4 />

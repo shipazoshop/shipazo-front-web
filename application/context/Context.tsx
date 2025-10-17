@@ -2,16 +2,19 @@
 import { allProducts } from "@/shared/constants/products";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import type { CartProduct } from "@/domain/mappers/product.mapper";
+import { mapImportProductToCartProduct, mapLegacyProductToImportProduct } from "@/domain/mappers/product.mapper";
+import type { IImportProductResponse } from "@/domain/dto/import-product.dto";
 
 type Product = (typeof allProducts)[number];
-type CartProduct = Product & { quantity: number; imgHover?: string };
 
 type ContextValue = {
   cartProducts: CartProduct[];
   setCartProducts: Dispatch<SetStateAction<CartProduct[]>>;
   totalPrice: number;
-  addProductToCart: (id: number, qty?: number, isModal?: boolean) => void;
-  isAddedToCartProducts: (id: number) => boolean;
+  addProductToCart: (product: IImportProductResponse, qty?: number, isModal?: boolean) => void;
+  addProductToCartById: (id: number, qty?: number, isModal?: boolean) => void;
+  isAddedToCartProducts: (id: string) => boolean;
   removeFromWishlist: (id: number) => void;
   addToWishlist: (id: number) => void;
   isAddedtoWishlist: (id: number) => boolean;
@@ -25,7 +28,7 @@ type ContextValue = {
   removeFromCompareItem: (id: number) => void;
   compareItem: number[];
   setCompareItem: Dispatch<SetStateAction<number[]>>;
-  updateQuantity: (id: number, qty: number) => void;
+  updateQuantity: (id: string, qty: number) => void;
 };
 
 const dataContext = createContext<ContextValue | undefined>(undefined);
@@ -47,6 +50,9 @@ const WISHLIST_STORAGE_KEY = "wishlist";
 
 const findProductById = (id: number): Product | undefined =>
   allProducts.find((product) => product.id === id);
+
+const findCartProductById = (id: string, cartProducts: CartProduct[]): CartProduct | undefined =>
+  cartProducts.find((product) => product.id === id);
 
 const readStorageArray = (key: string): number[] | CartProduct[] => {
   if (typeof window === "undefined") {
@@ -88,28 +94,44 @@ export default function Context({ children }: ContextProviderProps) {
     [cartProducts]
   );
 
-  const isAddedToCartProducts = (id: number): boolean =>
+  const isAddedToCartProducts = (id: string): boolean =>
     cartProducts.some((product) => product.id === id);
 
-  const addProductToCart = (id: number, qty = 1, isModal = true): void => {
-    if (isAddedToCartProducts(id)) {
+  /**
+   * Método principal unificado para agregar productos al carrito
+   * Acepta únicamente IImportProductResponse
+   */
+  const addProductToCart = (product: IImportProductResponse, qty = 1, isModal = true): void => {
+    if (isAddedToCartProducts(product.product_id)) {
       return;
     }
-    const product = findProductById(id);
-    if (!product) {
-      return;
-    }
-    const productToAdd: CartProduct = {
-      ...product,
-      quantity: qty,
-    };
+    const productToAdd = mapImportProductToCartProduct(product, qty);
     setCartProducts((previous) => [...previous, productToAdd]);
     if (isModal) {
       // openCartModal();
     }
   };
 
-  const updateQuantity = (id: number, qty: number): void => {
+  /**
+   * Método helper para agregar productos legacy por ID
+   * Convierte productos legacy a IImportProductResponse antes de agregarlos
+   * @deprecated Migrar a usar addProductToCart con IImportProductResponse directamente
+   */
+  const addProductToCartById = (id: number, qty = 1, isModal = true): void => {
+    const stringId = String(id);
+    if (isAddedToCartProducts(stringId)) {
+      return;
+    }
+    const legacyProduct = findProductById(id);
+    if (!legacyProduct) {
+      return;
+    }
+    // Convertir producto legacy a IImportProductResponse
+    const importProduct = mapLegacyProductToImportProduct(legacyProduct);
+    addProductToCart(importProduct, qty, isModal);
+  };
+
+  const updateQuantity = (id: string, qty: number): void => {
     if (!isAddedToCartProducts(id) || qty < 1) {
       return;
     }
@@ -118,9 +140,9 @@ export default function Context({ children }: ContextProviderProps) {
       previous.map((item) =>
         item.id === id
           ? {
-              ...item,
-              quantity: qty,
-            }
+            ...item,
+            quantity: qty,
+          }
           : item
       )
     );
@@ -170,6 +192,7 @@ export default function Context({ children }: ContextProviderProps) {
     setCartProducts,
     totalPrice,
     addProductToCart,
+    addProductToCartById,
     isAddedToCartProducts,
     removeFromWishlist,
     addToWishlist,
