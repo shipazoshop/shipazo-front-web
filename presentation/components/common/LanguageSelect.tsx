@@ -53,7 +53,7 @@ export default function LanguageSelect({
         className="image-select center style-default type-languages"
         tabIndex={-1}
         value={selected.id}
-        readOnly
+        onChange={() => {}}
       >
         {languageOptions.map((option) => (
           <option key={option.id} value={option.id}>

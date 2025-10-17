@@ -104,7 +104,7 @@ export default function Products3() {
     }
     if (rating !== "All") {
       const filteredByrating = [...products3].filter(
-        (elm) => elm.rating >= rating
+        (elm) => elm.rating >= Number(rating)
       );
       filteredArrays = [...filteredArrays, filteredByrating];
     }

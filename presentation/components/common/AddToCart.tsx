@@ -3,13 +3,13 @@
 import { useContextElement } from "@/application/context/Context";
 
 export default function AddToCart({ productId, tooltipClass = "" }) {
-  const { addProductToCart, isAddedToCartProducts } = useContextElement();
+  const { addProductToCartById, isAddedToCartProducts } = useContextElement();
   return (
     <>
       <a
         href="#shoppingCart"
         data-bs-toggle="offcanvas"
-        onClick={() => addProductToCart(productId)}
+        onClick={() => addProductToCartById(productId)}
         className={`box-icon add-to-cart btn-icon-action hover-tooltip ${tooltipClass}`}
       >
         <span className="icon icon-cart2" />
