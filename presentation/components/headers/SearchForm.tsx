@@ -3,6 +3,7 @@ import { useProductRepository } from "@/presentation";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProductStore } from "../../../application/state/product";
+import { LoadingScreen } from "../common/LoadingScreen";
 
 const categories = [
   { rel: "", label: "All categories" },
@@ -67,7 +68,7 @@ export default function SearchForm({
 
         console.log("✅ Producto importado:", result);
         setProduct(result);
-        router.push(`/product-detail/${result.product_id}`);      
+        router.push(`/product-detail/${result.product_id}`);
         setSearchTerm("");
       } else {
         setErrorMessage("Por favor ingresa una URL válida (debe comenzar con http:// o https://)");
@@ -173,27 +174,9 @@ export default function SearchForm({
         disabled={isLoading}
         type="button"
       >
-        {isLoading ? <i className="icon-spinner"></i> : <i className="icon-search"></i>}
+        <i className="icon-search"></i>
       </button>
-      {errorMessage && (
-        <div style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: 0,
-          marginTop: '8px',
-          padding: '12px',
-          backgroundColor: '#fee',
-          border: '1px solid #fcc',
-          borderRadius: '4px',
-          color: '#c33',
-          fontSize: '14px',
-          zIndex: 1000
-        }}>
-          {errorMessage}
-        </div>
-      )}
-
+      <LoadingScreen show={isLoading} />
     </form>
   );
 }

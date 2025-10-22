@@ -29,6 +29,7 @@ export const shopPages = [
       { id: 4, href: "/order-details", text: "Order Detail" },
       { id: 5, href: "/track-your-order", text: "Track Your Order" },
       { id: 6, href: "/my-account", text: "My Account" },
+      { id: 7, href: "/analytics", text: "Analytics" },
     ],
   },
 ];

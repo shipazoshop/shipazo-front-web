@@ -1,7 +1,6 @@
 "use client";
 import { arrayProducts } from "@/shared/constants/productsTest";
-// import { products20 } from "@/shared/constants/products";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -39,9 +38,8 @@ export default function Products4() {
                 onClick={() => handleTabClick(tab.name)}
               >
                 <a
-                  className={`tab-link main-title link fw-semibold ${
-                    activeTab === tab.name ? "active" : ""
-                  }`}
+                  className={`tab-link main-title link fw-semibold ${activeTab === tab.name ? "active" : ""
+                    }`}
                 >
                   {tab.name}
                 </a>
@@ -90,9 +88,8 @@ export default function Products4() {
             {filtered.map((product, index) => (
               <SwiperSlide className="swiper-slide" key={index}>
                 <div
-                  className={`card-product ${
-                    index < 5 ? "wow fadeInLeft" : ""
-                  }`}
+                  className={`card-product ${index < 5 ? "wow fadeInLeft" : ""
+                    }`}
                   {...(index < 5 && { "data-wow-delay": 500 })}
                 >
                   <div className="card-product-wrapper">
