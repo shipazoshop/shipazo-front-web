@@ -18,6 +18,7 @@
     "photoswipe": "^5.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "recharts": "^3.3.0",
     "sass": "^1.86.3",
     "simple-parallax-js": "^6.1.1",
     "swiper": "^11.2.6",
