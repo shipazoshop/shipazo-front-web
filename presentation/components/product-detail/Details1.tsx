@@ -4,8 +4,13 @@ import Slider1 from "./sliders/Slider1";
 import Link from "next/link";
 import { useContextElement } from "@/application/context/Context";
 import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
-export default function Details1({ product }: Readonly<{ product: IImportProductResponse}>) {
-  
+import { LoadingScreen } from "../common/LoadingScreen";
+export default function Details1({ product }: Readonly<{ product: IImportProductResponse }>) {
+
+  if (!product) {
+    return <LoadingScreen show />;
+  }
+
   const [quantity, setQuantity] = useState(1);
   const { addProductToCart, isAddedToCartProducts } = useContextElement();
   return (
@@ -17,7 +22,7 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
               {/* Product Image */}
               <div className="tf-product-media-wrap thumbs-default sticky-top">
                 <div className="thumbs-slider">
-                  <Slider1 productImages={product.productData.images ?? ['']}  />
+                  <Slider1 productImages={product?.productData?.images ?? ['']} />
                 </div>
               </div>
               {/* /Product Image */}
@@ -39,7 +44,7 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         </Link>
                       </p> */}
                       <h5 className="product-info-name fw-semibold">
-                        {product.productData.title ??
+                        {product?.productData.title ??
                           ``}
                       </h5>
                       {/* <ul className="product-info-rate-wrap">
@@ -117,7 +122,7 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                   <div className="tf-product-info-choose-option sticky-top">
                     <div className="product-delivery">
                       <p className="price-text fw-medium text-primary">
-                          ${product.productData.price_details.base_price_usd}
+                        ${product.productData.price_details.base_price_usd}
                       </p>
                       <p>
                         <i className="icon-delivery-2" /> Free shipping
