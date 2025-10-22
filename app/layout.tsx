@@ -133,7 +133,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
               <ScrollTop />
               <Toolbar />
               <Search />
-              <NewsLetter />
+              {/* <NewsLetter /> */}
               <AddParallax />
             </Context>
           </QueryProvider>

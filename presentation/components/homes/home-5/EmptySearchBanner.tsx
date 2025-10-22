@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import SearchForm from "../../headers/SearchForm";
 
 export default function EmptySearchBanner() {
   return (
@@ -19,10 +20,17 @@ export default function EmptySearchBanner() {
         <div className="search-prompt">
           <h2 className="main-text">Empieza buscando un producto</h2>
           <p className="sub-text">Encuentra lo que necesitas en nuestra amplia selección</p>
-          <div className="search-icon-wrapper">
+          {/* <div className="search-icon-wrapper">
             <i className="icon-search search-icon" />
+          </div> */}
+        </div>
+
+        <div className="col-md-7 d-none d-md-block">
+          <div className="header-center justify-content-end">
+            <SearchForm />
           </div>
         </div>
+
       </div>
 
       <style>{`

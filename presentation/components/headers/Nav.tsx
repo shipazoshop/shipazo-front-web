@@ -24,11 +24,26 @@ export default function Nav() {
 
   return (
     <>
+      <div className="col-xl-2 col-md-3 col-7 d-flex align-items-center">
+        <div className="logo-site">
+          <Link href={`/`}>
+            <Image
+              alt="Logo"
+              src="/images/logo/horizontal-shipazo.webp"
+              style={{
+                aspectRatio: "185 / 41"
+              }}
+              width={300}
+              height={100}
+            />
+          </Link>
+        </div>
+      </div>
       <li
-        className={`nav-item ${
-          isMenuParentActive(demoItems) ? "active" : ""
-        }  pst-unset`}
+        className={`nav-item ${isMenuParentActive(demoItems) ? "active" : ""
+          }  pst-unset`}
       >
+
         <a href="#" className="item-link link body-md-2 fw-semibold">
           <span>Home</span>
           <i className="icon icon-arrow-down" />
@@ -102,9 +117,8 @@ export default function Nav() {
         </div>
       </li>
       <li
-        className={`nav-item ${
-          isMenuParentActive2(shopDetailsPages) ? "active" : ""
-        }`}
+        className={`nav-item ${isMenuParentActive2(shopDetailsPages) ? "active" : ""
+          }`}
       >
         <a href="#" className="item-link body-md-2 fw-semibold">
           <span>Product</span>
@@ -133,9 +147,8 @@ export default function Nav() {
         </div>
       </li>
       <li
-        className={`nav-item ${
-          isMenuParentActive(blogMenuItems) ? "active" : ""
-        }`}
+        className={`nav-item ${isMenuParentActive(blogMenuItems) ? "active" : ""
+          }`}
       >
         <a href="#" className="item-link body-md-2 fw-semibold">
           <span>Blog</span>
@@ -157,9 +170,8 @@ export default function Nav() {
         </div>
       </li>
       <li
-        className={`nav-item relative ${
-          isMenuParentActive(othersPages) ? "active" : ""
-        }`}
+        className={`nav-item relative ${isMenuParentActive(othersPages) ? "active" : ""
+          }`}
       >
         <a href="#" className="item-link body-md-2 fw-semibold">
           <span>Page</span>
