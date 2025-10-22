@@ -159,6 +159,46 @@ export default function Header1() {
               <div className="header-bt-right">
                 <ul className="nav-icon style-2">
                   <li>
+                    <Link href={`/analytics`} className="d-flex align-items-center" title="Sales Analytics">
+                      <svg
+                        width={26}
+                        height={26}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M3 3V21H21"
+                          stroke="#333E48"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M7 16L12 11L15 14L21 8"
+                          stroke="#333E48"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M21 8V12"
+                          stroke="#333E48"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M17 8H21"
+                          stroke="#333E48"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </Link>
+                  </li>
+                  <li>
                     <a href="#compare" data-bs-toggle="offcanvas">
                       <svg
                         width={26}
