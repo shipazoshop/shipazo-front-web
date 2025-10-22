@@ -8,6 +8,11 @@ export default function Sidebar() {
         <span className="my-account-nav-item active">Dashboard</span>
       </li>
       <li>
+        <Link href={`/analytics`} className="my-account-nav-item">
+          Analytics
+        </Link>
+      </li>
+      <li>
         <Link href={`/my-account-orders`} className="my-account-nav-item">
           Orders
         </Link>
