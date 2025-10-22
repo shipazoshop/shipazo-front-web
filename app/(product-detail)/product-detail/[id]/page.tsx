@@ -10,6 +10,7 @@ import SimilerProducts from "@/presentation/components/product-detail/SimilerPro
 import React from "react";
 import Link from "next/link";
 import { useProductStore } from "../../../../application/state/product";
+import EmptySearchBanner from "@/presentation/components/homes/home-5/EmptySearchBanner";
 
 export default function ProductDetailPage({ params }) {
   const { product } = useProductStore();
@@ -45,11 +46,11 @@ export default function ProductDetailPage({ params }) {
         </div>
       </div>
       <Details1 product={product} />
+      {/* <SimilerProducts />
       <Description />
-      <SimilerProducts />
       <Relatedproducts />
       <BrandsSlider />
-      <RecentProducts />
+      <RecentProducts /> */}
       <Footer1 />
     </>
   );
