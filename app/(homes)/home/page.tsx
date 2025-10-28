@@ -11,7 +11,7 @@ export const metadata = {
 export default function page() {
   return (
     <>
-      <Topbar1 parentClass="tf-topbar" />
+      {/* <Topbar1 parentClass="tf-topbar" /> */}
       <Header1 />
       <div className="tf-sp-7">
         <div className="container">
@@ -50,7 +50,7 @@ export default function page() {
           </div>
         </div>
       </div>
-      <Footer1 />
+      {/* <Footer1 /> */}
     </>
   );
 }
