@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add \"presentation/components/dashboard/Sidebar.tsx\")",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd analytics link to dashboard sidebar\n\nAdded navigation link to analytics page in the user dashboard sidebar for easy access to analytics features.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,9 +1,9 @@
 "use client";
 
-import { useContextElement } from "@/application/context/Context";
+import { useCartActions } from "@/application/stores/useCartStore";
 
 export default function AddToCart({ productId, tooltipClass = "" }) {
-  const { addProductToCartById, isAddedToCartProducts } = useContextElement();
+  const { addProductToCartById, isAddedToCartProducts } = useCartActions();
   return (
     <>
       <a
@@ -14,7 +14,7 @@ export default function AddToCart({ productId, tooltipClass = "" }) {
       >
         <span className="icon icon-cart2" />
         <span className="tooltip">
-          {isAddedToCartProducts(productId) ? "Already Added" : "Add to Cart"}
+          {isAddedToCartProducts(String(productId)) ? "Already Added" : "Add to Cart"}
         </span>
       </a>
     </>

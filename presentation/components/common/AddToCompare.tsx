@@ -1,20 +1,20 @@
 "use client";
 
-import { useContextElement } from "@/application/context/Context";
+import { useCompareActions } from "@/application/stores/useCompareStore";
 
 export default function AddToCompare({ productId, tooltipClass = "" }) {
-  const { addToCompareItem, isAddedtoCompareItem } = useContextElement();
+  const { addToCompare, isAddedToCompare } = useCompareActions();
   return (
     <a
       href="#compare"
       data-bs-toggle="offcanvas"
-      onClick={() => addToCompareItem(productId)}
+      onClick={() => addToCompare(productId)}
       className={`box-icon btn-icon-action hover-tooltip ${tooltipClass}`}
     >
       <span className="icon icon-compare1" />
       <span className="tooltip">
         {" "}
-        {isAddedtoCompareItem(productId) ? "Compared" : "Compare"}
+        {isAddedToCompare(productId) ? "Compared" : "Compare"}
       </span>
     </a>
   );

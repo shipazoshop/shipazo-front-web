@@ -94,7 +94,7 @@ export default function Products4() {
                 >
                   <div className="card-product-wrapper">
                     <Link
-                      href={`/product-detail/${product.product_id}`}
+                      href={`/product-detail/${product.productData.product_id}`}
                       className="product-img"
                     >
                       <Image
@@ -116,24 +116,24 @@ export default function Products4() {
                       <li>
                         <AddToCart
                           tooltipClass="tooltip-left"
-                          productId={product.product_id}
+                          productId={product.productData.product_id}
                         />
                       </li>
                       <li className="d-none d-sm-block wishlist">
                         <AddToWishlist
                           tooltipClass="tooltip-left"
-                          productId={product.product_id}
+                          productId={product.productData.product_id}
                         />
                       </li>
                       <li>
                         <AddToQuickview
-                          productId={product.product_id}
+                          productId={product.productData.product_id}
                           tooltipClass="tooltip-left"
                         />
                       </li>
                       <li className="d-none d-sm-block">
                         <AddToCompare
-                          productId={product.product_id}
+                          productId={product.productData.product_id}
                           tooltipClass="tooltip-left"
                         />
                       </li>
@@ -146,7 +146,7 @@ export default function Products4() {
                           {product.productData.brand}
                         </p>
                         <Link
-                          href={`/product-detail/${product.product_id}`}
+                          href={`/product-detail/${product.productData.product_id}`}
                           className="name-product body-md-2 fw-semibold text-secondary link"
                         >
                           {product.productData.title}

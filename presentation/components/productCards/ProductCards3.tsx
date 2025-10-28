@@ -1,22 +1,18 @@
 "use client";
-import { useContextElement } from "@/application/context/Context";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import AddToCart from "../common/AddToCart";
 import AddToWishlist from "../common/AddToWishlist";
 import AddToQuickview from "../common/AddToQuickview";
+import { useWishlistActions } from "@/application/stores/useWishlistStore";
+import { useCompareActions } from "@/application/stores/useCompareStore";
+import { useCartActions } from "@/application/stores/useCartStore";
 
 export default function ProductCards3({ product }) {
-  const {
-    addToWishlist,
-    isAddedtoWishlist,
-    addToCompareItem,
-    isAddedtoCompareItem,
-
-    addProductToCart,
-    isAddedToCartProducts,
-  } = useContextElement();
+  const { toggleWishlist, isAddedToWishlist } = useWishlistActions();
+  const { addToCompare, isAddedToCompare } = useCompareActions();
+  const { addProductToCartById, isAddedToCartProducts } = useCartActions();
 
   return (
     <div className="card-product">
@@ -133,7 +129,7 @@ export default function ProductCards3({ product }) {
             href="#compare"
             data-bs-toggle="offcanvas"
             className="tf-btn-icon style-2"
-            onClick={() => addToCompareItem(product.id)}
+            onClick={() => addToCompare(product.id)}
           >
             <svg
               width={18}
@@ -152,7 +148,7 @@ export default function ProductCards3({ product }) {
             </svg>
             <span className="body-text-3 fw-normal">
               {" "}
-              {isAddedtoCompareItem(product.id) ? "Compared" : "Compare"}
+              {isAddedToCompare(product.id) ? "Compared" : "Compare"}
             </span>
           </a>
         </div>
@@ -162,10 +158,10 @@ export default function ProductCards3({ product }) {
           href="#shoppingCart"
           data-bs-toggle="offcanvas"
           className="tf-btn btn-line w-100"
-          onClick={() => addProductToCart(product.id)}
+          onClick={() => addProductToCartById(product.id)}
         >
           <span>
-            {isAddedToCartProducts(product.id)
+            {isAddedToCartProducts(String(product.id))
               ? "Already Added"
               : "Add to Cart"}
           </span>
@@ -176,7 +172,7 @@ export default function ProductCards3({ product }) {
             href="#compare"
             data-bs-toggle="offcanvas"
             className="tf-btn-icon style-2 type-black"
-            onClick={() => addToCompareItem(product.id)}
+            onClick={() => addToCompare(product.id)}
           >
             <svg
               width={18}
@@ -195,12 +191,12 @@ export default function ProductCards3({ product }) {
             </svg>
             <span className="body-text-3 fw-normal">
               {" "}
-              {isAddedtoCompareItem(product.id) ? "Compared" : "Compare"}
+              {isAddedToCompare(product.id) ? "Compared" : "Compare"}
             </span>
           </a>
           <a
             href="#"
-            onClick={() => addToWishlist(product.id)}
+            onClick={() => toggleWishlist(product.id)}
             className="tf-btn-icon style-2 type-black"
           >
             <svg
@@ -219,7 +215,7 @@ export default function ProductCards3({ product }) {
               />
             </svg>
             <span className="body-text-3 fw-normal">
-              {isAddedtoWishlist(product.id) ? "Wishlisted" : "Wishlist"}
+              {isAddedToWishlist(product.id) ? "Wishlisted" : "Wishlist"}
             </span>
           </a>
         </div>

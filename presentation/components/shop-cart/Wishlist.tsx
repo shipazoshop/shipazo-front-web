@@ -2,15 +2,15 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useContextElement } from "@/application/context/Context";
+import { useWishlist, useWishlistActions } from "@/application/stores/useWishlistStore";
+import { useCartActions } from "@/application/stores/useCartStore";
 import { allProducts } from "@/shared/constants/products";
+
 export default function Wishlist() {
-  const {
-    wishList,
-    removeFromWishlist,
-    addProductToCartById,
-    isAddedToCartProducts,
-  } = useContextElement();
+  const wishList = useWishlist();
+  const { removeFromWishlist } = useWishlistActions();
+  const { addProductToCartById, isAddedToCartProducts } = useCartActions();
+
   const [items, setItems] = useState(allProducts);
   useEffect(() => {
     setItems([...allProducts.filter((elm) => wishList.includes(elm.id))]);

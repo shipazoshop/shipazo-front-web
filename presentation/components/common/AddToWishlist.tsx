@@ -1,25 +1,26 @@
 "use client";
 
-import { useContextElement } from "@/application/context/Context";
+import { useWishlistActions } from "@/application/stores/useWishlistStore";
+
 export default function AddToWishlist({ productId, tooltipClass = "" }) {
-  const { addToWishlist, isAddedtoWishlist } = useContextElement();
+  const { toggleWishlist, isAddedToWishlist } = useWishlistActions();
   return (
     <a
       href="#"
       onClick={(e) => {
         e.preventDefault();
-        addToWishlist(productId);
+        toggleWishlist(productId);
       }}
       className={`box-icon btn-icon-action hover-tooltip ${tooltipClass}`}
     >
       <span
         className={`icon ${
-          isAddedtoWishlist(productId) ? "icon-trash" : "icon-heart2"
+          isAddedToWishlist(productId) ? "icon-trash" : "icon-heart2"
         } `}
       />
       <span className="tooltip">
         {" "}
-        {isAddedtoWishlist(productId) ? "Remove Wishlist" : "Add to Wishlist"}
+        {isAddedToWishlist(productId) ? "Remove Wishlist" : "Add to Wishlist"}
       </span>
     </a>
   );

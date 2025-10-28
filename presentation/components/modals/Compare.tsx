@@ -1,18 +1,19 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useContextElement } from "@/application/context/Context";
+import { useMemo } from "react";
+import { useCompareItems, useRemoveFromCompare, useClearCompare } from "@/application/stores/useCompareStore";
 import { allProducts } from "@/shared/constants/products";
+
 export default function Compare() {
-  const { removeFromCompareItem, compareItem, setCompareItem } =
-    useContextElement();
-  const [items, setItems] = useState([]);
-  useEffect(() => {
-    setItems([
-      ...allProducts.filter((product) => compareItem.includes(product.id)),
-    ]);
-  }, [compareItem]);
+  const compareItems = useCompareItems();
+  const removeFromCompare = useRemoveFromCompare();
+  const clearCompare = useClearCompare();
+
+  const items = useMemo(
+    () => allProducts.filter((product) => compareItems.includes(product.id)),
+    [compareItems]
+  );
 
   return (
     <div className="offcanvas offcanvas-bottom offcanvas-compare" id="compare">
@@ -30,14 +31,14 @@ export default function Compare() {
                 Compare <br className="d-none d-md-block" />
                 Products
               </h5>
-              {!compareItem.length ? (
+              {compareItems.length === 0 ? (
                 <div className="mini-compare-empty w-100 text-center">
                   <h6>Your compare is curently empty</h6>
                 </div>
               ) : (
                 <div className="tf-compare-wrap">
-                  {items.map((product, i) => (
-                    <div key={i} className="tf-compare-item">
+                  {items.map((product) => (
+                    <div key={product.id} className="tf-compare-item">
                       <span className="btns-repeat">
                         <svg
                           width={16}
@@ -88,9 +89,11 @@ export default function Compare() {
                           </defs>
                         </svg>
                       </span>
-                      <span
+                      <button
+                        type="button"
                         className="icon-close remove"
-                        onClick={() => removeFromCompareItem(product.id)}
+                        onClick={() => removeFromCompare(product.id)}
+                        aria-label="Remove from compare"
                       />
                       <Link
                         href={`/product-detail/${product.id}`}
@@ -129,12 +132,13 @@ export default function Compare() {
                   >
                     <span className="text-white">Compare Products</span>
                   </Link>
-                  <div
+                  <button
+                    type="button"
                     className="tf-btn tf-compapre-button-clear-all clear-file-delete link btn-large-3"
-                    onClick={() => setCompareItem([])}
+                    onClick={clearCompare}
                   >
                     <span className="text-white">Clear All Products</span>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
