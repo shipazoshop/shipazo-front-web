@@ -2,13 +2,11 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useContextElement } from "@/application/context/Context";
-export default function Checkout() {
-  const {
-    cartProducts,
+import { useCartProducts, useCartTotalPrice } from "@/application/stores/useCartStore";
 
-    totalPrice,
-  } = useContextElement();
+export default function Checkout() {
+  const cartProducts = useCartProducts();
+  const totalPrice = useCartTotalPrice();
 
   return (
     <section className="tf-sp-2">

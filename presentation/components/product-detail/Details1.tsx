@@ -2,9 +2,10 @@
 import React, { useState } from "react";
 import Slider1 from "./sliders/Slider1";
 import Link from "next/link";
-import { useContextElement } from "@/application/context/Context";
 import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
 import { LoadingScreen } from "../common/LoadingScreen";
+import { useCartActions } from "@/application/stores/useCartStore";
+
 export default function Details1({ product }: Readonly<{ product: IImportProductResponse }>) {
 
   if (!product) {
@@ -12,7 +13,7 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
   }
 
   const [quantity, setQuantity] = useState(1);
-  const { addProductToCart, isAddedToCartProducts } = useContextElement();
+  const { addProductToCart, isAddedToCartProducts } = useCartActions();
   return (
     <section>
       <div className="tf-main-product section-image-zoom">
@@ -84,13 +85,13 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                     <div className="infor-center">
                       <div className="product-info-price">
                         <h4 className="text-primary">
-                          ${product.productData.price_details.base_price_usd}
+                          ${product.productData.price_details.priceBreakdown.priceUsd}
                         </h4>{" "}
-                        {/* {product.oldPrice && (
+                        {product.productData.price_details.original_price && (
                           <span className="price-text text-main-2 old-price">
-                            ${product.oldPrice.toFixed(2)}
+                            ${product.productData.price_details.original_price}
                           </span>
-                        )} */}
+                        )}
                       </div>
                       <ul className="product-fearture-list">
                         <li>
@@ -122,10 +123,10 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                   <div className="tf-product-info-choose-option sticky-top">
                     <div className="product-delivery">
                       <p className="price-text fw-medium text-primary">
-                        ${product.productData.price_details.base_price_usd}
+                        Q{product.productData.price_details.calculatedPriceGtq.toFixed(2)}
                       </p>
                       <p>
-                        <i className="icon-delivery-2" /> Free shipping
+                        <i className="icon-delivery-2" /> Shipping: Q{product.productData.price_details.priceBreakdown.shippingCost.toFixed(2)}
                       </p>
                       {/* <div className="shipping-to">
                         <p className="body-md-2">Shipping to:</p>
@@ -180,7 +181,7 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         className="tf-btn text-white"
                         onClick={() => addProductToCart(product, quantity)}
                       >
-                        {isAddedToCartProducts(product.product_id)
+                        {isAddedToCartProducts(product.productData.product_id)
                           ? "Already Added"
                           : "Add to cart"}
                         <i className="icon-cart-2" />

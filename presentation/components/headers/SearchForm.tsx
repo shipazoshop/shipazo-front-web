@@ -68,7 +68,7 @@ export default function SearchForm({
 
         console.log("✅ Producto importado:", result);
         setProduct(result);
-        router.push(`/product-detail/${result.product_id}`);
+        router.push(`/product-detail/${result.productData.product_id}`);
         setSearchTerm("");
       } else {
         setErrorMessage("Por favor ingresa una URL válida (debe comenzar con http:// o https://)");

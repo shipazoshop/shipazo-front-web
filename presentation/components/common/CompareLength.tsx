@@ -1,9 +1,9 @@
 "use client";
 
-import { useContextElement } from "@/application/context/Context";
+import { useCompareLength } from "@/application/stores/useCompareStore";
 
 export default function CompareLength() {
-  const { compareItem } = useContextElement();
-  return <>{compareItem.length}</>;
+  const compareLength = useCompareLength();
+  return <>{compareLength}</>;
 }
 

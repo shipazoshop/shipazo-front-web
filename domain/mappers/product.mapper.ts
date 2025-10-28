@@ -42,41 +42,38 @@ export function mapImportProductToCartProduct(
   importProduct: IImportProductResponse,
   quantity: number = 1
 ): CartProduct {
-  const { product_id, productData } = importProduct;
-
-  // Convertir precio de string a number
-  const priceNumber = parseFloat(productData.price) || 0;
+  const { productData } = importProduct;
 
   return {
-    id: product_id,
+    id: productData.product_id,
     title: productData.title,
     description: productData.description,
-    price: priceNumber,
+    price: productData.price,
     currency: productData.currency,
     brand: productData.brand,
     stock: productData.stock,
-    weight: productData.weight,
+    weight: String(productData.weight ?? ''),
     dimensions: productData.dimensions,
     images: productData.images || [],
     imgSrc: productData.images?.[0] || "/images/product/default.jpg",
     imgHover: productData.images?.[1],
     quantity,
     priceDetails: productData.price_details ? {
-      basePriceUsd: productData.price_details.base_price_usd,
-      exchangeRate: productData.price_details.exchange_rate,
-      basePriceGtq: productData.price_details.base_price_gtq,
+      basePriceUsd: productData.price_details.priceBreakdown.priceUsd.toString(),
+      exchangeRate: productData.price_details.priceBreakdown.exchangeRate.toString(),
+      basePriceGtq: productData.price_details.priceBreakdown.baseGtq.toString(),
       taxes: {
-        dutyRate: productData.price_details.taxes.duty_rate,
+        dutyRate: productData.price_details.priceBreakdown.daiPercentage.toString(),
       },
       operationalCosts: {
-        flete: productData.price_details.operational_costs.flete,
-        dai: productData.price_details.operational_costs.dai,
-        iva: productData.price_details.operational_costs.iva,
-        servicioCalshop: productData.price_details.operational_costs.servicio_calshop,
-        comisionParcela: productData.price_details.operational_costs.comision_parcela,
-        valorCif: productData.price_details.operational_costs.valor_cif,
+        flete: productData.price_details.priceBreakdown.shippingCost.toString(),
+        dai: productData.price_details.priceBreakdown.dai.toString(),
+        iva: productData.price_details.priceBreakdown.iva.toString(),
+        servicioCalshop: productData.price_details.priceBreakdown.calshopServiceFee.toString(),
+        comisionParcela: productData.price_details.priceBreakdown.paymentFee.toString(),
+        valorCif: productData.price_details.priceBreakdown.cif.toString(),
       },
-      finalPrice: productData.price_details.final_price,
+      finalPrice: productData.price_details.priceBreakdown.totalGtq.toString(),
     } : undefined,
   };
 }
@@ -88,34 +85,45 @@ export function mapImportProductToCartProduct(
 export function mapLegacyProductToImportProduct(
   legacyProduct: any
 ): IImportProductResponse {
+  const price = legacyProduct.price || 0;
   return {
     success: true,
     url: "",
-    product_id: String(legacyProduct.id),
     productData: {
+      product_id: String(legacyProduct.id),
       title: legacyProduct.title || "",
       description: legacyProduct.description || "",
-      price: String(legacyProduct.price || 0),
+      price: price,
       currency: "USD",
       brand: legacyProduct.brand || "",
+      categoria: "",
       stock: true,
-      weight: legacyProduct.weight || "",
+      weight: null,
       dimensions: legacyProduct.dimensions || "",
       images: legacyProduct.thumbImages || [legacyProduct.imgSrc] || [],
       price_details: {
-        base_price_usd: String(legacyProduct.price || 0),
-        exchange_rate: "1",
-        base_price_gtq: String(legacyProduct.price || 0),
-        taxes: { duty_rate: "0" },
-        operational_costs: {
-          flete: "0",
-          dai: "0",
-          iva: "0",
-          servicio_calshop: "0",
-          comision_parcela: "0",
-          valor_cif: String(legacyProduct.price || 0),
+        original_price: String(price),
+        discount: "0",
+        calculatedPriceGtq: price * 7.8, // Tasa de cambio aproximada
+        priceBreakdown: {
+          priceUsd: price,
+          exchangeRate: 7.8,
+          baseGtq: price * 7.8,
+          weightLb: 0,
+          shippingCost: 0,
+          insuranceCost: 0,
+          cif: price * 7.8,
+          category: "",
+          daiPercentage: 0,
+          dai: 0,
+          ivaPercentage: 0,
+          iva: 0,
+          clearanceCost: 0,
+          calshopServiceFee: 0,
+          paymentFee: 0,
+          totalFees: 0,
+          totalGtq: price * 7.8,
         },
-        final_price: String(legacyProduct.price || 0),
       },
     },
   };

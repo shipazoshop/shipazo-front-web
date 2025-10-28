@@ -1,9 +1,9 @@
 "use client";
 
-import { useContextElement } from "@/application/context/Context";
+import { useWishlistLength } from "@/application/stores/useWishlistStore";
 
 export default function WishlistLength() {
-  const { wishList } = useContextElement();
-  return <>{wishList.length}</>;
+  const wishlistLength = useWishlistLength();
+  return <>{wishlistLength}</>;
 }
 

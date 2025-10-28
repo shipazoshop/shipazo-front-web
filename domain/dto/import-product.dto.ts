@@ -5,39 +5,47 @@ export interface ImportFromUrlDto {
 export interface IImportProductResponse {
     success: boolean;
     url: string;
-    product_id: string;
-    productData: IProductData;
+    productData: ProductData;
 }
 
-export interface IProductData {
+export interface ProductData {
+    product_id: string;
     title: string;
     description: string;
-    price: string;
+    price: number;
     currency: string;
     brand: string;
+    categoria: string;
     stock: boolean;
-    weight: string;
+    weight: null;
     dimensions: string;
     images: string[];
-    price_details: IPriceDetails;
+    price_details: PriceDetails;
 }
 
-export interface IPriceDetails {
-    base_price_usd: string;
-    taxes: ITaxes;
-    operational_costs: IOperationalCosts;
-    final_price: string;
+export interface PriceDetails {
+    original_price: string;
+    discount: string;
+    calculatedPriceGtq: number;
+    priceBreakdown: PriceBreakdown;
 }
 
-export interface IOperationalCosts {
-    flete: string;
-    dai: string;
-    iva: string;
-    servicio_calshop: string;
-    comision_parcela: string;
-    valor_cif: string;
-}
-
-export interface ITaxes {
-    duty_rate: string;
+export interface PriceBreakdown {
+    priceUsd: number;
+    exchangeRate: number;
+    baseGtq: number;
+    weightLb: number;
+    shippingCost: number;
+    insuranceCost: number;
+    cif: number;
+    category: string;
+    daiPercentage: number;
+    dai: number;
+    ivaPercentage: number;
+    iva: number;
+    clearanceCost: number;
+    calshopServiceFee: number;
+    paymentFee: number;
+    totalFees: number;
+    totalGtq: number;
 }

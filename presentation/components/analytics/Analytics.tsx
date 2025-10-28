@@ -176,11 +176,11 @@ export default function Analytics() {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={categoryDistributionData}
+                    data={categoryDistributionData as any}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ category, value }) => `${category}: ${value}%`}
+                    label={(entry: any) => `${entry.category}: ${entry.value}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
