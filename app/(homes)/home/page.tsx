@@ -1,4 +1,3 @@
-
 import Footer1 from "@/presentation/components/footers/Footer1";
 import Header1 from "@/presentation/components/headers/Header1";
 import Topbar1 from "@/presentation/components/headers/Topbar1";

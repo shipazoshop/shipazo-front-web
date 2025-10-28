@@ -18,5 +18,5 @@ export const getApiConfig = (): ApiConfig => ({
 export type ApiService = keyof ApiConfig;
 
 export const URL_DICTIONARY = {
-  PRODUCTS: '/product'
+  PRODUCTS: '/scraper'
 }
