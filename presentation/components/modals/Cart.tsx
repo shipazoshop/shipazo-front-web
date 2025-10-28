@@ -2,12 +2,15 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useContextElement } from "@/application/context/Context";
-export default function Cart() {
-  const { cartProducts, setCartProducts, totalPrice } = useContextElement();
+import { useCartProducts, useCartTotalPrice, useCartActions } from "@/application/stores/useCartStore";
 
-  const removeItem = (id) => {
-    setCartProducts((pre) => [...pre.filter((elm) => elm.id != id)]);
+export default function Cart() {
+  const cartProducts = useCartProducts();
+  const totalPrice = useCartTotalPrice();
+  const { removeFromCart } = useCartActions();
+
+  const removeItem = (id: string) => {
+    removeFromCart(id);
   };
 
   return (

@@ -1,12 +1,12 @@
 "use client";
 
-import { useContextElement } from "@/application/context/Context";
+import { useQuickViewActions } from "@/application/stores/useQuickViewStore";
 import { allProducts } from "@/shared/constants/products";
 
 export default function AddToQuickview({ productId, tooltipClass = "" }) {
   const product =
     allProducts.filter((elm) => elm.id == productId)[0] || allProducts[0];
-  const { setQuickViewItem } = useContextElement();
+  const { setQuickViewItem } = useQuickViewActions();
   return (
     <a
       href="#quickView"

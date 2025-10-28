@@ -1,16 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useContextElement } from "@/application/context/Context";
+import { useCompareItems, useCompareActions } from "@/application/stores/useCompareStore";
+import { useCartActions } from "@/application/stores/useCartStore";
 import { allProducts } from "@/shared/constants/products";
-export default function Compare() {
-  const {
-    removeFromCompareItem,
-    compareItem,
 
-    addProductToCart,
-    isAddedToCartProducts,
-  } = useContextElement();
+export default function Compare() {
+  const compareItem = useCompareItems();
+  const { removeFromCompare } = useCompareActions();
+  const { addProductToCartById, isAddedToCartProducts } = useCartActions();
+
   const [items, setItems] = useState([]);
   useEffect(() => {
     setItems([
@@ -39,7 +38,7 @@ export default function Compare() {
                       </a>
                       <span
                         className="icon"
-                        onClick={() => removeFromCompareItem(product.id)}
+                        onClick={() => removeFromCompare(product.id)}
                       >
                         <i className="icon-close remove link cs-pointer" />
                       </span>
@@ -114,10 +113,10 @@ export default function Compare() {
                       href="#shoppingCart"
                       data-bs-toggle="offcanvas"
                       className="tf-btn btn-gray text-nowrap"
-                      onClick={() => addProductToCart(product.id)}
+                      onClick={() => addProductToCartById(product.id)}
                     >
                       <span className="text-white">
-                        {isAddedToCartProducts(product.id)
+                        {isAddedToCartProducts(String(product.id))
                           ? "Already Added"
                           : "Add to Cart"}
                       </span>

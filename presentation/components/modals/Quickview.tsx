@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useContextElement } from "@/application/context/Context";
+import { useQuickViewItem } from "@/application/stores/useQuickViewStore";
+import { useCartActions } from "@/application/stores/useCartStore";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Thumbs } from "swiper/modules";
 
@@ -16,8 +17,9 @@ export default function Quickview() {
   ]);
   const [thumbSwiper, setThumbSwiper] = useState(null);
   const [quantity, setQuantity] = useState(1); // Initial quantity is 1
-  const { quickViewItem, addProductToCart, isAddedToCartProducts } =
-    useContextElement();
+
+  const quickViewItem = useQuickViewItem();
+  const { addProductToCartById, isAddedToCartProducts } = useCartActions();
   useEffect(() => {
     setQuickviewImages((pre) => {
       const prevImages = [...pre];
@@ -257,10 +259,10 @@ export default function Quickview() {
                   href="#shoppingCart"
                   className="tf-btn btn-gray"
                   data-bs-toggle="offcanvas"
-                  onClick={() => addProductToCart(quickViewItem.id, quantity)}
+                  onClick={() => addProductToCartById(quickViewItem.id, quantity)}
                 >
                   <span className="text-white">
-                    {isAddedToCartProducts(quickViewItem.id)
+                    {isAddedToCartProducts(String(quickViewItem.id))
                       ? "Already Added"
                       : "Add To Cart"}
                   </span>

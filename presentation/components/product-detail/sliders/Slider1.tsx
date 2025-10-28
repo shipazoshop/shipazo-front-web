@@ -150,7 +150,6 @@ export default function Slider1({ productImages } : Readonly<{productImages: str
             <SwiperSlide
               key={index}
               className="swiper-slide stagger-item"
-              data-color={item.color}
             >
               <div className="item">
                 <Image
