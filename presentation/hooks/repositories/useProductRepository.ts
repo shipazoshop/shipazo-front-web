@@ -96,11 +96,10 @@ export function useProductRepository() {
         updater: (old: any[] | undefined, newData: IImportProductResponse) => {
           if (!old) return old;
           const p = newData.productData;
-          const id = newData.product_id;
+          const id = newData.productData.product_id;
 
-          const idx = old.findIndex((x) => x.product_id === id || x?.productData?.title === p.title);
+          const idx = old.findIndex((x) => x.productData?.product_id === id || x?.productData?.title === p.title);
           const normalized = {
-            product_id: id,
             url: newData.url,
             productData: p,
           };
@@ -113,7 +112,7 @@ export function useProductRepository() {
         },
       },
       onSuccess: (data) => {
-        console.log("Producto importado:", data.product_id, data.productData?.title);
+        console.log("Producto importado:", data.productData.product_id, data.productData?.title);
       },
     });
   };
