@@ -8,12 +8,11 @@ import { useCartActions } from "@/application/stores/useCartStore";
 
 export default function Details1({ product }: Readonly<{ product: IImportProductResponse }>) {
 
-  if (!product) {
-    return <LoadingScreen show />;
-  }
-
   const [quantity, setQuantity] = useState(1);
   const { addProductToCart, isAddedToCartProducts } = useCartActions();
+
+  if (!product) return <LoadingScreen show />;
+
   return (
     <section>
       <div className="tf-main-product section-image-zoom">
