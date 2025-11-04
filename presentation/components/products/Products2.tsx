@@ -21,8 +21,6 @@ export default function Products2() {
     sortingOption,
     sorted,
 
-    currentPage,
-    itemPerPage,
   } = state;
 
   const allProps = {
@@ -239,9 +237,8 @@ export default function Products2() {
                     ].map((elm, i) => (
                       <div
                         key={i}
-                        className={`select-item ${
-                          sortingOption == elm ? "active" : ""
-                        }`}
+                        className={`select-item ${sortingOption == elm ? "active" : ""
+                          }`}
                         onClick={() => allProps.setSortingOption(elm)}
                       >
                         <span className="text-value-item">{elm}</span>
@@ -253,11 +250,11 @@ export default function Products2() {
             </div>
 
             {price[0] != 0 ||
-            price[1] != 100 ||
-            isNew != "All" ||
-            deals != "All" ||
-            rating != "All" ||
-            brands.length ? (
+              price[1] != 100 ||
+              isNew != "All" ||
+              deals != "All" ||
+              rating != "All" ||
+              brands.length ? (
               <div className="meta-filter-shop" style={{}}>
                 <div id="product-count-grid" className="count-text">
                   <span className="count">{sorted.length}</span> Products Found
