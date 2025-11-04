@@ -1,16 +1,10 @@
 "use client";
-import BrandsSlider from "@/presentation/components/common/BrandsSlider";
-import RecentProducts from "@/presentation/components/common/RecentProducts";
 import Footer1 from "@/presentation/components/footers/Footer1";
 import Header4 from "@/presentation/components/headers/Header4";
-import Description from "@/presentation/components/product-detail/Description";
 import Details1 from "@/presentation/components/product-detail/Details1";
-import Relatedproducts from "@/presentation/components/product-detail/Relatedproducts";
-import SimilerProducts from "@/presentation/components/product-detail/SimilerProducts";
 import React from "react";
 import Link from "next/link";
 import { useProductStore } from "../../../../application/state/product";
-import EmptySearchBanner from "@/presentation/components/homes/home-5/EmptySearchBanner";
 
 export default function ProductDetailPage({ params }) {
   const { product } = useProductStore();
@@ -46,12 +40,6 @@ export default function ProductDetailPage({ params }) {
         </div>
       </div>
       <Details1 product={product} />
-      {/* <SimilerProducts />
-      <Description />
-      <Relatedproducts />
-      <BrandsSlider />
-      <RecentProducts /> */}
-      <Footer1 />
     </>
   );
 }

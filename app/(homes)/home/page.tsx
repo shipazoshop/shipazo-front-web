@@ -1,6 +1,4 @@
-import Footer1 from "@/presentation/components/footers/Footer1";
 import Header1 from "@/presentation/components/headers/Header1";
-import Topbar1 from "@/presentation/components/headers/Topbar1";
 import EmptySearchBanner from "@/presentation/components/homes/home-5/EmptySearchBanner";
 import React from "react";
 
