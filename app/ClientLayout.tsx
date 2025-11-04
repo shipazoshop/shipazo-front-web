@@ -1,38 +1,58 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function ClientLayout() {
   const pathname = usePathname();
+  const bootstrapRef = useRef<any>(null);
+  const wowRef = useRef<any>(null);
 
+  // Bootstrap - Load only once on mount
   useEffect(() => {
-    // Bootstrap - solo una vez
-    if (typeof window !== "undefined") {
-      void import("bootstrap/dist/js/bootstrap.esm.js");
+    if (globalThis.window !== undefined && !bootstrapRef.current) {
+      void import("bootstrap/dist/js/bootstrap.esm.js").then((bootstrap) => {
+        bootstrapRef.current = bootstrap;
+      });
     }
   }, []);
 
+  // Close modals on navigation - Reuse cached Bootstrap instance
   useEffect(() => {
-    // Header scroll behavior
+    if (bootstrapRef.current) {
+      closeModalsAndOffcanvas(bootstrapRef.current);
+    } else {
+      // If bootstrap not loaded yet, wait for it
+      void import("bootstrap/dist/js/bootstrap.esm.js").then((bootstrap) => {
+        bootstrapRef.current = bootstrap;
+        closeModalsAndOffcanvas(bootstrap);
+      });
+    }
+  }, [pathname]);
+
+  // Header scroll behavior - Optimized with requestAnimationFrame
+  useEffect(() => {
     let lastScrollTop = 0;
     const delta = 5;
-    let didScroll = false;
+    let ticking = false;
     const header = document.querySelector<HTMLElement>("header");
 
-    const handleScroll = () => {
-      didScroll = true;
-    };
-
     const checkScroll = () => {
-      if (!didScroll || !header) return;
+      if (!header) return;
 
       const scrollTop = window.scrollY;
       const navbarHeight = header.offsetHeight;
 
+      if (Math.abs(lastScrollTop - scrollTop) <= delta) {
+        ticking = false;
+        return;
+      }
+
       if (scrollTop > navbarHeight) {
-        if (scrollTop > lastScrollTop + delta) {
+        if (scrollTop > lastScrollTop) {
+          // Scrolling down
           header.style.top = `-${navbarHeight}px`;
-        } else if (scrollTop < lastScrollTop - delta) {
+        } else {
+          // Scrolling up
           header.style.top = "0";
           header.classList.add("header-bg");
         }
@@ -42,43 +62,51 @@ export default function ClientLayout() {
       }
 
       lastScrollTop = scrollTop;
-      didScroll = false;
+      ticking = false;
     };
 
-    window.addEventListener("scroll", handleScroll);
-    const interval = setInterval(checkScroll, 250);
+    const handleScroll = () => {
+      if (!ticking) {
+        globalThis.requestAnimationFrame(checkScroll);
+        ticking = true;
+      }
+    };
+
+    globalThis.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      clearInterval(interval);
+      globalThis.removeEventListener("scroll", handleScroll);
     };
   }, [pathname]);
 
+  // WOW animations - Load only once on mount
   useEffect(() => {
-    // Close modals on navigation
-    void import("bootstrap").then((bootstrapModule) => {
-      const modalElements = document.querySelectorAll(".modal.show");
-      modalElements.forEach((modal) => {
-        const modalInstance = bootstrapModule.Modal.getInstance(modal);
-        modalInstance?.hide();
+    if (globalThis.window !== undefined && !wowRef.current) {
+      void import("@/shared/utils/wow").then((module) => {
+        const WOW = module.default;
+        wowRef.current = new WOW({ mobile: false, live: false });
+        wowRef.current.init();
       });
-
-      const offcanvasElements = document.querySelectorAll(".offcanvas.show");
-      offcanvasElements.forEach((offcanvas) => {
-        const offcanvasInstance = bootstrapModule.Offcanvas.getInstance(offcanvas);
-        offcanvasInstance?.hide();
-      });
-    });
-  }, [pathname]);
-
-  useEffect(() => {
-    // WOW animations
-    void import("@/shared/utils/wow").then((module) => {
-      const WOW = module.default;
-      const wow = new WOW({ mobile: false, live: false });
-      wow.init();
-    });
+    } else if (wowRef.current) {
+      // Re-sync WOW on navigation (lightweight operation)
+      wowRef.current.sync();
+    }
   }, [pathname]);
 
   return null;
+}
+
+// Helper function to close modals and offcanvas
+function closeModalsAndOffcanvas(bootstrapModule: any) {
+  const modalElements = document.querySelectorAll(".modal.show");
+  for (const modal of modalElements) {
+    const modalInstance = bootstrapModule.Modal.getInstance(modal);
+    modalInstance?.hide();
+  }
+
+  const offcanvasElements = document.querySelectorAll(".offcanvas.show");
+  for (const offcanvas of offcanvasElements) {
+    const offcanvasInstance = bootstrapModule.Offcanvas.getInstance(offcanvas);
+    offcanvasInstance?.hide();
+  }
 }
