@@ -24,9 +24,7 @@ const MobileMenu = dynamic(() => import("@/presentation/components/modals/Mobile
 const Search = dynamic(() => import("@/presentation/components/modals/Search"), {
   ssr: false,
 });
-const NewsLetter = dynamic(() => import("@/presentation/components/modals/NewsLetter"), {
-  ssr: false,
-});
+
 const Toolbar = dynamic(() => import("@/presentation/components/modals/Toolbar"), {
   ssr: false,
 });
@@ -51,7 +49,6 @@ export default function Modals() {
       <ScrollTop />
       <Toolbar />
       <Search />
-      <NewsLetter />
       <AddParallax />
     </Suspense>
   );
