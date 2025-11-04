@@ -84,31 +84,31 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                     <div className="infor-center">
                       <div className="product-info-price">
                         <h4 className="text-primary">
-                          ${product.productData.price_details.priceBreakdown.priceUsd}
+                          {product.productData.currency}{product.productData.price_details.priceBreakdown.priceUsd}
                         </h4>{" "}
                         {product.productData.price_details.original_price && (
                           <span className="price-text text-main-2 old-price">
-                            ${product.productData.price_details.original_price}
+                            {product.productData.currency}{product.productData.price_details.original_price}
                           </span>
                         )}
                       </div>
                       <ul className="product-fearture-list">
                         <li>
-                          <p className="body-md-2 fw-semibold">Brand</p>
+                          <p className="body-md-2 fw-semibold">Tienda</p>
                           <span className="body-text-3">{product.productData.brand ?? ''}</span>
                         </li>
                         <li>
-                          <p className="body-md-2 fw-semibold">Dimensions</p>
+                          <p className="body-md-2 fw-semibold">Dimensiones</p>
                           <span className="body-text-3">{product.productData.dimensions ?? ''}</span>
                         </li>
                         <li>
-                          <p className="body-md-2 fw-semibold">Weight</p>
+                          <p className="body-md-2 fw-semibold">Peso</p>
                           <span className="body-text-3">{product.productData.weight}</span>
                         </li>
                       </ul>
                     </div>
                     <div className="infor-bottom">
-                      <h6 className="fw-semibold">About this item</h6>
+                      <h6 className="fw-semibold">Sobre este artículo</h6>
                       <ul className="product-about-list">
                         <li>
                           <p className="body-text-3">
