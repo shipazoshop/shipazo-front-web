@@ -1,9 +1,5 @@
-import Features2 from "@/presentation/components/common/Features2";
-import RecentProducts from "@/presentation/components/common/RecentProducts";
-import Footer1 from "@/presentation/components/footers/Footer1";
 import Header4 from "@/presentation/components/headers/Header4";
 import ShopCart from "@/presentation/components/shop-cart/ShopCart";
-import Testimonials from "@/presentation/components/shop-cart/Testimonials";
 import React from "react";
 import Link from "next/link";
 export const metadata = {
@@ -32,10 +28,6 @@ export default function page() {
         </div>
       </div>
       <ShopCart />
-      <Testimonials />
-      <RecentProducts />
-      <Features2 />
-      <Footer1 />
     </>
   );
 }

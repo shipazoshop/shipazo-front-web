@@ -1,7 +1,6 @@
-import Analytics from "@/presentation/components/analytics/Analytics";
-import Sidebar from "@/presentation/components/dashboard/Sidebar";
 import Footer1 from "@/presentation/components/footers/Footer1";
 import Header4 from "@/presentation/components/headers/Header4";
+import AnalyticsLoader from "@/presentation/components/analytics/AnalyticsLoader";
 import React from "react";
 import Link from "next/link";
 
@@ -33,10 +32,9 @@ export default function page() {
       </div>
       <section className="tf-sp-2">
         <div className="container">
-          <Analytics />
+          <AnalyticsLoader />
         </div>
       </section>
-      <Footer1 />
     </>
   );
 }

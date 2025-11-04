@@ -83,7 +83,7 @@ export default function Header4({ fullWidth = false }) {
                         </svg>
                       </span>
                       <span className="count-box style-pst-2 d-none d-xxl-flex">
-                        04
+                        0
                       </span>
                       <p className="body-small">Wishlist</p>
                     </Link>
@@ -117,7 +117,7 @@ export default function Header4({ fullWidth = false }) {
                         </svg>
                       </span>
                       <span className="count-box style-pst-2 d-none d-xxl-flex">
-                        10
+                        0
                       </span>
                       <p className="body-small">Your cart:</p>
                     </a>
@@ -143,8 +143,6 @@ export default function Header4({ fullWidth = false }) {
           <div className="row">
             <div className="col-xxl-9 col-8">
               <div className="header-bt-left active-container">
-                <NavCategories styleClass="" />
-                <span className="br-line type-vertical bg-gray-2" />
                 <nav className="main-nav-menu">
                   <ul className="nav-list">
                     <Nav />

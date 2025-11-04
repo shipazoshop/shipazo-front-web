@@ -1,8 +1,5 @@
 import React from "react";
 import Header4 from "@/presentation/components/headers/Header4";
-import RecentProducts from "@/presentation/components/common/RecentProducts";
-import Features2 from "@/presentation/components/common/Features2";
-import Footer1 from "@/presentation/components/footers/Footer1";
 import Link from "next/link";
 import Products2 from "@/presentation/components/products/Products2";
 
@@ -34,9 +31,6 @@ export default function page() {
       </div>
 
       <Products2 />
-      <RecentProducts />
-      <Features2 />
-      <Footer1 />
       <div className="overlay-filter" id="overlay-filter" />
     </>
   );
