@@ -1,5 +1,5 @@
 "use client";
-import { products5 } from "@/shared/constants/products";
+import { useProducts } from "@/shared/hooks/useProducts";
 import React from "react";
 import { Swiper, SwiperSlide } from "@/presentation/components/common/SwiperClient";
 import Link from "next/link";
@@ -9,10 +9,31 @@ import AddToCart from "./AddToCart";
 import AddToWishlist from "./AddToWishlist";
 import AddToQuickview from "./AddToQuickview";
 import AddToCompare from "./AddToCompare";
+
 export default function RecentProducts({
   parentClass = "tf-sp-2",
   fullWidth = false,
 }) {
+  const { products, isLoading } = useProducts();
+  const products5 = products?.products5 || [];
+
+  if (isLoading) {
+    return (
+      <section className={parentClass}>
+        <div className={`container${fullWidth ? "-full" : ""}`}>
+          <div className="flat-title">
+            <h5 className="fw-semibold">Recently Viewed</h5>
+          </div>
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "300px" }}>
+            <div className="spinner-border text-primary">
+              <span className="visually-hidden">Loading products...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={parentClass}>
       <div className={`container${fullWidth ? "-full" : ""}`}>
