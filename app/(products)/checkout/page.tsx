@@ -35,9 +35,9 @@ export default function page() {
 
       <Checkout />
 
-      <RecentProducts />
+      {/* <RecentProducts />
       <Features2 />
-      <Footer1 />
+      <Footer1 /> */}
     </>
   );
 }

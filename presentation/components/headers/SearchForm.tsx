@@ -90,7 +90,7 @@ export default function SearchForm({
       style={{ position: 'relative' }}
     >
       <fieldset>
-        <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search for products" />
+        <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Cotiza tu producto ahora!" />
       </fieldset>
       <button
         onClick={handleClientScriptLoad}

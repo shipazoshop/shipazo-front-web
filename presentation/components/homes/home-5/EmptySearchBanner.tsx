@@ -56,11 +56,8 @@ export default function EmptySearchBanner() {
           />
         </div>
         <div className="search-prompt">
-          <h2 className="main-text">Empieza buscando un producto</h2>
+          <h2 className="main-text">Cotiza ahora!</h2>
           <p className="sub-text">Encuentra lo que necesitas en nuestra amplia selección</p>
-          {/* <div className="search-icon-wrapper">
-            <i className="icon-search search-icon" />
-          </div> */}
         </div>
 
         <div className="col-md-7 d-none d-md-block">

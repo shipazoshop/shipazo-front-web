@@ -47,7 +47,6 @@ export * from './components/modals/Cart';
 export * from './components/modals/Compare';
 export * from './components/modals/Login';
 export * from './components/modals/MobileMenu';
-export * from './components/modals/NewsLetter';
 export * from './components/modals/Quickview';
 export * from './components/modals/Register';
 export * from './components/modals/Search';
