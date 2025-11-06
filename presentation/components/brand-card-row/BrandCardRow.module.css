@@ -1,0 +1,14 @@
+.row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(var(--minw, 220px), 1fr);
+  gap: var(--gap, 16px);
+  overflow-x: auto;
+  padding: 8px 4px;
+  scroll-snap-type: x proximity;
+}
+
+.item {
+  scroll-snap-align: start;
+  min-width: var(--minw, 220px);
+}

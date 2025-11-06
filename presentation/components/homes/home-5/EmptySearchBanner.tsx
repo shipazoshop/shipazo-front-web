@@ -2,8 +2,46 @@
 import React from "react";
 import Image from "next/image";
 import SearchForm from "../../headers/SearchForm";
+import BrandCardRow, { IBrandItem } from "../../brand-card-row/BrandCardRow";
 
 export default function EmptySearchBanner() {
+
+
+  const brands: IBrandItem[] = [
+    {
+      brand: "Amazon",
+      logoSrc: "/images/brand/amazon-white.png",
+      images: ["/images/brands/amazon/1.jpg", "/images/brands/amazon/2.jpg"],
+      link: 'https://www.amazon.com/'
+    },
+    {
+      brand: "Sephora",
+      logoSrc: "/images/brand/sephora-white.png",
+      images: ["/images/brands/sephora/1.webp", "/images/brands/sephora/2.webp"],
+      link: 'https://www.sephora.com/'
+    },
+    {
+      brand: "Target",
+      logoSrc: "/images/brand/target-white.png",
+      images: ["/images/brands/target/1.webp", "/images/brands/target/2.webp"],
+      link: 'https://www.target.com/'
+    },
+    {
+      brand: "Victoria’s Secret USA",
+      logoSrc: "/images/brand/victorias-secret-white.png",
+      images: ["/images/brands/vs/1.webp", "/images/brands/vs/2.webp"],
+      link: 'https://www.victoriassecret.com/us/'
+    },
+    {
+      brand: "Nike USA",
+      logoSrc: "/images/brand/nike-white.png",
+      images: ["/images/brands/nike/1.png", "/images/brands/nike/2.avif"],
+      link: 'https://www.nike.com/us/es/'
+    },
+  ];
+
+
+
   return (
     <div className="empty-search-banner">
       <div className="empty-search-content">
@@ -26,7 +64,9 @@ export default function EmptySearchBanner() {
           <div className="header-center justify-content-end">
             <SearchForm />
           </div>
+
         </div>
+          <BrandCardRow items={brands} gap={20} cardMinWidth={240} />
 
       </div>
 

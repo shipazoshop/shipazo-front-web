@@ -24,7 +24,6 @@ const MobileMenu = dynamic(() => import("@/presentation/components/modals/Mobile
 const Search = dynamic(() => import("@/presentation/components/modals/Search"), {
   ssr: false,
 });
-
 const Toolbar = dynamic(() => import("@/presentation/components/modals/Toolbar"), {
   ssr: false,
 });
