@@ -30,6 +30,18 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'scontent.cdninstagram.com',
       },
+      {
+        protocol: 'https',
+        hostname: '**sephora.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'target.scene7.com'
+      },
+      {
+        protocol: 'https',
+        hostname: '**target.**'
+      }
     ],
     // Optimize with modern formats
     formats: ['image/webp', 'image/avif'],
