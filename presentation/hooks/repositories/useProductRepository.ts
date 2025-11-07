@@ -23,7 +23,7 @@ export function useProductRepository() {
     return useApiQuery<Product>({
       service: 'products',
       queryKey,
-      endpoint: `/products`,
+      endpoint: URL_DICTIONARY.PRODUCTS,
       enabled: enabled,
       params: {
         url
@@ -34,47 +34,18 @@ export function useProductRepository() {
     });
   };
 
-  const createProduct = () => {
-    return useApiMutation<Product, Partial<Product>>({
-      service: 'products',
-      endpoint: '/products',
-      method: 'POST',
-      invalidateQueries: [
-        ['products', '/products'], // Invalida la lista de productos
-      ],
-      onSuccess: (data) => {
-        console.log('Producto creado:', data);
+  const getCachedProducts = (queryKey: string, enabled = true, page = 1, limit = 10) => {
+    return useApiQuery<Product[]>({
+      service: 'cached-products',
+      queryKey,
+      endpoint: SCRAPER_PRODUCT_URL.products + URL_DICTIONARY.CACHED_PRODUCTS,
+      enabled: enabled,
+      params: {
+        page,
+        limit
       },
-    });
-  };
-
-  const updateProduct = (id: string) => {
-    return useApiMutation<Product, Partial<Product>>({
-      service: 'products',
-      endpoint: `/products/${id}`,
-      method: 'PUT',
-      invalidateQueries: [
-        ['products', '/products'],
-        ['products', `/products/${id}`],
-      ],
-    });
-  };
-
-  const deleteProduct = (id: string) => {
-    return useApiMutation<void, void>({
-      service: 'products',
-      endpoint: `/products/${id}`,
-      method: 'DELETE',
-      invalidateQueries: [
-        ['products', '/products'],
-      ],
-      // Actualizar cache optimísticamente
-      updateCache: {
-        queryKey: ['products', '/products'],
-        updater: (oldData: Product[] | undefined, _newData) => {
-          if (!oldData) return oldData;
-          return oldData.filter(p => p.productData.title !== id);
-        },
+      queryOptions: {
+        staleTime: 10 * 60 * 1000,
       },
     });
   };
@@ -122,11 +93,7 @@ export function useProductRepository() {
   return {
     // Queries
     getProducts,
-    getProductByURL,
-    // Mutations
-    createProduct,
-    updateProduct,
-    deleteProduct,
     importProductFromUrl,
+    getCachedProducts
   };
 }
