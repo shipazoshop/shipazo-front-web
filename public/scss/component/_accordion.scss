@@ -16,7 +16,7 @@
 
     &:not(.collapsed) {
       .icon {
-        background-color: var(--primary);
+        background-color: var(--color-brand-red);
 
         &::before {
           transform: rotate(90deg);
@@ -24,7 +24,7 @@
         }
 
         &::after {
-          background-color: var(--white);
+          background-color: var(--color-white);
         }
       }
     }
@@ -47,7 +47,7 @@
       .accordion-title {
         &.collapsed {
           padding-bottom: 16px;
-          border-bottom: 1px solid var(--gray-5);
+          border-bottom: 1px solid var(--color-gray-light);
           margin-bottom: 10px;
         }
       }
@@ -57,7 +57,7 @@
   .accordion-title {
     position: relative;
     @include mixin.transition3;
-    border-color: var(--white);
+    border-color: var(--color-white);
 
     .title-sidebar {
       @include mixin.transition3;
@@ -65,7 +65,7 @@
 
     &:not(.collapsed) {
       .title-sidebar {
-        color: var(--primary);
+        color: var(--color-brand-red);
       }
     }
 
@@ -73,7 +73,7 @@
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      background-color: var(--gray-6);
+      background-color: var(--color-gray-lightest);
       @include mixin.flex(center, center);
       position: absolute;
       top: -2px;
@@ -86,7 +86,7 @@
         width: 11.25px;
         height: 2px;
         border-radius: 1px;
-        background-color: var(--gray);
+        background-color: var(--color-gray-darkest);
       }
 
       &::before {
@@ -96,7 +96,7 @@
         height: 11.25px;
         width: 2px;
         border-radius: 1px;
-        background-color: var(--gray);
+        background-color: var(--color-gray-darkest);
       }
     }
   }

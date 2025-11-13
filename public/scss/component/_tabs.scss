@@ -43,7 +43,7 @@
 
     .tab-link {
       &.active {
-        color: var(--primary);
+        color: var(--color-brand-red);
       }
     }
   }
@@ -57,7 +57,7 @@
     align-items: center;
     gap: 5px;
     border-radius: 999px;
-    border: 1px solid var(--line);
+    border: 1px solid var(--color-border-default);
     padding: 7px 10px;
   }
 
@@ -67,7 +67,7 @@
 
     a {
       &.active {
-        color: var(--primary);
+        color: var(--color-brand-red);
       }
     }
   }
@@ -75,10 +75,10 @@
 
 .flat-title-tab-product-des {
   border-radius: 6px;
-  border: 1px solid var(--gray-5);
+  border: 1px solid var(--color-gray-light);
 
   .flat-title-tab {
-    background-color: var(--gray-6);
+    background-color: var(--color-gray-lightest);
   }
 
   .menu-tab-line {
@@ -91,11 +91,11 @@
 
     .tab-link {
       &:hover {
-        color: var(--secondary);
+        color: var(--color-brand-blue);
       }
 
       &.active {
-        color: var(--secondary);
+        color: var(--color-brand-blue);
       }
     }
   }
@@ -126,7 +126,7 @@
 
     &:not(:last-child) {
       padding-bottom: 4px;
-      border-bottom: 1px solid var(--gray-5);
+      border-bottom: 1px solid var(--color-gray-light);
       margin-bottom: 4px;
     }
   }
@@ -189,7 +189,7 @@
       flex-wrap: wrap;
       padding-bottom: 30px;
       border-radius: unset;
-      border-bottom: 1px solid var(--gray-5);
+      border-bottom: 1px solid var(--color-gray-light);
     }
 
     .tab-review-wrap {
@@ -240,12 +240,12 @@
   a {
     padding: 5px 20px;
     border-radius: 18px;
-    background-color: var(--gray-6);
+    background-color: var(--color-gray-lightest);
 
     &:hover,
     &.active {
-      background-color: var(--primary);
-      color: var(--white);
+      background-color: var(--color-brand-red);
+      color: var(--color-white);
     }
   }
 }
@@ -264,7 +264,7 @@
       max-width: 123px;
       width: 100%;
       height: 2px;
-      background-color: var(--primary);
+      background-color: var(--color-brand-red);
     }
   }
 
@@ -277,7 +277,7 @@
     &.active,
     &:hover {
       font-weight: 600;
-      color: var(--primary);
+      color: var(--color-brand-red);
     }
   }
 }

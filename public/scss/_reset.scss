@@ -128,9 +128,9 @@ body {
     font-size: 15px;
     line-height: 24px;
     font-weight: 400;
-    background-color: var(--white);
+    background-color: var(--color-white);
     font-style: normal;
-    color: var(--gray);
+    color: var(--color-gray-darkest);
     overflow-x: hidden;
 
     &::-webkit-scrollbar {
@@ -138,7 +138,7 @@ body {
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: var(--primary);
+        background-color: var(--color-brand-red);
         border-radius: 5px;
         cursor: grab;
     }
@@ -203,15 +203,15 @@ select {
 
 /* Placeholder color */
 ::-webkit-input-placeholder {
-    color: var(--text-3);
+    color: var(--color-text-primary);
 }
 
 :-moz-placeholder {
-    color: var(--text-3);
+    color: var(--color-text-primary);
 }
 
 ::-moz-placeholder {
-    color: var(--text-3);
+    color: var(--color-text-primary);
     opacity: 1;
 }
 
@@ -224,7 +224,7 @@ button:focus {
 /* Since FF19 lowers the opacity of the placeholder by default */
 
 :-ms-input-placeholder {
-    color: var(--secondary-2);
+    color: var(--color-brand-blue);
 }
 
 /* Typography
@@ -385,72 +385,72 @@ video {
 
 // color
 .text-main {
-    color: var(--gray) !important;
+    color: var(--color-gray-darkest) !important;
 }
 
 .text-main-2 {
-    color: var(--gray-2);
+    color: var(--color-gray-dark);
 }
 
 .text-main-4 {
-    color: var(--gray-4) !important;
+    color: var(--color-gray-medium) !important;
 }
 
 
 .text-cl-1 {
-    color: var(--text);
+    color: var(--color-text-tertiary);
 }
 
 .text-cl-2 {
-    color: var(--text-2);
+    color: var(--color-text-secondary);
 }
 
 .text-cl-3 {
-    color: var(--text-3);
+    color: var(--color-text-primary);
 }
 
 .text-cl-4 {
-    color: var(--text-4);
+    color: var(--color-text-quaternary);
 }
 
 .text-cl-5 {
-    color: var(--text-5);
+    color: var(--color-text-dark);
 }
 
 .text-cl-7 {
-    color: var(--text-7);
+    color: var(--color-text-light);
 }
 
 .text-primary {
-    color: var(--primary) !important;
+    color: var(--color-brand-red) !important;
 }
 
 .text-primary-2 {
-    color: var(--primary-2) !important;
+    color: var(--color-brand-red-dark) !important;
 }
 
 .text-secondary {
-    color: var(--secondary) !important;
+    color: var(--color-brand-blue) !important;
 }
 
 .text-third {
-    color: var(--third) !important;
+    color: var(--color-brand-yellow) !important;
 }
 
 .text-third-2 {
-    color: var(--third-2) !important;
+    color: var(--color-brand-yellow-light) !important;
 }
 
 .text-third-3 {
-    color: var(--third-3) !important;
+    color: var(--color-brand-yellow-medium) !important;
 }
 
 .text-third-4 {
-    color: var(--third-4) !important;
+    color: var(--color-brand-yellow-pale) !important;
 }
 
 .text-price {
-    color: var(--price) !important;
+    color: var(--color-bg-price) !important;
 }
 
 a {
@@ -458,7 +458,7 @@ a {
     text-decoration: none;
     cursor: pointer;
     display: inline-block;
-    color: var(--gray);
+    color: var(--color-gray-darkest);
 
     &:focus,
     &:hover {
@@ -473,7 +473,7 @@ a {
     @include mixin.transition3;
 
     &:hover {
-        color: var(--primary) !important;
+        color: var(--color-brand-red) !important;
     }
 
 
@@ -490,7 +490,7 @@ a {
 
         svg,
         path {
-            stroke: var(--primary);
+            stroke: var(--color-brand-red);
         }
     }
 }
@@ -506,7 +506,7 @@ a {
     &:hover {
 
         path {
-            fill: var(--primary);
+            fill: var(--color-brand-red);
         }
     }
 }
@@ -521,8 +521,8 @@ a {
     &:hover {
 
         path {
-            stroke: var(--primary);
-            fill: var(--primary);
+            stroke: var(--color-brand-red);
+            fill: var(--color-brand-red);
         }
     }
 }
@@ -531,7 +531,7 @@ a {
     @include mixin.transition3;
 
     &:hover {
-        color: var(--secondary) !important;
+        color: var(--color-brand-blue) !important;
     }
 }
 
@@ -539,20 +539,20 @@ a {
     @include mixin.transition3;
 
     &:hover {
-        color: var(--gray) !important;
+        color: var(--color-gray-darkest) !important;
     }
 }
 
 .line {
-    border: 1px solid var(--line);
+    border: 1px solid var(--color-border-default);
 }
 
 .line-2 {
-    border: 1px solid var(--line-2);
+    border: 1px solid var(--color-border-light);
 }
 
 .line-bt {
-    border-bottom: 1px solid var(--gray-5) !important;
+    border-bottom: 1px solid var(--color-gray-light) !important;
 }
 
 .line-bt-2 {
@@ -560,7 +560,7 @@ a {
 }
 
 .line-tp {
-    border-top: 1px solid var(--gray-5) !important;
+    border-top: 1px solid var(--color-gray-light) !important;
 }
 
 // gap
@@ -765,7 +765,7 @@ a {
         content: "";
         top: 0;
         left: 50%;
-        background-color: var(--line);
+        background-color: var(--color-border-default);
         height: 1px;
         width: 100%;
         max-width: 1320px;
@@ -781,7 +781,7 @@ a {
         content: "";
         bottom: 0;
         left: 50%;
-        background-color: var(--line);
+        background-color: var(--color-border-default);
         height: 1px;
         width: 100%;
         max-width: 1320px;
@@ -823,7 +823,7 @@ a {
 
     &:hover {
         transform: translateY(-5px);
-        background-color: var(--primary);
+        background-color: var(--color-brand-red);
     }
 }
 
@@ -851,7 +851,7 @@ a {
     width: 60px;
     height: 60px;
     border: 3px solid transparent;
-    border-top: 3px solid var(--gray);
+    border-top: 3px solid var(--color-gray-darkest);
     border-radius: 100%;
     position: absolute;
     top: 0;
@@ -977,7 +977,7 @@ a {
     right: 40px;
     width: 38px;
     height: 38px;
-    background: var(--white);
+    background: var(--color-white);
     color: black;
     font-size: 20px;
     text-align: center;
@@ -1037,31 +1037,31 @@ a {
 }
 
 .bg-3 {
-    background-color: var(--bg-3) !important;
+    background-color: var(--color-bg-tertiary) !important;
 }
 
 .bg-line {
-    background-color: var(--line);
+    background-color: var(--color-border-default);
 }
 
 .bg-line-3 {
-    background-color: var(--line-3);
+    background-color: var(--color-border-dark);
 }
 
 .bg-gray {
-    background-color: var(--gray) !important;
+    background-color: var(--color-gray-darkest) !important;
 }
 
 .bg-gray-2 {
-    background-color: var(--gray-2) !important;
+    background-color: var(--color-gray-dark) !important;
 }
 
 .bg-gray-5 {
-    background-color: var(--gray-5) !important;
+    background-color: var(--color-gray-light) !important;
 }
 
 .bg-primary {
-    background-color: var(--primary) !important;
+    background-color: var(--color-brand-red) !important;
 }
 
 .br-line {
@@ -1120,7 +1120,7 @@ a {
 
     .progress-bar {
         border-radius: 999px;
-        background-color: var(--primary);
+        background-color: var(--color-brand-red);
 
     }
 

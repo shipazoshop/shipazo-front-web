@@ -271,12 +271,12 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 .noUi-base {
   .noUi-connects {
     border-radius: 999px;
-    background-color: var(--gray-5);
+    background-color: var(--color-gray-light);
   }
 }
 
 .noUi-connect {
-  background-color: var(--black);
+  background-color: var(--color-black);
 }
 
 .noUi-horizontal .noUi-handle,
@@ -284,8 +284,8 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   height: 16px;
   width: 16px;
   border-radius: 50px;
-  border: 2px solid var(--black);
-  background-color: var(--gray-4);
+  border: 2px solid var(--color-black);
+  background-color: var(--color-gray-medium);
   box-shadow: unset;
   cursor: pointer;
   @include mixin.transition3;
@@ -312,8 +312,8 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   width: 1024px;
 
   thead {
-    border-top: 1px solid var(--gray-5);
-    border-bottom: 1px solid var(--gray-5);
+    border-top: 1px solid var(--color-gray-light);
+    border-bottom: 1px solid var(--color-gray-light);
   }
 
   th {
@@ -374,7 +374,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
       font-weight: 400;
       font-size: 14px;
       line-height: 20px;
-      color: var(--gray-2);
+      color: var(--color-gray-dark);
       border: unset;
       appearance: none;
       cursor: pointer;
@@ -391,7 +391,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   }
 
   .tf-cart-item {
-    border-bottom: 1px solid var(--gray-5);
+    border-bottom: 1px solid var(--color-gray-light);
 
     td {
       padding-right: 25px;
@@ -479,7 +479,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
     display: block;
     padding: 11px 14px;
     border-radius: 8px;
-    border: 1px solid var(--gray-4);
+    border: 1px solid var(--color-gray-medium);
     width: 100%;
     position: relative;
     @include mixin.transition3;
@@ -488,7 +488,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
       position: absolute;
       content: "\e918";
       font-family: variable.$fontIcon;
-      color: var(--gray-2);
+      color: var(--color-gray-dark);
       font-size: 16px;
       right: 14px;
       top: 50%;
@@ -497,7 +497,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
     }
 
     &:hover {
-      border-color: var(--primary);
+      border-color: var(--color-brand-red);
     }
   }
 
@@ -521,7 +521,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   top: 90px;
   padding: 15px;
   box-shadow: 0px 4px 8px 0px #0000000d;
-  background-color: var(--white);
+  background-color: var(--color-white);
 
   .sub-type {
     margin-bottom: 6px;
@@ -555,7 +555,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 
   .sec-total-price {
     li {
-      border-top: 1px solid var(--gray-5);
+      border-top: 1px solid var(--color-gray-light);
       @include mixin.flex(center, space-between);
       padding: 10px 0px;
 
@@ -568,12 +568,12 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 
 .facet-categories {
   border-radius: 10px;
-  border: 1px solid var(--gray-5);
+  border: 1px solid var(--color-gray-light);
   margin-bottom: 24px;
 
   .title {
     padding: 13px 18px;
-    background-color: var(--gray-6);
+    background-color: var(--color-gray-lightest);
   }
 
   ul {
@@ -596,12 +596,12 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
         width: 0%;
         height: 1px;
         @include mixin.transition3;
-        background-color: var(--primary);
+        background-color: var(--color-brand-red);
       }
 
       &:hover,
       &.active {
-        color: var(--primary);
+        color: var(--color-brand-red);
       }
     }
 
@@ -629,12 +629,12 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--secondary);
+  color: var(--color-brand-blue);
   @include mixin.transition3;
   margin-top: 16px;
 
   &:hover {
-    color: var(--primary);
+    color: var(--color-brand-red);
   }
 }
 
@@ -657,7 +657,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   &:not(:last-child) {
     margin-bottom: 24px;
     padding-bottom: 24px;
-    border-bottom: 1px solid var(--gray-5);
+    border-bottom: 1px solid var(--color-gray-light);
   }
 }
 
@@ -693,7 +693,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   .count-text {
     font-size: 12px;
     line-height: 22px;
-    color: var(--text);
+    color: var(--color-text-tertiary);
     padding-right: 12px;
     position: relative;
 
@@ -709,7 +709,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
     }
 
     .count {
-      color: var(--black);
+      color: var(--color-black);
       display: inline-block;
       margin-right: 2px;
     }
@@ -729,7 +729,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
     align-items: center;
     gap: 6px;
     padding: 4px 12px;
-    border: 1px solid var(--gray-5);
+    border: 1px solid var(--color-gray-light);
     border-radius: 1000px;
     @include mixin.transition3;
     cursor: pointer;
@@ -742,7 +742,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
     }
 
     &:hover {
-      border-color: var(--black);
+      border-color: var(--color-black);
     }
   }
 
@@ -759,14 +759,14 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 
   .remove-all-filters {
     padding: 4px 12px;
-    border: 1px solid var(--black);
+    border: 1px solid var(--color-black);
     border-radius: 99px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    background-color: var(--black);
-    color: var(--white);
+    background-color: var(--color-black);
+    color: var(--color-white);
 
     .icon {
       font-size: 12px;
@@ -774,7 +774,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 
     &:hover {
       background-color: transparent;
-      color: var(--black);
+      color: var(--color-black);
     }
   }
 }

@@ -24,7 +24,7 @@
   gap: 20px;
   padding-bottom: 10px;
   margin-bottom: 30px;
-  border-bottom: 1px solid var(--gray-5);
+  border-bottom: 1px solid var(--color-gray-light);
 }
 
 .flat-title-has-icon {
@@ -36,8 +36,8 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-color: var(--primary);
-    color: var(--white);
+    background-color: var(--color-brand-red);
+    color: var(--color-white);
     @include mixin.flex(center, center);
 
     i {
@@ -120,7 +120,7 @@
     justify-content: space-between;
     padding: 18px 24px;
     flex-wrap: wrap;
-    border-bottom: 1px solid var(--gray-5);
+    border-bottom: 1px solid var(--color-gray-light);
     gap: 15px;
   }
 
@@ -174,7 +174,7 @@
     gap: 20px;
     padding: 15px;
     border-radius: 8px;
-    background-color: var(--white);
+    background-color: var(--color-white);
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -203,14 +203,14 @@
   top: 15px;
   left: 15px;
   border-radius: 50%;
-  background-color: var(--primary);
+  background-color: var(--color-brand-red);
   width: 50px;
   height: 50px;
   @include mixin.flex(center, center);
   flex-direction: column;
 
   p {
-    color: var(--white);
+    color: var(--color-white);
     font-weight: 700;
     text-align: center;
     text-transform: uppercase;
@@ -845,12 +845,12 @@
 
     &:first-child {
       .wg-cls-2 {
-        border-left: 1px solid var(--gray-5);
+        border-left: 1px solid var(--color-gray-light);
       }
     }
 
     .wg-cls-2 {
-      border: 1px solid var(--gray-5);
+      border: 1px solid var(--color-gray-light);
       border-left: unset;
     }
   }
@@ -882,7 +882,7 @@
     aspect-ratio: 133/80;
     padding-top: 8px;
     padding-bottom: 8px;
-    border-bottom: 1px solid var(--gray-6);
+    border-bottom: 1px solid var(--color-gray-lightest);
 
     &:nth-child(1) {
       padding-top: 0;
@@ -896,7 +896,7 @@
 
     &:nth-child(odd) {
       padding-right: 10px;
-      border-right: 1px solid var(--gray-6);
+      border-right: 1px solid var(--color-gray-lightest);
     }
 
     &:nth-child(even) {
@@ -1009,7 +1009,7 @@
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0px 2px 4px 0px #0000001a;
-    background-color: var(--white);
+    background-color: var(--color-white);
     display: grid;
     gap: 30px;
     pointer-events: all;
@@ -1075,7 +1075,7 @@
     width: 100%;
     height: 4px;
     border-radius: 999px;
-    background-color: var(--gray-5);
+    background-color: var(--color-gray-light);
     position: absolute;
     top: 22px;
     left: 0;
@@ -1087,7 +1087,7 @@
       height: 4px;
       left: 0;
       top: 0;
-      background-color: var(--primary);
+      background-color: var(--color-brand-red);
       border-radius: 999px;
     }
 
@@ -1113,10 +1113,10 @@
   .icon {
     @include mixin.flex(center, center);
     border-radius: 50%;
-    background-color: var(--primary);
+    background-color: var(--color-brand-red);
     width: 48px;
     height: 48px;
-    color: var(--white);
+    color: var(--color-white);
 
     i {
       font-size: 24px;
@@ -1150,7 +1150,7 @@
   gap: 20px;
   padding: 15px;
   box-shadow: 0px 4px 8px 0px #0000000d;
-  background-color: var(--white);
+  background-color: var(--color-white);
   border-radius: 8px;
 
   .entry_image {
@@ -1169,7 +1169,7 @@
     .br-line {
       height: 14px;
       width: 1px;
-      background-color: var(--gray-4);
+      background-color: var(--color-gray-medium);
     }
   }
 
@@ -1215,7 +1215,7 @@
   .my-account-nav-item {
     display: flex;
     width: 100%;
-    border: 1px solid var(--gray-4);
+    border: 1px solid var(--color-gray-medium);
     padding: 15px 20px;
     border-radius: 3px;
     font-size: 16px;
@@ -1225,9 +1225,9 @@
 
     &:hover,
     &.active {
-      background-color: var(--gray-5);
-      color: var(--primary);
-      border-color: var(--gray-5);
+      background-color: var(--color-gray-light);
+      color: var(--color-brand-red);
+      border-color: var(--color-gray-light);
     }
   }
 }
@@ -1391,7 +1391,7 @@
     border-bottom: 3px solid var(--third-2);
 
     &.type-2 {
-      border-bottom: 3px solid var(--primary);
+      border-bottom: 3px solid var(--color-brand-red);
     }
   }
 

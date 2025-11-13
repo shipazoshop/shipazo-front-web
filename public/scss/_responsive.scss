@@ -243,7 +243,7 @@
 
     .wrap {
       padding-left: 38px;
-      border-left: 1px solid var(--gray-5);
+      border-left: 1px solid var(--color-gray-light);
     }
 
     .flat-title-tab-faq {
@@ -382,7 +382,7 @@
           bottom: 0;
           width: 1px;
           height: 100%;
-          background-color: var(--gray-5);
+          background-color: var(--color-gray-light);
         }
       }
 
@@ -636,7 +636,7 @@
     .tab-rating-wrap {
       width: 50%;
       padding-right: 30px;
-      border-right: 1px solid var(--gray-5);
+      border-right: 1px solid var(--color-gray-light);
     }
 
     &.style-2 {
@@ -653,7 +653,7 @@
 
         .br-line {
           height: 140px;
-          background-color: var(--gray-4);
+          background-color: var(--color-gray-medium);
         }
       }
 
@@ -667,7 +667,7 @@
 
         .review-list {
           padding-right: 40px;
-          border-right: 1px solid var(--gray-5);
+          border-right: 1px solid var(--color-gray-light);
         }
 
         .add-comment-wrap {
@@ -948,7 +948,7 @@
   .main-page {
     margin-top: -65px;
     border-radius: 8px;
-    background-color: var(--white);
+    background-color: var(--color-white);
   }
 
   .banner-countdown {
@@ -1918,7 +1918,7 @@
           top: 15px;
           width: 4px;
           height: 4px;
-          background-color: var(--gray-4);
+          background-color: var(--color-gray-medium);
           border-radius: 50%;
         }
 
@@ -1929,7 +1929,7 @@
           top: 27px;
           width: 4px;
           height: 4px;
-          background-color: var(--gray-4);
+          background-color: var(--color-gray-medium);
           border-radius: 50%;
         }
       }
@@ -2142,7 +2142,7 @@
   }
 
   .canvas-filter-product {
-    background-color: var(--white);
+    background-color: var(--color-white);
 
     .canvas-body {
       padding: 15px 20px;
@@ -2154,7 +2154,7 @@
       }
 
       &::-webkit-scrollbar-thumb {
-        background-color: var(--primary);
+        background-color: var(--color-brand-red);
         border-radius: 5px;
       }
     }
@@ -2229,7 +2229,7 @@
 
     &.style-2,
     &.style-4 {
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid var(--color-border-default);
     }
   }
 
@@ -2631,7 +2631,7 @@
       transform: translateY(-50%);
       width: 12px;
       height: 1px;
-      background-color: var(--black);
+      background-color: var(--color-black);
       transition: 0.25s ease-in-out;
     }
 
@@ -2643,7 +2643,7 @@
       transform: translate(-50%, -50%);
       width: 1px;
       height: 12px;
-      background-color: var(--black);
+      background-color: var(--color-black);
       transition: 0.25s ease-in-out;
     }
   }
