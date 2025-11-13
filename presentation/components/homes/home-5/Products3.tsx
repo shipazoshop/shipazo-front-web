@@ -77,9 +77,9 @@ export default function Products3() {
                           <li>
                             <AddToCart productId={product.id} />
                           </li>
-                          <li className="wishlist">
+                          {/* <li className="wishlist">
                             <AddToWishlist productId={product.id} />
-                          </li>
+                          </li> */}
                           <li>
                             <AddToQuickview productId={product.id} />
                           </li>

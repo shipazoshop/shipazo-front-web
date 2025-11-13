@@ -119,12 +119,12 @@ export default function Products4() {
                           productId={product.productData.product_id}
                         />
                       </li>
-                      <li className="d-none d-sm-block wishlist">
+                      {/* <li className="d-none d-sm-block wishlist">
                         <AddToWishlist
                           tooltipClass="tooltip-left"
                           productId={product.productData.product_id}
                         />
-                      </li>
+                      </li> */}
                       <li>
                         <AddToQuickview
                           productId={product.productData.product_id}

@@ -403,14 +403,14 @@ export default function Footer1({ fullWidth = false }) {
                     Top 100 offers
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     href={`/blog-grid`}
                     className="title-sidebar link fw-bold"
                   >
                     Blog
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     href={`/blog-grid`}

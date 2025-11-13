@@ -68,7 +68,6 @@ export * from './components/shop-cart/OrderDetails';
 export * from './components/shop-cart/OrderTraking';
 export * from './components/shop-cart/ShopCart';
 export * from './components/shop-cart/Testimonials';
-export * from './components/shop-cart/Wishlist';
 export * from './hooks/api/useApiMutation';
 export * from './hooks/api/useApiQuery';
 export * from './hooks/repositories/useProductRepository';

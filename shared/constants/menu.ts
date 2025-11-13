@@ -23,8 +23,8 @@ export const shopPages = [
     id: 2,
     heading: "WOO PAGE",
     items: [
-      { id: 1, href: "/compare", text: "Compare" },
-      { id: 2, href: "/wishlist", text: "Wishlist" },
+      // { id: 1, href: "/compare", text: "Compare" },
+      // { id: 2, href: "/wishlist", text: "Wishlist" },
       { id: 3, href: "/checkout", text: "Check Out" },
       { id: 4, href: "/order-details", text: "Order Detail" },
       { id: 5, href: "/track-your-order", text: "Track Your Order" },
