@@ -3,6 +3,8 @@ import React from "react";
 import Image from "next/image";
 import SearchForm from "../../headers/SearchForm";
 import BrandCardRow, { IBrandItem } from "../../brand-card-row/BrandCardRow";
+import Testimonials from "../../shop-cart/Testimonials";
+import HowItWorks from "../../common/HowItWorks";
 
 export default function EmptySearchBanner() {
 
@@ -60,13 +62,11 @@ export default function EmptySearchBanner() {
           <p className="sub-text">Encuentra lo que necesitas en nuestra amplia selección</p>
         </div>
 
-        <div className="col-md-7 d-none d-md-block">
-          <div className="header-center justify-content-end">
-            <SearchForm />
-          </div>
+        <SearchForm />
 
-        </div>
-          <BrandCardRow items={brands} gap={20} cardMinWidth={240} />
+        <HowItWorks />
+        <BrandCardRow items={brands} gap={20} cardMinWidth={240} />
+        <Testimonials />
 
       </div>
 
@@ -87,7 +87,6 @@ export default function EmptySearchBanner() {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          max-width: 600px;
           gap: 2.5rem;
         }
 

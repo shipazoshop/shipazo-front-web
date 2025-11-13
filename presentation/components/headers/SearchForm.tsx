@@ -34,7 +34,7 @@ export default function SearchForm({
   const router = useRouter();
 
   const { importProductFromUrl } = useProductRepository();
-  const { mutateAsync, isSuccess, isError, data, error, isLoading } = importProductFromUrl();
+  const { mutateAsync, isLoading } = importProductFromUrl();
 
 
   // Close when clicking outside
@@ -99,8 +99,8 @@ export default function SearchForm({
         type="button"
       >
         <i className="icon-search"></i>
-      </button>
+      </button >
       <LoadingScreen show={isLoading} />
-    </form>
+    </form >
   );
 }

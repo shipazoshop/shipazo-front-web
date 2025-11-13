@@ -7,6 +7,7 @@ import { LoadingScreen } from "../common/LoadingScreen";
 import { useCartActions } from "@/application/stores/useCartStore";
 
 export default function Details1({ product }: Readonly<{ product: IImportProductResponse }>) {
+  console.log("🚀 ~ Details1 ~ product:", product)
 
   const [quantity, setQuantity] = useState(1);
   const { addProductToCart, isAddedToCartProducts } = useCartActions();
@@ -84,7 +85,7 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                     <div className="infor-center">
                       <div className="product-info-price">
                         <h4 className="text-primary">
-                          {product.productData.currency}{product.productData.price_details.priceBreakdown.priceUsd}
+                          {product.productData.currency}{product.productData.price_details?.priceBreakdown?.priceUsd}
                         </h4>{" "}
                         {product.productData.price_details.original_price && (
                           <span className="price-text text-main-2 old-price">
@@ -121,11 +122,14 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                   </div>
                   <div className="tf-product-info-choose-option sticky-top">
                     <div className="product-delivery">
-                      <p className="price-text fw-medium text-primary">
-                        Q{product.productData.price_details.calculatedPriceGtq.toFixed(2)}
-                      </p>
+                      {
+                        Boolean(product.productData?.price_details?.calculatedPriceGtq) &&
+                        <p className="price-text fw-medium text-primary">
+                          Q{product.productData.price_details.calculatedPriceGtq.toFixed(2)}
+                        </p>
+                      }
                       <p>
-                        <i className="icon-delivery-2" /> Shipping: Q{product.productData.price_details.priceBreakdown.shippingCost.toFixed(2)}
+                        <i className="icon-delivery-2" /> Shipping: Q{product.productData?.price_details?.priceBreakdown?.shippingCost?.toFixed(2)}
                       </p>
                       {/* <div className="shipping-to">
                         <p className="body-md-2">Shipping to:</p>

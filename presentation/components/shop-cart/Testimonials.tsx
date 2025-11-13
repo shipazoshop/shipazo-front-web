@@ -8,27 +8,6 @@ export default function Testimonials() {
   return (
     <div className="themesFlat">
       <div className="container">
-        <div className="tf-cart-sold">
-          <div className="notification-progress">
-            <div className="delivery-progress">
-              <div
-                className="progress"
-                role="progressbar"
-                aria-label="Basic example"
-                aria-valuenow={0}
-                aria-valuemin={0}
-                aria-valuemax={100}
-              >
-                <div className="progress-bar" style={{ width: "50%" }} />
-              </div>
-              <p className="body-text-3">
-                <i className="icon-delivery-2 fs-24" />
-                Free shipping on all orders over
-                <span className="fw-bold">$250</span>
-              </p>
-            </div>
-          </div>
-        </div>
         <Swiper
           className="swiper tf-sw-products"
           breakpoints={{
