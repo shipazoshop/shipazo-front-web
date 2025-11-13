@@ -39,6 +39,7 @@ export default function page() {
             </div> */}
             <div className="container-main">
               <EmptySearchBanner />
+
               {/* <Products4 /> */}
               {/* <Products5 />
               <Banner4 />
@@ -52,4 +53,3 @@ export default function page() {
     </>
   );
 }
-
