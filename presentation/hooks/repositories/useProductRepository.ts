@@ -23,7 +23,7 @@ export function useProductRepository() {
     return useApiQuery<Product>({
       service: 'scrapper',
       queryKey,
-      endpoint: `/products`,
+      endpoint: URL_DICTIONARY.PRODUCTS,
       enabled: enabled,
       params: {
         url
@@ -35,7 +35,7 @@ export function useProductRepository() {
   };
 
   const getCachedProducts = (queryKey: string, enabled = true, page: number = 1, limit: number = 10) => {
-    return useApiQuery<any>({
+    return useApiQuery<Product[]>({
       service: 'scrapper',
       queryKey,
       endpoint: SCRAPER_PRODUCT_URL.scrapper + URL_DICTIONARY.CACHED_PRODUCTS,
