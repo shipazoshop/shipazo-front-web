@@ -24,8 +24,6 @@ const categories = [
 export default function SearchForm({
   parentClass = "form-search-product style-2",
 }) {
-  const [activeDropdown, setActiveDropdown] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("All categories");
   const [searchTerm, setSearchTerm] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navRef = useRef(null);
@@ -35,21 +33,6 @@ export default function SearchForm({
 
   const { importProductFromUrl } = useProductRepository();
   const { mutateAsync, isLoading } = importProductFromUrl();
-
-
-  // Close when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (navRef.current && !navRef.current.contains(event.target)) {
-        setActiveDropdown(false); // Close the menu
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   // Limpiar mensaje de error cuando el usuario cambia el término de búsqueda
   useEffect(() => {
