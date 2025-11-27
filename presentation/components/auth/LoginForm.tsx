@@ -2,23 +2,16 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useAuthRepository } from "@/presentation/hooks/repositories/useAuthRepository";
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { googleAuth } = useAuthRepository();
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setIsLoading(true);
-    try {
-      // TODO: Implementar autenticación con Google OAuth
-      // Aquí se integrará con tu servicio de autenticación
-      console.log("Iniciando sesión con Google...");
-
-      // Ejemplo de redirección para OAuth (implementar según tu backend)
-      // window.location.href = '/api/auth/google';
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      setIsLoading(false);
-    }
+    // Redirige al usuario a Google para autenticación
+    googleAuth();
   };
 
   return (
