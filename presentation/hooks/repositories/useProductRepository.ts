@@ -10,7 +10,7 @@ const SCRAPER_PRODUCT_URL = getApiConfig()
 export function useProductRepository() {
   const getProducts = (filters?: ProductFilters) => {
     return useApiQuery<Product[]>({
-      service: 'products',
+      service: 'scrapper',
       endpoint: '/products',
       params: filters,
       queryOptions: {
@@ -21,7 +21,7 @@ export function useProductRepository() {
 
   const getProductByURL = (url: string, queryKey: string, enabled = true) => {
     return useApiQuery<Product>({
-      service: 'products',
+      service: 'scrapper',
       queryKey,
       endpoint: `/products`,
       enabled: enabled,
@@ -36,9 +36,9 @@ export function useProductRepository() {
 
   const getCachedProducts = (queryKey: string, enabled = true, page: number = 1, limit: number = 10) => {
     return useApiQuery<any>({
-      service: 'cachedProducts',
+      service: 'scrapper',
       queryKey,
-      endpoint: SCRAPER_PRODUCT_URL.products + URL_DICTIONARY.CACHED_PRODUCTS,
+      endpoint: SCRAPER_PRODUCT_URL.scrapper + URL_DICTIONARY.CACHED_PRODUCTS,
       enabled: enabled,
       params: {
         page,
@@ -51,13 +51,13 @@ export function useProductRepository() {
   }
 
   const importProductFromUrl = () => {
-    if (!SCRAPER_PRODUCT_URL.products) {
+    if (!SCRAPER_PRODUCT_URL.scrapper) {
       throw new Error("Falta NEXT_PUBLIC_API_SCRAPER_URL en .env");
     }
 
     return useApiMutation<IImportProductResponse, ImportFromUrlDto>({
-      service: "products",
-      endpoint: SCRAPER_PRODUCT_URL.products + URL_DICTIONARY.PRODUCTS,
+      service: "scrapper",
+      endpoint: SCRAPER_PRODUCT_URL.scrapper + URL_DICTIONARY.PRODUCTS,
       method: "POST",
       invalidateQueries: [
         ["products", "/products"],
