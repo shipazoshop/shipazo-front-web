@@ -59,32 +59,6 @@ export function useProductRepository() {
       service: "scrapper",
       endpoint: SCRAPER_PRODUCT_URL.scrapper + URL_DICTIONARY.PRODUCTS,
       method: "POST",
-      invalidateQueries: [
-        ["products", "/products"],
-      ],
-      updateCache: {
-        queryKey: ["products", "/products"],
-        updater: (old: any[] | undefined, newData: IImportProductResponse) => {
-          if (!old) return old;
-          const p = newData.productData;
-          const id = newData.productData.product_id;
-
-          const idx = old.findIndex((x) => x.productData?.product_id === id || x?.productData?.title === p.title);
-          const normalized = {
-            url: newData.url,
-            productData: p,
-          };
-          if (idx >= 0) {
-            const copy = old.slice();
-            copy[idx] = { ...old[idx], ...normalized };
-            return copy;
-          }
-          return [normalized, ...old];
-        },
-      },
-      onSuccess: (data) => {
-        console.log("Producto importado:", data.productData.product_id, data.productData?.title);
-      },
     });
   };
 

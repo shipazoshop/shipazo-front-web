@@ -1,6 +1,6 @@
 "use client";
 import { useProductRepository } from "@/presentation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProductStore } from "../../../application/state/product";
 import { LoadingScreen } from "../common/LoadingScreen";
@@ -25,7 +25,6 @@ export default function SearchForm({
   parentClass = "form-search-product style-2",
 }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const navRef = useRef(null);
 
   const { setProduct } = useProductStore();
@@ -34,34 +33,24 @@ export default function SearchForm({
   const { importProductFromUrl } = useProductRepository();
   const { mutateAsync, isLoading } = importProductFromUrl();
 
-  // Limpiar mensaje de error cuando el usuario cambia el término de búsqueda
-  useEffect(() => {
-    if (errorMessage) {
-      setErrorMessage("");
-    }
-  }, [searchTerm]);
-
   const handleClientScriptLoad = async () => {
     try {
-      setErrorMessage("");
-
       // Validar que sea una URL válida
       if (searchTerm && (searchTerm.startsWith("http://") || searchTerm.startsWith("https://"))) {
         const result = await mutateAsync({ url: searchTerm });
 
         console.log("✅ Producto importado:", result);
+
+        // Navegar primero para evitar delay, pasando la URL como query param
+        const productUrl = encodeURIComponent(searchTerm);
+        router.push(`/product-detail/${result.productData.product_id}?url=${productUrl}`);
+
+        // Actualizar el store después (esto se hace en segundo plano)
         setProduct(result);
-        router.push(`/product-detail/${result.productData.product_id}`);
         setSearchTerm("");
-      } else {
-        setErrorMessage("Por favor ingresa una URL válida (debe comenzar con http:// o https://)");
       }
     } catch (error: any) {
       console.error("❌ Error al importar producto:", error);
-
-      // Mostrar mensaje de error amigable al usuario
-      const errorMsg = error?.message || "Error desconocido al importar el producto";
-      setErrorMessage(errorMsg);
     }
   }
 

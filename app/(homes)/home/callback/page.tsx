@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/application/stores/useAuthStore";
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
@@ -69,5 +69,32 @@ export default function AuthCallbackPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        flexDirection: "column",
+        gap: "1rem"
+      }}>
+        <div className="loader" style={{
+          border: "4px solid #f3f3f3",
+          borderTop: "4px solid #3b82f6",
+          borderRadius: "50%",
+          width: "40px",
+          height: "40px",
+          animation: "spin 1s linear infinite"
+        }} />
+        <p>Cargando...</p>
+      </div>
+    }>
+      <AuthCallbackContent />
+    </Suspense>
   );
 }
