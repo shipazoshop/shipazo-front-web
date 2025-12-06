@@ -77,7 +77,7 @@ export default function EmptySearchBanner() {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 3rem 1.5rem;
+          padding: 3rem 0;
           border-radius: 12px;
           margin: 2rem 0;
         }
@@ -88,6 +88,9 @@ export default function EmptySearchBanner() {
           align-items: center;
           text-align: center;
           gap: 2.5rem;
+          width: 100%;
+          max-width: 100%;
+          margin: 0 auto;
         }
 
         .logo-container {
@@ -177,7 +180,7 @@ export default function EmptySearchBanner() {
         @media (max-width: 768px) {
           .empty-search-banner {
             min-height: 350px;
-            padding: 2rem 1rem;
+            padding: 2rem 0;
           }
 
           .logo-container {

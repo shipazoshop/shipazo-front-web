@@ -5,8 +5,7 @@ import Image from "next/image";
 export default function HowItWorks() {
   return (
     <div className="how-it-works-section">
-      <div className="container">
-        <div className="steps-grid">
+      <div className="steps-grid">
           {/* Paso 1: COPIA */}
           <div className="step-card step-1">
             <div className="step-content">
@@ -188,7 +187,6 @@ export default function HowItWorks() {
             </div>
           </div>
         </div>
-      </div>
 
       <style >{`
         .how-it-works-section {
@@ -200,13 +198,14 @@ export default function HowItWorks() {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
           gap: 1.5rem;
-          max-width: 1300px;
+          width: 100%;
+          max-width: 100%;
           margin: 0 auto;
         }
 
         .step-card {
           border-radius: 24px;
-          padding: 2.5rem 2.5rem;
+          padding: 2.5rem 2rem;
           min-height: 280px;
           display: flex;
           flex-direction: column;
@@ -223,23 +222,22 @@ export default function HowItWorks() {
         }
 
         .step-1 {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+          background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
           color: white;
         }
 
         .step-2 {
-        background: linear-gradient(135deg, #004ec3 0%, #0066ff 100%);
+          background: linear-gradient(135deg, #004ec3 0%, #0066ff 100%);
           color: white;
         }
 
         .step-3 {
-        background: linear-gradient(135deg, #ff3d3d 0%, #ff6b6b 100%);
-        
+          background: linear-gradient(135deg, #ff3d3d 0%, #ff6b6b 100%);
           color: white;
         }
 
         .step-logo {
-   background: linear-gradient(135deg, #FCB500 0%, #ffd43b 100%);
+          background: linear-gradient(135deg, #FCB500 0%, #ffd43b 100%);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -300,21 +298,48 @@ export default function HowItWorks() {
         @media (max-width: 1200px) {
           .steps-grid {
             grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+          }
+
+          .step-card {
+            padding: 2rem 1.75rem;
+          }
+
+          .step-title {
+            font-size: 2.25rem;
+          }
+        }
+
+        @media (max-width: 992px) {
+          .how-it-works-section {
+            padding: 3rem 0;
+          }
+
+          .steps-grid {
+            gap: 1rem;
+          }
+
+          .step-title {
+            font-size: 2rem;
+          }
+
+          .step-description {
+            font-size: 1.05rem;
           }
         }
 
         @media (max-width: 768px) {
           .how-it-works-section {
-            padding: 2rem 0;
+            padding: 2.5rem 0;
           }
 
           .steps-grid {
             grid-template-columns: 1fr;
-            gap: 1rem;
+            gap: 1.25rem;
           }
 
           .step-card {
-            min-height: 240px;
+            min-height: 220px;
             padding: 2rem 1.5rem;
           }
 
@@ -324,25 +349,108 @@ export default function HowItWorks() {
 
           .step-description {
             font-size: 1rem;
+            line-height: 1.5;
           }
 
           .step-arrow svg {
             width: 100px;
+            height: 35px;
+          }
+
+          .logo-wrapper img {
+            max-width: 180px;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .how-it-works-section {
+            padding: 2rem 0;
+          }
+
+          .steps-grid {
+            gap: 1rem;
+          }
+
+          .step-card {
+            min-height: 200px;
+            padding: 1.75rem 1.5rem;
+            border-radius: 20px;
+          }
+
+          .step-title {
+            font-size: 1.875rem;
+          }
+
+          .step-description {
+            font-size: 0.975rem;
+          }
+
+          .step-arrow svg {
+            width: 90px;
+            height: 30px;
+          }
+
+          .logo-wrapper img {
+            max-width: 160px;
           }
         }
 
         @media (max-width: 480px) {
+          .how-it-works-section {
+            padding: 1.5rem 0;
+          }
+
+          .steps-grid {
+            gap: 0.875rem;
+          }
+
           .step-card {
-            min-height: 220px;
+            min-height: 180px;
             padding: 1.5rem 1.25rem;
+            border-radius: 16px;
           }
 
           .step-title {
-            font-size: 1.75rem;
+            font-size: 1.65rem;
+            letter-spacing: 0.5px;
           }
 
           .step-description {
-            font-size: 0.95rem;
+            font-size: 0.925rem;
+            line-height: 1.4;
+          }
+
+          .step-arrow svg {
+            width: 80px;
+            height: 28px;
+          }
+
+          .logo-wrapper img {
+            max-width: 140px;
+          }
+        }
+
+        @media (max-width: 375px) {
+          .step-card {
+            min-height: 170px;
+            padding: 1.25rem 1rem;
+          }
+
+          .step-title {
+            font-size: 1.5rem;
+          }
+
+          .step-description {
+            font-size: 0.875rem;
+          }
+
+          .step-arrow svg {
+            width: 70px;
+            height: 25px;
+          }
+
+          .logo-wrapper img {
+            max-width: 120px;
           }
         }
       `}</style>
