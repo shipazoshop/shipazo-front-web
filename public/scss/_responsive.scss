@@ -1875,7 +1875,7 @@
   }
 
   .container-wrap {
-    display: flex;
+    flex-direction: row;
     gap: 30px;
 
     .container-sidebar {
@@ -1889,9 +1889,6 @@
 
     .container-main {
       max-width: 1176px;
-      width: 100%;
-      margin-left: auto;
-      margin-right: auto;
     }
   }
 
@@ -2396,6 +2393,11 @@
     }
   }
 
+  .tf-sp-7 {
+    padding-top: 20px;
+    padding-bottom: 30px;
+  }
+
   .has-bg-img {
     &.style-2 {
       background-position: 30% center !important;
@@ -2673,6 +2675,16 @@
     line-height: 24px;
   }
 
+  .tf-sp-7 {
+    padding-top: 15px;
+    padding-bottom: 25px;
+  }
+
+  .container {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
   .ft-bottom .ft-menu-list-2 {
     gap: 10px;
 
@@ -2825,6 +2837,11 @@
     .img-item {
       max-width: 200px;
     }
+  }
+
+  .container {
+    padding-right: 8px;
+    padding-left: 8px;
   }
 
   .card-product.style-row.row-small-2 {

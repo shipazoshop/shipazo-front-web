@@ -178,6 +178,22 @@ li {
     max-width: 1520px;
     padding-right: 15px;
     padding-left: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.container-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.container-main {
+    max-width: 1176px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .container-full {

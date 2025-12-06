@@ -690,3 +690,166 @@ input[type="number"]::-webkit-outer-spin-button {
         gap: 20px;
     }
 }
+
+// Responsive styles for SearchForm
+@media (max-width: 991px) {
+    .form-search-product {
+        max-width: 100%;
+        padding: 0px 18px;
+        gap: 12px;
+
+        &.style-2,
+        &.style-3 {
+            max-width: 100%;
+        }
+
+        fieldset {
+            max-width: 100%;
+
+            input {
+                font-size: 12px;
+                line-height: 22px;
+
+                &::placeholder {
+                    font-size: 12px;
+                    line-height: 22px;
+                }
+            }
+        }
+
+        .btn-submit-form {
+            width: 32px;
+            height: 32px;
+            right: 4px;
+
+            i {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .form-search-product {
+        padding: 0px 15px;
+        gap: 10px;
+        border-width: 1.5px;
+
+        fieldset {
+            input {
+                padding: 7px 0px;
+                font-size: 11px;
+                line-height: 20px;
+
+                &::placeholder {
+                    font-size: 11px;
+                    line-height: 20px;
+                }
+            }
+        }
+
+        .btn-submit-form {
+            width: 30px;
+            height: 30px;
+            right: 3px;
+
+            i {
+                font-size: 13px;
+            }
+        }
+
+        &.style-2,
+        &.style-3 {
+            input {
+                padding: 8px 0px;
+            }
+        }
+    }
+}
+
+@media (max-width: 575px) {
+    .form-search-product {
+        padding: 0px 12px;
+        gap: 8px;
+
+        fieldset {
+            input {
+                padding: 6px 0px;
+                font-size: 10.5px;
+                line-height: 18px;
+
+                &::placeholder {
+                    font-size: 10.5px;
+                    line-height: 18px;
+                }
+            }
+        }
+
+        .btn-submit-form {
+            width: 28px;
+            height: 28px;
+
+            i {
+                font-size: 12px;
+            }
+        }
+    }
+}
+
+@media (max-width: 425px) {
+    .form-search-product {
+        padding: 0px 10px;
+        border-radius: 80px;
+
+        fieldset {
+            input {
+                padding: 5px 0px;
+                font-size: 10px;
+                line-height: 16px;
+
+                &::placeholder {
+                    font-size: 10px;
+                    line-height: 16px;
+                }
+            }
+        }
+
+        .btn-submit-form {
+            width: 26px;
+            height: 26px;
+            right: 2px;
+
+            i {
+                font-size: 11px;
+            }
+        }
+    }
+}
+
+@media (max-width: 375px) {
+    .form-search-product {
+        padding: 0px 8px;
+
+        fieldset {
+            input {
+                padding: 4px 0px;
+                font-size: 9.5px;
+                line-height: 15px;
+
+                &::placeholder {
+                    font-size: 9.5px;
+                    line-height: 15px;
+                }
+            }
+        }
+
+        .btn-submit-form {
+            width: 24px;
+            height: 24px;
+
+            i {
+                font-size: 10px;
+            }
+        }
+    }
+}
