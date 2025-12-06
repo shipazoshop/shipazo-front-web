@@ -1,4 +1,5 @@
 export * from './state/filterReducer';
+export * from './stores/useAuthStore';
 export * from './stores/useCartStore';
 export * from './stores/useWishlistStore';
 export * from './stores/useCompareStore';

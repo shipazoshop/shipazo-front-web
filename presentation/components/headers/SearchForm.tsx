@@ -1,6 +1,6 @@
 "use client";
 import { useProductRepository } from "@/presentation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProductStore } from "../../../application/state/product";
 import { LoadingScreen } from "../common/LoadingScreen";
@@ -24,61 +24,33 @@ const categories = [
 export default function SearchForm({
   parentClass = "form-search-product style-2",
 }) {
-  const [activeDropdown, setActiveDropdown] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("All categories");
   const [searchTerm, setSearchTerm] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const navRef = useRef(null);
 
   const { setProduct } = useProductStore();
   const router = useRouter();
 
   const { importProductFromUrl } = useProductRepository();
-  const { mutateAsync, isSuccess, isError, data, error, isLoading } = importProductFromUrl();
-
-
-  // Close when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (navRef.current && !navRef.current.contains(event.target)) {
-        setActiveDropdown(false); // Close the menu
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // Limpiar mensaje de error cuando el usuario cambia el término de búsqueda
-  useEffect(() => {
-    if (errorMessage) {
-      setErrorMessage("");
-    }
-  }, [searchTerm]);
+  const { mutateAsync, isLoading } = importProductFromUrl();
 
   const handleClientScriptLoad = async () => {
     try {
-      setErrorMessage("");
-
       // Validar que sea una URL válida
       if (searchTerm && (searchTerm.startsWith("http://") || searchTerm.startsWith("https://"))) {
         const result = await mutateAsync({ url: searchTerm });
 
         console.log("✅ Producto importado:", result);
+
+        // Navegar primero para evitar delay, pasando la URL como query param
+        const productUrl = encodeURIComponent(searchTerm);
+        router.push(`/product-detail/${result.productData.product_id}?url=${productUrl}`);
+
+        // Actualizar el store después (esto se hace en segundo plano)
         setProduct(result);
-        router.push(`/product-detail/${result.productData.product_id}`);
         setSearchTerm("");
-      } else {
-        setErrorMessage("Por favor ingresa una URL válida (debe comenzar con http:// o https://)");
       }
     } catch (error: any) {
       console.error("❌ Error al importar producto:", error);
-
-      // Mostrar mensaje de error amigable al usuario
-      const errorMsg = error?.message || "Error desconocido al importar el producto";
-      setErrorMessage(errorMsg);
     }
   }
 
@@ -99,8 +71,8 @@ export default function SearchForm({
         type="button"
       >
         <i className="icon-search"></i>
-      </button>
+      </button >
       <LoadingScreen show={isLoading} />
-    </form>
+    </form >
   );
 }

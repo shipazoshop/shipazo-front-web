@@ -14,36 +14,8 @@ export default function page() {
       <div className="tf-sp-7">
         <div className="container">
           <div className="container-wrap">
-            {/* <div className="container-sidebar d-none">
-              console.log(`🚀 ~ page ~   <div className="container-sidebar d-none">
-              <Products />
-              <Banner />
-              <Products2 />
-              <Banner2 />
-              <Brands />
-              <Blogs />
-            </div>:`,   <div className="container-sidebar d-none">
-              <Products />
-              <Banner />
-              <Products2 />
-              <Banner2 />
-              <Brands />
-              <Blogs />
-            </div>)
-              <Products />
-              <Banner />
-              <Products2 />
-              <Banner2 />
-              <Brands />
-              <Blogs />
-            </div> */}
             <div className="container-main">
               <EmptySearchBanner />
-              {/* <Products4 /> */}
-              {/* <Products5 />
-              <Banner4 />
-              <Products6 />
-              <Products7 /> */}
             </div>
           </div>
         </div>
@@ -52,4 +24,3 @@ export default function page() {
     </>
   );
 }
-

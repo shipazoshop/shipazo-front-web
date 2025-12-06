@@ -2,12 +2,47 @@
 import Footer1 from "@/presentation/components/footers/Footer1";
 import Header4 from "@/presentation/components/headers/Header4";
 import Details1 from "@/presentation/components/product-detail/Details1";
-import React from "react";
+import React, { useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useProductStore } from "../../../../application/state/product";
+import { useSearchParams } from "next/navigation";
+import { useProductRepository } from "@/presentation";
+import { LoadingScreen } from "@/presentation/components/common/LoadingScreen";
 
-export default function ProductDetailPage({ params }) {
-  const { product } = useProductStore();
+function ProductDetailContent() {
+  const { product, setProduct } = useProductStore();
+  const searchParams = useSearchParams();
+  const productUrl = searchParams.get('url');
+
+  const { importProductFromUrl } = useProductRepository();
+  const { mutateAsync, isLoading } = importProductFromUrl();
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      // Si no hay producto en store pero hay URL en params, hacer fetch
+      if (!product && productUrl) {
+        try {
+          const decodedUrl = decodeURIComponent(productUrl);
+          const result = await mutateAsync({ url: decodedUrl });
+          setProduct(result);
+        } catch (error) {
+          console.error("❌ Error al cargar producto:", error);
+        }
+      }
+    };
+
+    fetchProduct();
+  }, [product, productUrl]);
+
+  // Mostrar loading mientras se hace el fetch
+  if (isLoading || (!product && productUrl)) {
+    return (
+      <>
+        <Header4 />
+        <LoadingScreen show={true} />
+      </>
+    );
+  }
 
   return (
     <>
@@ -41,6 +76,19 @@ export default function ProductDetailPage({ params }) {
       </div>
       <Details1 product={product} />
     </>
+  );
+}
+
+export default function ProductDetailPage() {
+  return (
+    <Suspense fallback={
+      <>
+        <Header4 />
+        <LoadingScreen show={true} />
+      </>
+    }>
+      <ProductDetailContent />
+    </Suspense>
   );
 }
 

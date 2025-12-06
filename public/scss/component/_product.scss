@@ -80,11 +80,11 @@
     width: 30px;
     height: 30px;
     border-radius: 3px;
-    background-color: var(--white);
-    color: var(--black);
+    background-color: var(--color-white);
+    color: var(--color-black);
     position: relative;
     border-radius: 50%;
-    // border: 1px solid var(--gray-4);
+    // border: 1px solid var(--color-gray-medium);
     box-shadow: 0px 4px 16px 0px #00000014;
 
     .icon {
@@ -100,9 +100,9 @@
     }
 
     &:hover {
-      background-color: var(--black) !important;
-      color: var(--white);
-      border-color: var(--black);
+      background-color: var(--color-black) !important;
+      color: var(--color-white);
+      border-color: var(--color-black);
     }
   }
 
@@ -173,14 +173,14 @@
 
   &.style-img-border {
     .card-product-wrapper {
-      border: 1px solid var(--gray-5);
+      border: 1px solid var(--color-gray-light);
       padding: 15px;
     }
   }
 
   &.style-border {
     border-radius: 8px;
-    border: 1px solid var(--gray-5);
+    border: 1px solid var(--color-gray-light);
     padding: 15px;
   }
 
@@ -238,7 +238,7 @@
   }
 
   &.style-3 {
-    background-color: var(--white);
+    background-color: var(--color-white);
     padding: 10px;
     border-radius: 8px;
     gap: 16px !important;
@@ -257,7 +257,7 @@
   }
 
   &.style-4 {
-    background-color: var(--white);
+    background-color: var(--color-white);
     padding: 16px;
   }
 }
@@ -310,7 +310,7 @@
     @include mixin.flex(center, center);
     width: 40px;
     height: 40px;
-    background-color: var(--gray-5);
+    background-color: var(--color-gray-light);
     border-radius: 50%;
   }
 
@@ -325,7 +325,7 @@
   @include mixin.flex(center, center);
 
   .js-countdown {
-    background-color: var(--white);
+    background-color: var(--color-white);
     width: max-content;
     padding: 10px 15px;
     border-radius: 8px;
@@ -351,7 +351,7 @@
         position: absolute;
         height: 40px;
         width: 1px;
-        background-color: var(--gray-5);
+        background-color: var(--color-gray-light);
         right: -10px;
         top: 50%;
         transform: translateY(-50%);
@@ -376,10 +376,10 @@
   font-size: 13px;
   line-height: 23px;
   padding: 0px 5.5px;
-  color: var(--white);
+  color: var(--color-white);
   display: inline-flex;
   border-radius: 3px;
-  background-color: var(--primary);
+  background-color: var(--color-brand-red);
   margin-left: 5px;
   position: relative;
 
@@ -392,7 +392,7 @@
     transform: translateY(-50%) rotate(45deg);
     width: 8px;
     height: 8px;
-    background-color: var(--primary);
+    background-color: var(--color-brand-red);
     z-index: 0;
   }
 }
@@ -417,7 +417,7 @@
     .swatch-value {
       width: 100%;
       height: 100%;
-      border: 2px solid var(--white);
+      border: 2px solid var(--color-white);
       display: inline-block;
       border-radius: 50%;
       @include mixin.transition3;
@@ -453,13 +453,13 @@
 
     &.active,
     &:hover {
-      border-color: var(--black) !important;
+      border-color: var(--color-black) !important;
 
       .swatch-value {
-        border-color: var(--white);
+        border-color: var(--color-white);
 
         &::before {
-          border-color: var(--line);
+          border-color: var(--color-border-default);
         }
       }
     }
@@ -473,7 +473,7 @@
   li {
     padding: 3px 7px 3px 8px;
     border-radius: 3px;
-    border: 1px solid var(--gray-4);
+    border: 1px solid var(--color-gray-medium);
   }
 }
 
@@ -571,7 +571,7 @@
         right: 0;
         left: 0;
         bottom: 0;
-        border: 1px solid var(--gray-5);
+        border: 1px solid var(--color-gray-light);
         @include mixin.transition3;
         border-radius: 4px;
       }
@@ -658,14 +658,14 @@
     transform: translateY(-50%);
     width: 100%;
     height: 1px;
-    background-color: var(--gray-2);
+    background-color: var(--color-gray-dark);
   }
 
   &.style-white {
-    color: var(--white);
+    color: var(--color-white);
 
     &::before {
-      background-color: var(--white);
+      background-color: var(--color-white);
     }
   }
 }
@@ -733,7 +733,7 @@
   > * {
     &:not(:last-child) {
       padding-bottom: 20px;
-      border-bottom: 1px solid var(--gray-5);
+      border-bottom: 1px solid var(--color-gray-light);
     }
   }
 
@@ -775,7 +775,7 @@
         height: 4px;
         right: 4px;
         border-radius: 50%;
-        background-color: var(--gray-2);
+        background-color: var(--color-gray-dark);
       }
     }
   }
@@ -810,7 +810,7 @@
         transform: translateY(-50%);
         width: 1px;
         height: 14px;
-        background-color: var(--gray-4);
+        background-color: var(--color-gray-medium);
       }
     }
   }
@@ -856,7 +856,7 @@
     font-weight: 700;
     font-size: 16px;
     line-height: 18px;
-    color: var(--primary);
+    color: var(--color-brand-red);
     pointer-events: none;
   }
 
@@ -869,13 +869,13 @@
     align-items: center;
     justify-content: center;
     font-size: 16px;
-    color: var(--gray);
+    color: var(--color-gray-darkest);
     cursor: pointer;
-    border: 1px solid var(--line-4);
+    border: 1px solid var(--color-border-medium);
     @include mixin.transition3;
 
     &:hover {
-      color: var(--primary);
+      color: var(--color-brand-red);
     }
   }
 }
@@ -895,7 +895,7 @@
   flex-direction: column;
   gap: 18px;
   border-radius: 6px;
-  border: 1px solid var(--gray-4);
+  border: 1px solid var(--color-gray-medium);
   width: 100%;
 
   .product-delivery {
@@ -936,7 +936,7 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--gray);
+    color: var(--color-gray-darkest);
   }
 }
 
@@ -947,14 +947,14 @@
     font-weight: 700;
     font-size: 70px;
     line-height: 70px;
-    color: var(--primary);
+    color: var(--color-brand-red);
     margin-bottom: 9px;
 
     span {
       font-weight: 400;
       font-size: 40px;
       line-height: 48px;
-      color: var(--gray-4);
+      color: var(--color-gray-medium);
     }
   }
 
@@ -968,7 +968,7 @@
     &:not(:last-child) {
       padding-bottom: 20px;
       margin-bottom: 20px;
-      border-bottom: 1px solid var(--gray-5);
+      border-bottom: 1px solid var(--color-gray-light);
     }
   }
 }
@@ -1016,7 +1016,7 @@
           right: 0;
           top: 50%;
           transform: translateY(-50%);
-          background-color: var(--gray-4);
+          background-color: var(--color-gray-medium);
         }
       }
     }
@@ -1035,7 +1035,7 @@
 
       &:not(:last-child) {
         padding-bottom: 30px;
-        border-bottom: 1px solid var(--gray-5);
+        border-bottom: 1px solid var(--color-gray-light);
       }
     }
 
@@ -1121,7 +1121,7 @@
     .image-swap {
       width: 50px;
       height: 50px;
-      border: 1px solid var(--gray-5);
+      border: 1px solid var(--color-gray-light);
       border-radius: 3px;
       cursor: pointer;
       @include mixin.transition3;
@@ -1132,7 +1132,7 @@
       }
 
       &.active {
-        border-color: var(--black);
+        border-color: var(--color-black);
       }
     }
 
@@ -1179,7 +1179,7 @@
         right: 0;
         left: 0;
         bottom: 0;
-        border: 1px solid var(--gray-5);
+        border: 1px solid var(--color-gray-light);
         @include mixin.transition3;
         border-radius: 3px;
       }
@@ -1188,7 +1188,7 @@
     &.swiper-slide-thumb-active {
       .item {
         &::after {
-          border-color: var(--black);
+          border-color: var(--color-black);
         }
       }
     }
@@ -1200,7 +1200,7 @@
     &:not(:last-child) {
       margin-bottom: 20px;
       padding-bottom: 20px;
-      border-bottom: 1px solid var(--gray-5);
+      border-bottom: 1px solid var(--color-gray-light);
     }
   }
 }
@@ -1262,11 +1262,11 @@
   .tf-sort {
     padding: 9px;
     border-radius: 3px;
-    border: 1px solid var(--gray-5);
+    border: 1px solid var(--color-gray-light);
     display: flex;
     cursor: pointer;
     @include mixin.transition3;
-    color: var(--black);
+    color: var(--color-black);
 
     .btn-select {
       display: flex;
@@ -1275,8 +1275,8 @@
     }
 
     &:hover {
-      color: var(--primary);
-      border-color: var(--primary);
+      color: var(--color-brand-red);
+      border-color: var(--color-brand-red);
     }
 
     i {
@@ -1290,7 +1290,7 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 21px;
-  border-bottom: 1px solid var(--gray-5);
+  border-bottom: 1px solid var(--color-gray-light);
   margin-bottom: 30px;
 }
 
@@ -1303,16 +1303,16 @@
     a {
       padding: 9px;
       border-radius: 3px;
-      border: 1px solid var(--gray-5);
+      border: 1px solid var(--color-gray-light);
       display: flex;
       cursor: pointer;
       @include mixin.transition3;
-      color: var(--black);
+      color: var(--color-black);
 
       &:hover,
       &.active {
-        color: var(--primary);
-        border-color: var(--primary);
+        color: var(--color-brand-red);
+        border-color: var(--color-brand-red);
       }
     }
 
@@ -1416,7 +1416,7 @@
       height: 60px;
       width: 60px;
       @include mixin.flex(center, center);
-      background-color: var(--primary);
+      background-color: var(--color-brand-red);
     }
   }
 
@@ -1543,7 +1543,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: var(--gray-2);
+    background-color: var(--color-gray-dark);
     border-radius: 3px;
   }
 }
@@ -1620,11 +1620,11 @@
 
 .account-address-item {
   border-radius: 16px;
-  border: 1px solid var(--gray-4);
+  border: 1px solid var(--color-gray-medium);
 
   .title {
     padding: 15px;
-    border-bottom: 1px solid var(--gray-4);
+    border-bottom: 1px solid var(--color-gray-medium);
   }
 
   .info-detail {

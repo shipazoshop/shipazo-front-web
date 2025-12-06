@@ -1,6 +1,6 @@
 import { create, StateCreator } from "zustand";
 import { IImportProductResponse } from "@/domain/dto/import-product.dto";
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 
 
 interface IProductState {
@@ -16,13 +16,8 @@ const storeProduct: StateCreator<IProductState> = (set) => ({
 });
 
 
- export const useProductStore = create<IProductState>()(
-    devtools(
-        persist(
-            storeProduct,
-            {name: 'product-storage'}
-        )
-    )
+export const useProductStore = create<IProductState>()(
+    devtools(storeProduct)
 );
 
 

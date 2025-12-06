@@ -2,6 +2,7 @@ import { ApiError } from '@/domain';
 import { ApiErrorHandler, ApiService, HttpClientFactory } from '@/infrastructure';
 import { useMutation, useQueryClient, UseMutationOptions } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
+import { useAuthStore } from '@/application/stores/useAuthStore';
 
 export type HttpMethod = 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -31,10 +32,13 @@ export function useApiMutation<TData = unknown, TVariables = unknown>({
 }: UseApiMutationConfig<TData, TVariables>) {
   const queryClient = useQueryClient();
 
-  // Obtener cliente HTTP
+  // Obtener token de autenticación del store
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  // Obtener cliente HTTP con token de autenticación si existe
   const httpClient = useMemo(
-    () => HttpClientFactory.getClient(service),
-    [service]
+    () => HttpClientFactory.getClient(service, accessToken || ""),
+    [service, accessToken]
   );
 
   // Error handler

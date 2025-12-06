@@ -6,6 +6,7 @@ import { ApiErrorHandler } from '@/infrastructure/query/error-handler';
 import { QueryKeyFactory } from '@/infrastructure/query/query-key.factory';
 import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
+import { useAuthStore } from '@/application/stores/useAuthStore';
 
 export interface UseApiQueryConfig<TData> {
   service: ApiService;
@@ -52,10 +53,13 @@ export function useApiQuery<TData = unknown>({
     [service, endpoint, params, customQueryKey]
   );
 
-  // Obtener cliente HTTP
+  // Obtener token de autenticación del store
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  // Obtener cliente HTTP con token de autenticación si existe
   const httpClient = useMemo(
-    () => HttpClientFactory.getClient(service),
-    [service]
+    () => HttpClientFactory.getClient(service, accessToken || ""),
+    [service, accessToken]
   );
 
   // Error handler

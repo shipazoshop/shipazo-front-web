@@ -10,7 +10,7 @@ const SCRAPER_PRODUCT_URL = getApiConfig()
 export function useProductRepository() {
   const getProducts = (filters?: ProductFilters) => {
     return useApiQuery<Product[]>({
-      service: 'products',
+      service: 'scrapper',
       endpoint: '/products',
       params: filters,
       queryOptions: {
@@ -21,7 +21,7 @@ export function useProductRepository() {
 
   const getProductByURL = (url: string, queryKey: string, enabled = true) => {
     return useApiQuery<Product>({
-      service: 'products',
+      service: 'scrapper',
       queryKey,
       endpoint: URL_DICTIONARY.PRODUCTS,
       enabled: enabled,
@@ -34,11 +34,11 @@ export function useProductRepository() {
     });
   };
 
-  const getCachedProducts = (queryKey: string, enabled = true, page = 1, limit = 10) => {
+  const getCachedProducts = (queryKey: string, enabled = true, page: number = 1, limit: number = 10) => {
     return useApiQuery<Product[]>({
-      service: 'cached-products',
+      service: 'scrapper',
       queryKey,
-      endpoint: SCRAPER_PRODUCT_URL.products + URL_DICTIONARY.CACHED_PRODUCTS,
+      endpoint: SCRAPER_PRODUCT_URL.scrapper + URL_DICTIONARY.CACHED_PRODUCTS,
       enabled: enabled,
       params: {
         page,
@@ -47,44 +47,18 @@ export function useProductRepository() {
       queryOptions: {
         staleTime: 10 * 60 * 1000,
       },
-    });
-  };
+    })
+  }
 
   const importProductFromUrl = () => {
-    if (!SCRAPER_PRODUCT_URL.products) {
+    if (!SCRAPER_PRODUCT_URL.scrapper) {
       throw new Error("Falta NEXT_PUBLIC_API_SCRAPER_URL en .env");
     }
 
     return useApiMutation<IImportProductResponse, ImportFromUrlDto>({
-      service: "products",
-      endpoint: SCRAPER_PRODUCT_URL.products + URL_DICTIONARY.PRODUCTS,
+      service: "scrapper",
+      endpoint: SCRAPER_PRODUCT_URL.scrapper + URL_DICTIONARY.PRODUCTS,
       method: "POST",
-      invalidateQueries: [
-        ["products", "/products"],
-      ],
-      updateCache: {
-        queryKey: ["products", "/products"],
-        updater: (old: any[] | undefined, newData: IImportProductResponse) => {
-          if (!old) return old;
-          const p = newData.productData;
-          const id = newData.productData.product_id;
-
-          const idx = old.findIndex((x) => x.productData?.product_id === id || x?.productData?.title === p.title);
-          const normalized = {
-            url: newData.url,
-            productData: p,
-          };
-          if (idx >= 0) {
-            const copy = old.slice();
-            copy[idx] = { ...old[idx], ...normalized };
-            return copy;
-          }
-          return [normalized, ...old];
-        },
-      },
-      onSuccess: (data) => {
-        console.log("Producto importado:", data.productData.product_id, data.productData?.title);
-      },
     });
   };
 
@@ -93,7 +67,9 @@ export function useProductRepository() {
   return {
     // Queries
     getProducts,
+    getProductByURL,
+    getCachedProducts,
+    // Mutations
     importProductFromUrl,
-    getCachedProducts
   };
 }

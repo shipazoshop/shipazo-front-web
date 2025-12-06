@@ -3,6 +3,8 @@ import React from "react";
 import Image from "next/image";
 import SearchForm from "../../headers/SearchForm";
 import BrandCardRow, { IBrandItem } from "../../brand-card-row/BrandCardRow";
+import Testimonials from "../../shop-cart/Testimonials";
+import HowItWorks from "../../common/HowItWorks";
 
 export default function EmptySearchBanner() {
 
@@ -60,13 +62,11 @@ export default function EmptySearchBanner() {
           <p className="sub-text">Encuentra lo que necesitas en nuestra amplia selección</p>
         </div>
 
-        <div className="col-md-7 d-none d-md-block">
-          <div className="header-center justify-content-end">
-            <SearchForm />
-          </div>
+        <SearchForm />
 
-        </div>
-          <BrandCardRow items={brands} gap={20} cardMinWidth={240} />
+        <HowItWorks />
+        <BrandCardRow items={brands} gap={20} cardMinWidth={240} />
+        <Testimonials />
 
       </div>
 
@@ -77,7 +77,7 @@ export default function EmptySearchBanner() {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 3rem 1.5rem;
+          padding: 3rem 0;
           border-radius: 12px;
           margin: 2rem 0;
         }
@@ -87,8 +87,10 @@ export default function EmptySearchBanner() {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          max-width: 600px;
           gap: 2.5rem;
+          width: 100%;
+          max-width: 100%;
+          margin: 0 auto;
         }
 
         .logo-container {
@@ -178,7 +180,7 @@ export default function EmptySearchBanner() {
         @media (max-width: 768px) {
           .empty-search-banner {
             min-height: 350px;
-            padding: 2rem 1rem;
+            padding: 2rem 0;
           }
 
           .logo-container {

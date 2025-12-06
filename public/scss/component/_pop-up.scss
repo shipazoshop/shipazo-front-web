@@ -6,7 +6,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: var(--secondary);
+    background-color: var(--color-brand-blue);
     border-radius: 5px;
   }
 }
@@ -36,7 +36,7 @@
       @include mixin.transition3;
 
       &:hover {
-        color: var(--primary);
+        color: var(--color-brand-red);
       }
     }
   }
@@ -55,7 +55,7 @@
     p {
       display: inline-block;
       padding: 0px 10px;
-      background-color: var(--white);
+      background-color: var(--color-white);
       position: relative;
       z-index: 5;
     }
@@ -100,7 +100,7 @@
       left: 15px;
       right: 15px;
       height: 1px;
-      background-color: var(--line);
+      background-color: var(--color-border-default);
     }
   }
 
@@ -109,7 +109,7 @@
     overflow-y: auto;
     height: 100vh;
     padding: 15px 20px;
-    background-color: var(--white);
+    background-color: var(--color-white);
     max-width: unset;
 
     &::-webkit-scrollbar {
@@ -117,7 +117,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: var(--primary);
+      background-color: var(--color-brand-red);
       border-radius: 5px;
       cursor: grab;
     }
@@ -147,7 +147,7 @@
 }
 
 .canvas-filter-product {
-  background-color: var(--white);
+  background-color: var(--color-white);
 
   .canvas-header {
     display: flex;
@@ -181,7 +181,7 @@
   .canvas-bottom {
     box-shadow: 0px 5px 18px 5px #40485726;
     padding: 15px;
-    background-color: var(--white);
+    background-color: var(--color-white);
   }
 }
 
@@ -211,7 +211,7 @@
     padding-top: 30px;
     padding-bottom: 20px;
     margin: 0px 20px;
-    border-bottom: 1px solid var(--gray-4);
+    border-bottom: 1px solid var(--color-gray-medium);
   }
 
   .popup-body {
@@ -224,7 +224,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: var(--primary);
+      background-color: var(--color-brand-red);
       border-radius: 5px;
       cursor: grab;
     }
@@ -337,7 +337,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: var(--primary);
+      background-color: var(--color-brand-red);
       border-radius: 5px;
     }
   }
@@ -366,7 +366,7 @@
           width: 5px;
           height: 5px;
           border-radius: 50%;
-          background-color: var(--black);
+          background-color: var(--color-black);
         }
 
         &:not(:last-child) {
@@ -380,7 +380,7 @@
     display: grid;
     gap: 10px;
     padding-bottom: 20px;
-    border-bottom: 1px solid var(--gray-5);
+    border-bottom: 1px solid var(--color-gray-light);
   }
 }
 
@@ -440,7 +440,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: var(--primary);
+      background-color: var(--color-brand-red);
       border-radius: 3px;
     }
   }
@@ -459,7 +459,7 @@
     position: relative;
     padding: 11px;
     border-radius: 12px;
-    border: 1px solid var(--gray-4);
+    border: 1px solid var(--color-gray-medium);
     display: flex;
     align-items: center;
     gap: 16px;
@@ -489,16 +489,16 @@
       justify-content: center;
       width: 32px;
       height: 32px;
-      background-color: var(--primary);
+      background-color: var(--color-brand-red);
       border-radius: 50%;
       font-size: 12px;
-      color: var(--white);
+      color: var(--color-white);
       z-index: 5;
       cursor: pointer;
       @include mixin.transition3;
 
       &:hover {
-        background-color: var(--gray-2);
+        background-color: var(--color-gray-dark);
       }
     }
 
@@ -565,7 +565,7 @@
 
   .modal-content {
     padding: 0 50px 40px;
-    background-color: var(--white);
+    background-color: var(--color-white);
     width: 100%;
     border-radius: 20px;
     margin: 0 15px;
@@ -607,7 +607,7 @@
   right: 0;
   left: 0;
   border-top: 1px solid #eeeeee;
-  background-color: var(--white);
+  background-color: var(--color-white);
   box-shadow: 0px 4px 20px 0px #a3a3a347;
 
   .toolbar-item {
@@ -635,12 +635,12 @@
         width: 16px;
         height: 16px;
         @include mixin.flex(center, center);
-        background-color: var(--primary);
+        background-color: var(--color-brand-red);
         border-radius: 50%;
         font-size: 8px;
         font-weight: 500;
         line-height: 15px;
-        color: var(--white);
+        color: var(--color-white);
       }
 
       .toolbar-label {
@@ -672,7 +672,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: var(--primary);
+      background-color: var(--color-brand-red);
       border-radius: 5px;
       cursor: grab;
     }
@@ -687,7 +687,7 @@
     top: 0;
     left: 0;
     right: 0;
-    background-color: var(--white);
+    background-color: var(--color-white);
   }
 
   .popular-searches {

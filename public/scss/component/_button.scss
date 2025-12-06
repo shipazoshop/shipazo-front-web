@@ -7,7 +7,7 @@
     text-align: center;
     padding: 10px 16px;
     border-radius: 8px;
-    background-color: var(--primary);
+    background-color: var(--color-brand-red);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -15,56 +15,56 @@
     @include mixin.transition3;
 
     &:hover {
-        background-color: var(--gray);
+        background-color: var(--color-gray-darkest);
     }
 
     &.hover-2 {
         &:hover {
-            background-color: var(--secondary) !important;
+            background-color: var(--color-brand-blue) !important;
         }
     }
 
     &.btn-line {
         background-color: unset;
-        border: 1px solid var(--gray-4);
+        border: 1px solid var(--color-gray-medium);
         padding-top: 9px;
         padding-bottom: 9px;
 
         &:hover {
-            background-color: var(--gray);
-            color: var(--white);
+            background-color: var(--color-gray-darkest);
+            color: var(--color-white);
         }
     }
 
     &.btn-line-white {
         background-color: unset;
-        border: 2px solid var(--white);
-        color: var(--white);
+        border: 2px solid var(--color-white);
+        color: var(--color-white);
         padding-top: 8px;
         padding-bottom: 8px;
 
         &:hover {
-            background-color: var(--primary);
-            color: var(--white) !important;
-            border-color: var(--primary);
+            background-color: var(--color-brand-red);
+            color: var(--color-white) !important;
+            border-color: var(--color-brand-red);
         }
     }
 
     &.btn-gray {
-        background-color: var(--gray);
+        background-color: var(--color-gray-darkest);
 
         &:hover {
-            background-color: var(--primary);
+            background-color: var(--color-brand-red);
         }
     }
 
     &.btn-gray-2 {
-        background-color: var(--gray-4);
-        color: var(--gray-2);
+        background-color: var(--color-gray-medium);
+        color: var(--color-gray-dark);
 
         &:hover {
-            background-color: var(--primary);
-            color: var(--white);
+            background-color: var(--color-brand-red);
+            color: var(--color-white);
         }
     }
 
@@ -78,16 +78,16 @@
         border-radius: 100px;
 
         &:hover {
-            background-color: var(--primary);
-            color: var(--white);
+            background-color: var(--color-brand-red);
+            color: var(--color-white);
         }
     }
 
     &.style-3 {
         display: inline-flex;
         border-radius: 100px;
-        background-color: var(--secondary);
-        color: var(--white);
+        background-color: var(--color-brand-blue);
+        color: var(--color-white);
         padding: 7px 15px 7px;
     }
 
@@ -130,7 +130,7 @@
     }
 
     &:hover {
-        background-color: var(--primary);
+        background-color: var(--color-brand-red);
 
         &::after {
             height: 350%;
@@ -155,17 +155,17 @@
         border-radius: 50%;
         width: 60px;
         height: 60px;
-        border: 1px solid var(--gray-5);
-        color: var(--gray);
+        border: 1px solid var(--color-gray-light);
+        color: var(--color-gray-darkest);
         @include mixin.transition3;
     }
 
     &:hover {
-        color: var(--primary);
+        color: var(--color-brand-red);
 
         .icon {
-            border-color: var(--primary);
-            color: var(--primary);
+            border-color: var(--color-brand-red);
+            color: var(--color-brand-red);
         }
     }
 }
@@ -177,11 +177,11 @@
     font-weight: 600;
     font-size: 14px;
     line-height: 17px;
-    color: var(--black);
+    color: var(--color-black);
 
     i {
         @include mixin.transition3;
-        color: var(--black);
+        color: var(--color-black);
     }
 
     svg {
@@ -191,19 +191,19 @@
     }
 
     &.style-white {
-        color: var(--white);
+        color: var(--color-white);
 
         i {
-            color: var(--white);
+            color: var(--color-white);
         }
     }
 
     &:hover {
-        color: var(--primary);
+        color: var(--color-brand-red);
 
         i {
             animation: link-icon 0.3s linear;
-            color: var(--primary);
+            color: var(--color-brand-red);
         }
     }
 
@@ -219,27 +219,27 @@
 
     &.style-2 {
         gap: 4px;
-        color: var(--secondary);
+        color: var(--color-brand-blue);
 
         i {
-            color: var(--primary);
+            color: var(--color-brand-red);
         }
 
         &:hover {
-            color: var(--primary);
+            color: var(--color-brand-red);
 
             svg {
                 path {
-                    stroke: var(--primary);
+                    stroke: var(--color-brand-red);
                 }
             }
         }
 
         &.type-black {
-            color: var(--black);
+            color: var(--color-black);
 
             &:hover {
-                color: var(--primary);
+                color: var(--color-brand-red);
             }
         }
     }
@@ -281,7 +281,7 @@
     align-items: center;
     gap: 6px;
     padding: 5px 12px;
-    border: 1px solid var(--gray-5);
+    border: 1px solid var(--color-gray-light);
     border-radius: 1000px;
     @include mixin.transition3;
 
@@ -293,14 +293,14 @@
     }
 
     &:hover {
-        background-color: var(--primary);
-        color: var(--white);
+        background-color: var(--color-brand-red);
+        color: var(--color-white);
 
         svg {
-            fill: var(--white);
+            fill: var(--color-white);
 
             path {
-                stroke: var(--white);
+                stroke: var(--color-white);
             }
         }
     }

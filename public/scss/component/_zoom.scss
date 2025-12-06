@@ -40,15 +40,15 @@
 }
 
 .pswp__bg {
-    background: var(--white);
+    background: var(--color-white);
 }
 
 .pswp__icn {
     fill: rgb(34, 34, 34);
-    color: var(--white);
+    color: var(--color-white);
 
     .pswp__icn-shadow {
-        stroke: var(--white);
+        stroke: var(--color-white);
         stroke-width: 1px;
         fill: none;
     }
