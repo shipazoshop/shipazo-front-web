@@ -11,17 +11,14 @@ function AuthCallbackContent() {
   const { setAccessToken } = useAuthStore();
 
   useEffect(() => {
-    // Obtener el accessToken de los query parameters
     const accessToken = searchParams.get("accessToken");
+    console.log("🚀 ~ AuthCallbackContent ~ accessToken:", accessToken)
 
     if (accessToken) {
-      // Guardar el token en el store (y localStorage via persist)
       setAccessToken(accessToken);
 
-      // Redirigir al home o dashboard
-      setTimeout(() => {
-        router.push("/home");
-      }, 1000);
+      globalThis.history.replaceState({}, '', '/callback');
+      router.push("/home");
     } else {
       // Si no hay token, mostrar error
       setError("No se recibió el token de autenticación");
@@ -29,7 +26,7 @@ function AuthCallbackContent() {
         router.push("/login");
       }, 3000);
     }
-  }, [searchParams, setAccessToken, router]);
+  }, [searchParams]);
 
   return (
     <div style={{
