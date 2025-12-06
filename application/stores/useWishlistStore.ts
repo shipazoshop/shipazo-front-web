@@ -1,72 +1,126 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { WishlistProduct } from "@/domain/mappers/product.mapper";
+import {
+  mapImportProductToWishlistProduct,
+  mapLegacyProductToImportProduct,
+} from "@/domain/mappers/product.mapper";
+import type { IImportProductResponse } from "@/domain/dto/import-product.dto";
+import { allProducts } from "@/shared/constants/products";
+
+type Product = (typeof allProducts)[number];
 
 interface WishlistStore {
   // State
-  wishlist: number[];
+  wishlistProducts: WishlistProduct[];
 
   // Actions
-  addToWishlist: (id: number) => void;
-  removeFromWishlist: (id: number) => void;
-  toggleWishlist: (id: number) => void;
-  isAddedToWishlist: (id: number) => boolean;
+  addToWishlist: (product: IImportProductResponse) => void;
+  addToWishlistById: (id: number) => void;
+  removeFromWishlist: (id: string) => void;
+  toggleWishlist: (product: IImportProductResponse) => void;
+  isAddedToWishlist: (id: string) => boolean;
   clearWishlist: () => void;
 }
+
+const findProductById = (id: number): Product | undefined =>
+  allProducts.find((product) => product.id === id);
 
 export const useWishlistStore = create<WishlistStore>()(
   persist(
     (set, get) => ({
       // Initial state
-      wishlist: [],
+      wishlistProducts: [],
 
       // Actions
-      addToWishlist: (id: number) => {
-        set((state) => {
-          if (state.wishlist.includes(id)) {
-            return state;
-          }
-          return { wishlist: [...state.wishlist, id] };
-        });
-      },
+      addToWishlist: (product: IImportProductResponse) => {
+        const { wishlistProducts } = get();
+        const productId = product.productData.product_id;
 
-      removeFromWishlist: (id: number) => {
+        // Check if already in wishlist
+        if (wishlistProducts.some((p) => p.productData.product_id === productId)) {
+          return;
+        }
+
+        const productToAdd = mapImportProductToWishlistProduct(product);
+
         set((state) => ({
-          wishlist: state.wishlist.filter((item) => item !== id),
+          wishlistProducts: [...state.wishlistProducts, productToAdd],
         }));
       },
 
-      toggleWishlist: (id: number) => {
-        set((state) => {
-          if (state.wishlist.includes(id)) {
-            return { wishlist: state.wishlist.filter((item) => item !== id) };
-          }
-          return { wishlist: [...state.wishlist, id] };
-        });
+      addToWishlistById: (id: number) => {
+        const { wishlistProducts, addToWishlist } = get();
+        const stringId = String(id);
+
+        // Check if already in wishlist
+        if (wishlistProducts.some((p) => p.productData.product_id === stringId)) {
+          return;
+        }
+
+        const legacyProduct = findProductById(id);
+        if (!legacyProduct) {
+          return;
+        }
+
+        // Convert legacy product to IImportProductResponse
+        const importProduct = mapLegacyProductToImportProduct(legacyProduct);
+        addToWishlist(importProduct);
+      },
+
+      removeFromWishlist: (id: string) => {
+        set((state) => ({
+          wishlistProducts: state.wishlistProducts.filter(
+            (item) => item.productData.product_id !== id
+          ),
+        }));
+      },
+
+      toggleWishlist: (product: IImportProductResponse) => {
+        const { wishlistProducts } = get();
+        const productId = product.productData.product_id;
+
+        if (wishlistProducts.some((p) => p.productData.product_id === productId)) {
+          set({
+            wishlistProducts: wishlistProducts.filter(
+              (item) => item.productData.product_id !== productId
+            ),
+          });
+        } else {
+          const productToAdd = mapImportProductToWishlistProduct(product);
+          set({ wishlistProducts: [...wishlistProducts, productToAdd] });
+        }
         // TODO: Open wishlist modal
         // openWishlistModal();
       },
 
-      isAddedToWishlist: (id: number) => {
-        const { wishlist } = get();
-        return wishlist.includes(id);
+      isAddedToWishlist: (id: string) => {
+        const { wishlistProducts } = get();
+        return wishlistProducts.some(
+          (product) => product.productData.product_id === id
+        );
       },
 
       clearWishlist: () => {
-        set({ wishlist: [] });
+        set({ wishlistProducts: [] });
       },
     }),
     {
       name: "wishlist-storage", // name of the item in localStorage
+      partialize: (state) => ({
+        wishlistProducts: state.wishlistProducts,
+      }),
     }
   )
 );
 
 // Selectors for optimized rendering
-export const useWishlist = () => useWishlistStore((state) => state.wishlist);
-export const useWishlistLength = () => useWishlistStore((state) => state.wishlist.length);
+export const useWishlist = () => useWishlistStore((state) => state.wishlistProducts);
+export const useWishlistLength = () => useWishlistStore((state) => state.wishlistProducts.length);
 
 // Individual action selectors (recommended approach)
 export const useAddToWishlist = () => useWishlistStore((state) => state.addToWishlist);
+export const useAddToWishlistById = () => useWishlistStore((state) => state.addToWishlistById);
 export const useRemoveFromWishlist = () => useWishlistStore((state) => state.removeFromWishlist);
 export const useToggleWishlist = () => useWishlistStore((state) => state.toggleWishlist);
 export const useIsAddedToWishlist = () => useWishlistStore((state) => state.isAddedToWishlist);
@@ -75,6 +129,7 @@ export const useClearWishlist = () => useWishlistStore((state) => state.clearWis
 // Legacy: Combined actions selector
 export const useWishlistActions = () => {
   const addToWishlist = useWishlistStore((state) => state.addToWishlist);
+  const addToWishlistById = useWishlistStore((state) => state.addToWishlistById);
   const removeFromWishlist = useWishlistStore((state) => state.removeFromWishlist);
   const toggleWishlist = useWishlistStore((state) => state.toggleWishlist);
   const isAddedToWishlist = useWishlistStore((state) => state.isAddedToWishlist);
@@ -82,6 +137,7 @@ export const useWishlistActions = () => {
 
   return {
     addToWishlist,
+    addToWishlistById,
     removeFromWishlist,
     toggleWishlist,
     isAddedToWishlist,
