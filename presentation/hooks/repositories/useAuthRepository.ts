@@ -8,7 +8,6 @@ export function useAuthRepository() {
 
     const googleAuth = () => {
         const authUrl = SCRAPER_PRODUCT_URL.scrapper + URL_DICTIONARY.AUTH;
-        console.log("🚀 ~ googleAuth ~ authUrl:", authUrl)
         globalThis.location.href = authUrl;
     }
 

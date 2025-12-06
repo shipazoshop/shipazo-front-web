@@ -1,61 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useWishlist } from "@/application/stores/useWishlistStore";
-import { useProducts } from "@/shared/hooks/useProducts";
-import { mapLegacyProductToImportProduct } from "@/domain/mappers/product.mapper";
-
-interface WishlistProduct {
-  id: string;
-  title: string;
-  price: number;
-  currency: string;
-  images: string[];
-}
 
 export default function WishlistDropdown() {
-  const wishlistIds = useWishlist();
-  const { products, isLoading } = useProducts();
-  const [wishlistProducts, setWishlistProducts] = useState<WishlistProduct[]>([]);
+  const wishlistProducts = useWishlist();
 
   // Límite de productos a mostrar en el dropdown
   const MAX_DISPLAY_PRODUCTS = 6;
-
-  useEffect(() => {
-    if (!isLoading && products?.allProducts && wishlistIds.length > 0) {
-      // Filtrar productos que están en la wishlist
-      const filteredProducts = products.allProducts
-        .filter((product: any) => wishlistIds.includes(product.id))
-        .map((product: any) => {
-          const importProduct = mapLegacyProductToImportProduct(product);
-          return {
-            id: importProduct.productData.product_id,
-            title: importProduct.productData.title,
-            price: importProduct.productData.price,
-            currency: importProduct.productData.currency,
-            images: importProduct.productData.images,
-          };
-        });
-
-      setWishlistProducts(filteredProducts);
-    } else if (wishlistIds.length === 0) {
-      setWishlistProducts([]);
-    }
-  }, [wishlistIds, products, isLoading]);
-
-  if (isLoading) {
-    return (
-      <div className="sub-menu-container mega-menu mega-home">
-        <div className="container">
-          <div className="text-center py-4">
-            <p>Cargando productos...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (wishlistProducts.length === 0) {
     return (
@@ -79,12 +33,12 @@ export default function WishlistDropdown() {
           <div className="col-12">
             <ul className="row-demo" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
               {displayedProducts.map((product) => (
-                <li key={product.id} className="demo-item">
-                  <Link href={`/product-detail/${product.id}`}>
+                <li key={product.productData.product_id} className="demo-item">
+                  <Link href={`/product-detail/${product.productData.product_id}`}>
                     <div className="demo-image relative">
                       <Image
-                        src={product.images[0] || "/images/product/default.jpg"}
-                        alt={product.title}
+                        src={product.productData.images?.[0] || "/images/product/default.jpg"}
+                        alt={product.productData.title}
                         className="lazyload"
                         width={273}
                         height={300}
@@ -99,10 +53,12 @@ export default function WishlistDropdown() {
                         whiteSpace: 'nowrap',
                         marginBottom: '0.5rem'
                       }}>
-                        {product.title}
+                        {product.productData.title.length > 20
+                          ? `${product.productData.title.substring(0, 20)}...`
+                          : product.productData.title}
                       </span>
                       <span className="price fw-semibold">
-                        {product.currency} ${product.price.toFixed(2)}
+                        {product.productData.currency} ${product.productData.price.toFixed(2)}
                       </span>
                     </div>
                   </Link>

@@ -12,7 +12,6 @@ function AuthCallbackContent() {
 
   useEffect(() => {
     const accessToken = searchParams.get("accessToken");
-    console.log("🚀 ~ AuthCallbackContent ~ accessToken:", accessToken)
 
     if (accessToken) {
       setAccessToken(accessToken);

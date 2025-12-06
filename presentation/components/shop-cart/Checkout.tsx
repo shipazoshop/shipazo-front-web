@@ -236,7 +236,7 @@ export default function Checkout() {
                       <a href="#" className="img-product">
                         <Image
                           alt=""
-                          src={product.imgSrc}
+                          src={product.productData.images?.[0] || "/images/product/default.jpg"}
                           width={500}
                           height={500}
                         />
@@ -246,10 +246,10 @@ export default function Checkout() {
                           href="#"
                           className="link-secondary body-md-2 fw-semibold"
                         >
-                          {product.title}
+                          {product.productData.title}
                         </a>
                         <p className="price-quantity price-text fw-semibold">
-                          ${product.price.toFixed(2)}
+                          ${product.productData.price.toFixed(2)}
                           <span className="body-md-2 text-main-2 fw-normal">
                             X{product.quantity}
                           </span>

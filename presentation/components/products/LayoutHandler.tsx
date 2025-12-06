@@ -5,7 +5,6 @@ import { useEffect } from "react";
 export default function LayoutHandler() {
   useEffect(() => {
     const handleClick = (e) => {
-      console.log("first");
       e.preventDefault();
 
       const viewSwitch = e.currentTarget;

@@ -1,25 +1,19 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useWishlist, useWishlistActions } from "@/application/stores/useWishlistStore";
 import { useCartActions } from "@/application/stores/useCartStore";
-import { allProducts } from "@/shared/constants/products";
 
 export default function Wishlist() {
-  const wishList = useWishlist();
+  const wishlistProducts = useWishlist();
   const { removeFromWishlist } = useWishlistActions();
-  const { addProductToCartById, isAddedToCartProducts } = useCartActions();
-
-  const [items, setItems] = useState(allProducts);
-  useEffect(() => {
-    setItems([...allProducts.filter((elm) => wishList.includes(elm.id))]);
-  }, [wishList]);
+  const { addProductToCart, isAddedToCartProducts } = useCartActions();
   return (
     <div className="tf-sp-2">
       <div className="container">
         <div className="tf-wishlist">
-          {items.length ? (
+          {wishlistProducts.length ? (
             <table className="tf-table-wishlist">
               <thead>
                 <tr>
@@ -38,18 +32,18 @@ export default function Wishlist() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((product, i) => (
+                {wishlistProducts.map((product, i) => (
                   <tr key={i} className="wishlist-item">
                     <td
                       className="wishlist-item_remove"
-                      onClick={() => removeFromWishlist(product.id)}
+                      onClick={() => removeFromWishlist(product.productData.product_id)}
                     >
                       <i className="icon-close remove link cs-pointer" />
                     </td>
                     <td className="wishlist-item_image">
-                      <Link href={`/product-detail/${product.id}`}>
+                      <Link href={`/product-detail/${product.productData.product_id}`}>
                         <Image
-                          src={product.imgSrc}
+                          src={product.productData.images?.[0] || "/images/product/default.jpg"}
                           alt="Image"
                           className="lazyload"
                           width={500}
@@ -60,35 +54,37 @@ export default function Wishlist() {
                     <td className="wishlist-item_info">
                       <Link
                         className="text-line-clamp-2 body-md-2 fw-semibold text-secondary link"
-                        href={`/product-detail/${product.id}`}
+                        href={`/product-detail/${product.productData.product_id}`}
                       >
-                        {product.title}
+                        {product.productData.title}
                       </Link>
                     </td>
                     <td className="wishlist-item_price">
                       <p className="price-wrap fw-medium flex-nowrap">
                         <span className="new-price price-text fw-medium mb-0">
-                          ${product.price.toFixed(3)}
+                          ${product.productData.price.toFixed(3)}
                         </span>
-                        {"oldPrice" in product && product.oldPrice && (
+                        {product.productData.price_details && (
                           <span className="old-price body-md-2 text-main-2 fw-normal">
-                            ${product.oldPrice.toFixed(3)}
+                            ${product.productData.price_details.original_price}
                           </span>
                         )}
                       </p>
                     </td>
                     <td className="wishlist-item_stock">
-                      <span className="wishlist-stock-status">In Stock</span>
+                      <span className="wishlist-stock-status">
+                        {product.productData.stock ? "In Stock" : "Out of Stock"}
+                      </span>
                     </td>
                     <td className="wishlist-item_action">
                       <a
                         href="#shoppingCart"
                         data-bs-toggle="offcanvas"
                         className="tf-btn btn-gray"
-                        onClick={() => addProductToCartById(product.id)}
+                        onClick={() => addProductToCart(product)}
                       >
                         <span className="text-white">
-                          {isAddedToCartProducts(String(product.id))
+                          {isAddedToCartProducts(product.productData.product_id)
                             ? "Already Added"
                             : "Add to Cart"}
                         </span>

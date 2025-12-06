@@ -5,12 +5,24 @@ import Link from "next/link";
 import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
 import { LoadingScreen } from "../common/LoadingScreen";
 import { useCartActions } from "@/application/stores/useCartStore";
+import { useWishlistActions, useWishlist } from "@/application/stores/useWishlistStore";
 
 export default function Details1({ product }: Readonly<{ product: IImportProductResponse }>) {
-  console.log("🚀 ~ Details1 ~ product:", product)
-
   const [quantity, setQuantity] = useState(1);
   const { addProductToCart, isAddedToCartProducts } = useCartActions();
+  const { toggleWishlist } = useWishlistActions();
+
+  // Usar el estado completo de wishlist para que sea reactivo
+  const wishlistProducts = useWishlist();
+  const isInWishlist = product
+    ? wishlistProducts.some(p => p.productData.product_id === product.productData.product_id)
+    : false;
+
+  const handleWishlistToggle = () => {
+    if (product) {
+      toggleWishlist(product);
+    }
+  };
 
   if (!product) return <LoadingScreen show />;
 
@@ -87,7 +99,7 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         <h4 className="text-primary">
                           {product.productData.currency}{product.productData.price_details?.priceBreakdown?.priceUsd}
                         </h4>{" "}
-                        {product.productData.price_details.original_price && (
+                        {product.productData?.price_details?.original_price && (
                           <span className="price-text text-main-2 old-price">
                             {product.productData.currency}{product.productData.price_details.original_price}
                           </span>
@@ -189,6 +201,19 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                           : "Add to cart"}
                         <i className="icon-cart-2" />
                       </a>
+                      <button
+                        onClick={handleWishlistToggle}
+                        className={`tf-btn text-white ${isInWishlist ? 'btn-secondary' : 'btn-outline-primary'}`}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <i className={`icon-heart ${isInWishlist ? 'text-danger' : ''}`} style={{ fontSize: '18px' }} />
+                        {isInWishlist ? 'In Wishlist' : 'Add to Wishlist'}
+                      </button>
                       <Link
                         href={`/shop-cart`}
                         className="tf-btn text-white btn-gray"

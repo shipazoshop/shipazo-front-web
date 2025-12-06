@@ -63,12 +63,12 @@ export default function Cart() {
                 <div className="card-product style-row row-small-2 align-items-center">
                   <div className="card-product-wrapper">
                     <Link
-                      href={`/product-detail/${product.id}`}
+                      href={`/product-detail/${product.productData.product_id}url?=${product.url}`}
                       className="product-img"
                     >
                       <Image
                         className="img-product lazyload"
-                        src={product.imgSrc}
+                        src={product.productData?.images?.[0] || "/images/product/default.jpg"}
                         alt="image-product"
                         width={500}
                         height={500}
@@ -76,7 +76,7 @@ export default function Cart() {
                       <Image
                         className="img-hover lazyload"
                         src={
-                          product.imgHover ? product.imgHover : product.imgSrc
+                          product.productData?.images?.[1] || product.productData?.images?.[0] || "/images/product/default.jpg"
                         }
                         alt="image-product"
                         width={500}
@@ -87,14 +87,14 @@ export default function Cart() {
                   <div className="card-product-info">
                     <div className="box-title">
                       <Link
-                        href={`/product-detail/${product.id}`}
+                        href={`/product-detail/${product.productData.product_id}url?=${product.url}`}
                         className="name-product body-md-2 fw-semibold text-secondary link"
                       >
-                        {product.title}
+                        {product.productData.title}
                       </Link>
                       <p className="price-wrap fw-medium">
                         <span className="new-price price-text fw-medium">
-                          ${product.price.toFixed(3)}
+                          ${product.productData.price.toFixed(3)}
                         </span>
                       </p>
                       <p className="body-md-2">X{product.quantity}</p>
@@ -102,7 +102,7 @@ export default function Cart() {
                   </div>
                   <span
                     className="icon-close remove link"
-                    onClick={() => removeItem(product.id)}
+                    onClick={() => removeItem(product.productData.product_id)}
                   />
                 </div>
               </li>

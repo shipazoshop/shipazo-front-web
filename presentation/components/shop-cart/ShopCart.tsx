@@ -68,7 +68,7 @@ export default function ShopCart() {
                         <a href="#" className="img-box">
                           <Image
                             alt=""
-                            src={product.imgSrc}
+                            src={product.productData.images?.[0] || "/images/product/default.jpg"}
                             width={300}
                             height={300}
                           />
@@ -78,7 +78,7 @@ export default function ShopCart() {
                             href="#"
                             className="cart-title body-md-2 fw-semibold link"
                           >
-                            {product.title}
+                            {product.productData.title}
                           </a>
                           <div className="variant-box">
                             <p className="body-text-3">Color:</p>
@@ -100,7 +100,7 @@ export default function ShopCart() {
                         className="tf-cart-item_price"
                       >
                         <p className="cart-price price-on-sale price-text fw-medium">
-                          ${product.price.toFixed(2)}
+                          ${product.productData.price.toFixed(2)}
                         </p>
                       </td>
                       <td
@@ -111,7 +111,7 @@ export default function ShopCart() {
                           <span
                             className="btn-quantity btn-decrease"
                             onClick={() =>
-                              updateQuantity(product.id, product.quantity - 1)
+                              updateQuantity(product.productData.product_id, product.quantity - 1)
                             }
                           >
                             <i className="icon-minus" />
@@ -126,7 +126,7 @@ export default function ShopCart() {
                           <span
                             className="btn-quantity btn-increase"
                             onClick={() =>
-                              updateQuantity(product.id, product.quantity + 1)
+                              updateQuantity(product.productData.product_id, product.quantity + 1)
                             }
                           >
                             <i className="icon-plus" />
@@ -138,7 +138,7 @@ export default function ShopCart() {
                         className="tf-cart-item_total"
                       >
                         <p className="cart-total total-price price-text fw-medium">
-                          ${(product.price * product.quantity).toFixed(2)}
+                          ${(product.productData.price * product.quantity).toFixed(2)}
                         </p>
                       </td>
                       <td
@@ -147,7 +147,7 @@ export default function ShopCart() {
                       >
                         <span
                           className="remove icon icon-close link"
-                          onClick={() => removeItem(product.id)}
+                          onClick={() => removeItem(product.productData.product_id)}
                         />
                       </td>
                     </tr>

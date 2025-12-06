@@ -36,19 +36,17 @@ export default function SearchForm({
   const handleClientScriptLoad = async () => {
     try {
       // Validar que sea una URL válida
-      if (searchTerm && (searchTerm.startsWith("http://") || searchTerm.startsWith("https://"))) {
-        const result = await mutateAsync({ url: searchTerm });
 
-        console.log("✅ Producto importado:", result);
+      const result = await mutateAsync({ url: searchTerm });
 
-        // Navegar primero para evitar delay, pasando la URL como query param
-        const productUrl = encodeURIComponent(searchTerm);
-        router.push(`/product-detail/${result.productData.product_id}?url=${productUrl}`);
+      // Navegar primero para evitar delay, pasando la URL como query param
+      const productUrl = encodeURIComponent(searchTerm);
+      router.push(`/product-detail/${result.productData.product_id}?url=${productUrl}`);
 
-        // Actualizar el store después (esto se hace en segundo plano)
-        setProduct(result);
-        setSearchTerm("");
-      }
+      // Actualizar el store después (esto se hace en segundo plano)
+      setProduct(result);
+      setSearchTerm("");
+
     } catch (error: any) {
       console.error("❌ Error al importar producto:", error);
     }

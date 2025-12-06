@@ -19,9 +19,6 @@ export default function Header1() {
     setMounted(true);
   }, []);
 
-  // Debug temporal
-  console.log("🔍 Header1 - isAuthenticated:", isAuthenticated, "mounted:", mounted);
-
   return (
     <header className="tf-header style-2">
 
