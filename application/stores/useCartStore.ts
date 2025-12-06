@@ -45,7 +45,7 @@ export const useCartStore = create<CartStore>()(
         const productId = product.productData.product_id;
 
         // Check if already in cart
-        if (cartProducts.some((p) => p.id === productId)) {
+        if (cartProducts.some((p) => p.productData.product_id === productId)) {
           return;
         }
 
@@ -54,7 +54,7 @@ export const useCartStore = create<CartStore>()(
         set((state) => {
           const newCartProducts = [...state.cartProducts, productToAdd];
           const newTotalPrice = newCartProducts.reduce(
-            (acc, p) => acc + p.quantity * (p.price ?? 0),
+            (acc, p) => acc + p.quantity * (p.productData.price ?? 0),
             0
           );
 
@@ -75,7 +75,7 @@ export const useCartStore = create<CartStore>()(
         const stringId = String(id);
 
         // Check if already in cart
-        if (cartProducts.some((p) => p.id === stringId)) {
+        if (cartProducts.some((p) => p.productData.product_id === stringId)) {
           return;
         }
 
@@ -94,11 +94,11 @@ export const useCartStore = create<CartStore>()(
 
         set((state) => {
           const newCartProducts = state.cartProducts.map((item) =>
-            item.id === id ? { ...item, quantity: qty } : item
+            item.productData.product_id === id ? { ...item, quantity: qty } : item
           );
 
           const newTotalPrice = newCartProducts.reduce(
-            (acc, p) => acc + p.quantity * (p.price ?? 0),
+            (acc, p) => acc + p.quantity * (p.productData.price ?? 0),
             0
           );
 
@@ -111,9 +111,9 @@ export const useCartStore = create<CartStore>()(
 
       removeFromCart: (id: string) => {
         set((state) => {
-          const newCartProducts = state.cartProducts.filter((item) => item.id !== id);
+          const newCartProducts = state.cartProducts.filter((item) => item.productData.product_id !== id);
           const newTotalPrice = newCartProducts.reduce(
-            (acc, p) => acc + p.quantity * (p.price ?? 0),
+            (acc, p) => acc + p.quantity * (p.productData.price ?? 0),
             0
           );
 
@@ -130,13 +130,13 @@ export const useCartStore = create<CartStore>()(
 
       isAddedToCartProducts: (id: string) => {
         const { cartProducts } = get();
-        return cartProducts.some((product) => product.id === id);
+        return cartProducts.some((product) => product.productData.product_id === id);
       },
 
       _calculateTotalPrice: () => {
         set((state) => ({
           totalPrice: state.cartProducts.reduce(
-            (acc, p) => acc + p.quantity * (p.price ?? 0),
+            (acc, p) => acc + p.quantity * (p.productData.price ?? 0),
             0
           ),
         }));
