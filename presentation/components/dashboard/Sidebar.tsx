@@ -32,11 +32,6 @@ export default function Sidebar() {
         </Link>
       </li>
       <li>
-        <Link href={`/wishlist`} className="my-account-nav-item">
-          Wishlist
-        </Link>
-      </li>
-      <li>
         <Link href={`/`} className="my-account-nav-item">
           Logout
         </Link>

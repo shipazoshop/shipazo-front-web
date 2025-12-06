@@ -59,9 +59,9 @@ const renderProductCard = (product: Product) => {
                 <li>
                   <AddToCart productId={product.id} />
                 </li>
-                <li className="d-none d-sm-block wishlist">
+                {/* <li className="d-none d-sm-block wishlist">
                   <AddToWishlist productId={product.id} />
-                </li>
+                </li> */}
                 <li>
                   <AddToQuickview productId={product.id} />
                 </li>

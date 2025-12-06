@@ -18,10 +18,10 @@ export default function AddToWishlist({ productId, tooltipClass = "" }) {
           isAddedToWishlist(productId) ? "icon-trash" : "icon-heart2"
         } `}
       />
-      <span className="tooltip">
+      {/* <span className="tooltip">
         {" "}
         {isAddedToWishlist(productId) ? "Remove Wishlist" : "Add to Wishlist"}
-      </span>
+      </span> */}
     </a>
   );
 }

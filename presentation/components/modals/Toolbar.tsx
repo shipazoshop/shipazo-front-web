@@ -83,27 +83,6 @@ export default function Toolbar() {
         </a>
       </div> */}
       <div className="toolbar-item">
-        <Link href={`/wishlist`}>
-          <span className="toolbar-icon">
-            <svg
-              width={20}
-              height={20}
-              viewBox="0 0 24 26"
-              strokeWidth="0.3"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M17.1949 2.23732C15.1929 2.22573 13.2896 3.17827 12 4.83729C10.7184 3.16693 8.80988 2.21168 6.80503 2.23732C3.0467 2.23732 0 5.53791 0 9.60943C0 16.5867 11.2405 23.3993 11.6962 23.6626C11.8801 23.7957 12.1199 23.7957 12.3038 23.6626C12.7595 23.3993 24 16.6854 24 9.60943C24 5.53791 20.9532 2.23732 17.1949 2.23732ZM12 22.3461C10.238 21.2272 1.21519 15.2702 1.21519 9.60943C1.21519 6.26499 3.71785 3.55371 6.80508 3.55371C8.69561 3.52682 10.4648 4.55986 11.4836 6.28534C11.6904 6.59433 12.0893 6.66318 12.3746 6.43905C12.4291 6.39621 12.477 6.34437 12.5164 6.28534C14.206 3.48618 17.6702 2.70077 20.2541 4.53107C21.8358 5.65155 22.7879 7.56199 22.7848 9.60937C22.7848 15.336 13.762 21.2601 12 22.3461Z"
-                fill="#333E48"
-              />
-            </svg>
-            <span className="toolbar-count">04</span>
-          </span>
-          <span className="toolbar-label">Wishlist</span>
-        </Link>
-      </div>
-      <div className="toolbar-item">
         <a href="#shoppingCart" data-bs-toggle="offcanvas">
           <span className="toolbar-icon">
             <svg

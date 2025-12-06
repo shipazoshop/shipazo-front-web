@@ -111,9 +111,9 @@ const ProductCard2 = ({
             </p>
             <ul className="list-product-btn flex-row">
               <li>{/* <AddToCart productId={product.id} /> */}</li>
-              <li className="wishlist">
+              {/* <li className="wishlist">
                 <AddToWishlist productId={product.id} />
-              </li>
+              </li> */}
               <li>
                 <AddToQuickview productId={product.id} />
               </li>
