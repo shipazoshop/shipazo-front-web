@@ -1,12 +1,11 @@
+"use client";
+
 import Header1 from "@/presentation/components/headers/Header1";
 import EmptySearchBanner from "@/presentation/components/homes/home-5/EmptySearchBanner";
+import { AdminFloatingButton } from "@/presentation/components/common/AdminFloatingButton";
 import React from "react";
 
-export const metadata = {
-  title: "Home || shipazo - Multipurpose React Nextjs eCommerce",
-  description: "shipazo- Multipurpose React Nextjs eCommerce",
-};
-export default function page() {
+export default function HomePage() {
   return (
     <>
       {/* <Topbar1 parentClass="tf-topbar" /> */}
@@ -21,6 +20,9 @@ export default function page() {
         </div>
       </div>
       {/* <Footer1 /> */}
+
+      {/* Botón flotante para admins */}
+      <AdminFloatingButton />
     </>
   );
 }

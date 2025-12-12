@@ -5,18 +5,16 @@ import dynamic from "next/dynamic";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { adminTheme } from "@/presentation/theme/adminTheme";
-import { AdminShellSkeleton } from "@/presentation/components/admin/AdminShellSkeleton";
 
-const AdminShell = dynamic(() => import("./AdminShell"), {
-  loading: () => <AdminShellSkeleton />,
+const ConfigurationsShell = dynamic(() => import("./ConfigurationsShell"), {
   ssr: true,
 });
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function ConfigurationsLayout({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider theme={adminTheme}>
       <CssBaseline />
-      <AdminShell>{children}</AdminShell>
+      <ConfigurationsShell>{children}</ConfigurationsShell>
     </ThemeProvider>
   );
 }

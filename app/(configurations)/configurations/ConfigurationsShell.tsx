@@ -4,26 +4,25 @@ import { ReactNode } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 
-import { useAdminShell } from "@/presentation/hooks/admin/useAdminShell";
-import { Sidebar } from "@/presentation/components/admin/Sidebar";
+import { useConfigurationsShell } from "@/presentation/hooks/configurations/useConfigurationsShell";
+import { Sidebar } from "@/presentation/components/configurations/Sidebar";
 
 const drawerWidth = 260;
 
-interface AdminShellProps {
+interface ConfigurationsShellProps {
   children: ReactNode;
 }
 
-export default function AdminShell({ children }: AdminShellProps) {
+export default function ConfigurationsShell({ children }: ConfigurationsShellProps) {
   const {
     isDesktop,
     mobileOpen,
     activeMenuItems,
     handleDrawerToggle,
-  } = useAdminShell();
+  } = useConfigurationsShell();
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default" }}>
-
       {/* Sidebar - Desktop + Mobile */}
       {isDesktop ? (
         <Drawer

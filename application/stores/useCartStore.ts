@@ -6,9 +6,18 @@ import {
   mapLegacyProductToImportProduct,
 } from "@/domain/mappers/product.mapper";
 import type { IImportProductResponse } from "@/domain/dto/import-product.dto";
-import { allProducts } from "@/shared/constants/products";
 
-type Product = (typeof allProducts)[number];
+// Lazy load del archivo products.ts para no bloquear el hilo principal
+let productsCache: any[] | null = null;
+
+const getProducts = async () => {
+  if (productsCache) return productsCache;
+  const { allProducts } = await import("@/shared/constants/products");
+  productsCache = allProducts;
+  return allProducts;
+};
+
+type Product = any; // Tipo inferido del archivo products
 
 interface CartStore {
   // State
@@ -19,7 +28,7 @@ interface CartStore {
 
   // Actions
   addProductToCart: (product: IImportProductResponse, qty?: number, isModal?: boolean) => void;
-  addProductToCartById: (id: number, qty?: number, isModal?: boolean) => void;
+  addProductToCartById: (id: number, qty?: number, isModal?: boolean) => Promise<void>;
   updateQuantity: (id: string, qty: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
@@ -29,8 +38,10 @@ interface CartStore {
   _calculateTotalPrice: () => void;
 }
 
-const findProductById = (id: number): Product | undefined =>
-  allProducts.find((product) => product.id === id);
+const findProductById = async (id: number): Promise<Product | undefined> => {
+  const products = await getProducts();
+  return products.find((product) => product.id === id);
+};
 
 export const useCartStore = create<CartStore>()(
   persist(
@@ -70,7 +81,7 @@ export const useCartStore = create<CartStore>()(
         // }
       },
 
-      addProductToCartById: (id: number, qty = 1, isModal = true) => {
+      addProductToCartById: async (id: number, qty = 1, isModal = true) => {
         const { cartProducts, addProductToCart } = get();
         const stringId = String(id);
 
@@ -79,7 +90,7 @@ export const useCartStore = create<CartStore>()(
           return;
         }
 
-        const legacyProduct = findProductById(id);
+        const legacyProduct = await findProductById(id);
         if (!legacyProduct) {
           return;
         }
