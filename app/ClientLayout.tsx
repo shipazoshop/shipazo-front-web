@@ -7,17 +7,26 @@ export default function ClientLayout() {
   const bootstrapRef = useRef<any>(null);
   const wowRef = useRef<any>(null);
 
-  // Bootstrap - Load only once on mount
+  // Skip e-commerce specific effects on admin and configurations routes
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isConfigurationsRoute = pathname.startsWith("/configurations");
+  const skipEcommerceEffects = isAdminRoute || isConfigurationsRoute;
+
+  // Bootstrap - Load only once on mount (skip on admin and configurations routes)
   useEffect(() => {
+    if (skipEcommerceEffects) return;
+
     if (globalThis.window !== undefined && !bootstrapRef.current) {
       void import("bootstrap/dist/js/bootstrap.esm.js").then((bootstrap) => {
         bootstrapRef.current = bootstrap;
       });
     }
-  }, []);
+  }, [skipEcommerceEffects]);
 
   // Close modals on navigation - Reuse cached Bootstrap instance
   useEffect(() => {
+    if (skipEcommerceEffects) return;
+
     if (bootstrapRef.current) {
       closeModalsAndOffcanvas(bootstrapRef.current);
     } else {
@@ -27,10 +36,13 @@ export default function ClientLayout() {
         closeModalsAndOffcanvas(bootstrap);
       });
     }
-  }, [pathname]);
+  }, [pathname, skipEcommerceEffects]);
 
   // Header scroll behavior - Optimized with requestAnimationFrame
   useEffect(() => {
+    // Skip on admin and configurations routes - they use MUI layout
+    if (skipEcommerceEffects) return;
+
     let lastScrollTop = 0;
     const delta = 5;
     let ticking = false;
@@ -77,10 +89,13 @@ export default function ClientLayout() {
     return () => {
       globalThis.removeEventListener("scroll", handleScroll);
     };
-  }, [pathname]);
+  }, [pathname, skipEcommerceEffects]);
 
   // WOW animations - Load only once on mount
   useEffect(() => {
+    // Skip on admin and configurations routes - they don't use WOW animations
+    if (skipEcommerceEffects) return;
+
     if (globalThis.window !== undefined && !wowRef.current) {
       void import("@/shared/utils/wow").then((module) => {
         const WOW = module.default;
@@ -91,7 +106,7 @@ export default function ClientLayout() {
       // Re-sync WOW on navigation (lightweight operation)
       wowRef.current.sync();
     }
-  }, [pathname]);
+  }, [pathname, skipEcommerceEffects]);
 
   return null;
 }

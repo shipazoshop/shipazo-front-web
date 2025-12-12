@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import { usePathname } from "next/navigation";
 
 // Lazy load modals - se cargan solo cuando se abren
 const Cart = dynamic(() => import("@/presentation/components/modals/Cart"), {
@@ -37,6 +38,13 @@ const AddParallax = dynamic(() => import("@/shared/utils/AddParallax"), {
 });
 
 export default function Modals() {
+  const pathname = usePathname();
+
+  // No cargar modals de e-commerce en rutas de admin y configurations
+  if (pathname.startsWith('/admin') || pathname.startsWith('/configurations')) {
+    return null;
+  }
+
   return (
     <Suspense fallback={null}>
       <Login />
