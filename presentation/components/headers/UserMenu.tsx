@@ -9,7 +9,7 @@ export default function UserMenu() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLLIElement>(null);
   const isAuthenticated = useIsAuthenticated();
   const clearAuth = useClearAuth();
 

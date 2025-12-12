@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid2";
+import Grid from '@mui/material/Grid';
 import Typography from "@mui/material/Typography";
 import { Save, ArrowLeft } from "lucide-react";
 import { addressSchema, AddressFormData } from "@/presentation/validation/address.schema";
@@ -33,28 +33,28 @@ export function AddressForm({
     setValue,
     formState: { errors },
   } = useForm<AddressFormData>({
-    resolver: yupResolver(addressSchema),
+    resolver: yupResolver(addressSchema) as any,
     defaultValues: initialData
       ? {
-          address: initialData.address,
-          postalCode: initialData.postalCode,
-          additionalSpecifications: initialData.additionalSpecifications || "",
-          city: initialData.city,
-          state: initialData.state,
-          country: initialData.country,
-          alias: initialData.alias,
-          isDefault: initialData.isDefault,
-        }
+        address: initialData.address,
+        postalCode: initialData.postalCode,
+        additionalSpecifications: initialData.additionalSpecifications || "",
+        city: initialData.city,
+        state: initialData.state,
+        country: initialData.country,
+        alias: initialData.alias,
+        isDefault: initialData.isDefault,
+      }
       : {
-          address: "",
-          postalCode: "",
-          additionalSpecifications: "",
-          city: "",
-          state: "",
-          country: "SV",
-          alias: "",
-          isDefault: false,
-        },
+        address: "",
+        postalCode: "",
+        additionalSpecifications: "",
+        city: "",
+        state: "",
+        country: "SV",
+        alias: "",
+        isDefault: false,
+      },
   });
 
   // Si es la primera dirección, marcarla como predeterminada automáticamente
