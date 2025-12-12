@@ -19,7 +19,7 @@ export default function CreateAddressPage() {
   const isFirstAddress = addresses.length === 0;
 
   const handleSubmit = (data: AddressFormData) => {
-    createMutation.mutate(data, {
+    createMutation.mutate(data as Required<AddressFormData>, {
       onSuccess: () => {
         router.push("/configurations/address");
       },
