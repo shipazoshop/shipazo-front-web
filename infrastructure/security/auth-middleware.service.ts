@@ -94,7 +94,7 @@ export class AuthMiddlewareService {
       }
 
       // 4. Verificar el role
-      const userRole = payload.role;
+      const userRole = payload.roleId;
       if (!userRole) {
         console.log('No se encontró role en el token');
         return false;
