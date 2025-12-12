@@ -1,85 +1,15 @@
 "use client";
 
-import {
-  Box,
-  Card,
-  CardContent,
-  Chip,
-  Grid,
-  Typography,
-} from "@mui/material";
-import {
-  ArrowUpRight,
-  ArrowDownRight,
-  DollarSign,
-  ShoppingCart,
-  Users,
-  Package,
-} from "lucide-react";
-
-const stats = [
-  {
-    title: "Ingresos Totales",
-    value: "$45,231.89",
-    change: "+20.1%",
-    trend: "up" as const,
-    icon: DollarSign,
-  },
-  {
-    title: "Órdenes",
-    value: "2,350",
-    change: "+12.5%",
-    trend: "up" as const,
-    icon: ShoppingCart,
-  },
-  {
-    title: "Productos",
-    value: "892",
-    change: "+4.2%",
-    trend: "up" as const,
-    icon: Package,
-  },
-  {
-    title: "Usuarios",
-    value: "12,234",
-    change: "-2.4%",
-    trend: "down" as const,
-    icon: Users,
-  },
-];
-
-const recentOrders = [
-  {
-    id: "ORD-001",
-    customer: "Carlos Martínez",
-    amount: "$299.00",
-    status: "Completado",
-  },
-  {
-    id: "ORD-002",
-    customer: "María García",
-    amount: "$149.00",
-    status: "Pendiente",
-  },
-  {
-    id: "ORD-003",
-    customer: "Juan Pérez",
-    amount: "$499.00",
-    status: "Completado",
-  },
-  {
-    id: "ORD-004",
-    customer: "Ana López",
-    amount: "$199.00",
-    status: "Procesando",
-  },
-  {
-    id: "ORD-005",
-    customer: "Pedro Sánchez",
-    amount: "$349.00",
-    status: "Completado",
-  },
-];
+import { memo } from "react";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { mockDashboardStats, mockRecentOrders, type IDashboardStat, type IRecentOrder } from "@/mocks/admin";
+import { alpha } from "@mui/material/styles";
 
 const getStatusColor = (status: string):
   | "success"
@@ -87,262 +17,302 @@ const getStatusColor = (status: string):
   | "info"
   | "default" => {
   switch (status) {
-    case "Completado":
+    case "completed":
       return "success";
-    case "Pendiente":
+    case "pending":
       return "warning";
-    case "Procesando":
+    case "processing":
       return "info";
     default:
       return "default";
   }
 };
 
-export default function AdminHomePage() {
+// Memoizar el componente de tarjeta de estadística con diseño moderno
+const StatCard = memo(function StatCard({ stat }: { stat: IDashboardStat }) {
+  const Icon = stat.icon;
+  const isUp = stat.trend === "up";
+
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      <Box>
-        <Typography variant="h4" fontWeight="bold">
-          Dashboard
+    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+      <Card
+        sx={{
+          background: "linear-gradient(135deg, #ffffff 0%, #fafafa 100%)",
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
+          position: "relative",
+          overflow: "hidden",
+          transition: "all 0.3s ease-in-out",
+          "&:hover": {
+            transform: "translateY(-4px)",
+            boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.12)",
+            borderColor: "primary.main",
+          },
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "4px",
+            background: "linear-gradient(90deg, #ff3d3d 0%, #ff6b6b 100%)",
+          },
+        }}
+      >
+        <CardContent sx={{ pt: 3 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mb: 2,
+            }}
+          >
+            <Box
+              sx={{
+                width: 48,
+                height: 48,
+                borderRadius: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: `linear-gradient(135deg, ${alpha("#ff3d3d", 0.1)} 0%, ${alpha("#ff6b6b", 0.05)} 100%)`,
+                color: "primary.main",
+              }}
+            >
+              <Icon size={24} strokeWidth={2} />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 999,
+                bgcolor: isUp ? alpha("#4caf50", 0.1) : alpha("#f44336", 0.1),
+              }}
+            >
+              {isUp ? (
+                <ArrowUpRight size={14} color="#4caf50" />
+              ) : (
+                <ArrowDownRight size={14} color="#f44336" />
+              )}
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "0.7rem",
+                  color: isUp ? "success.main" : "error.main",
+                }}
+              >
+                {stat.change}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 800,
+              mb: 0.5,
+              background: "linear-gradient(135deg, #333333 0%, #505050 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            {stat.value}
+          </Typography>
+
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ fontWeight: 600, fontSize: "0.85rem" }}
+          >
+            {stat.title}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Grid>
+  );
+});
+
+// Memoizar el componente de fila de orden reciente
+const RecentOrderRow = memo(function RecentOrderRow({
+  order,
+  isLast
+}: {
+  order: IRecentOrder;
+  isLast: boolean;
+}) {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        py: 2,
+        px: 1.5,
+        borderRadius: 2,
+        transition: "all 0.2s ease-in-out",
+        "&:hover": {
+          bgcolor: alpha("#ff3d3d", 0.04),
+        },
+      }}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+        <Typography variant="body2" fontWeight={600}>
+          {order.customer}
         </Typography>
         <Typography
-          variant="body2"
+          variant="caption"
           color="text.secondary"
-          sx={{ mt: 0.5 }}
+          sx={{ fontFamily: "monospace", fontSize: "0.7rem" }}
         >
-          Bienvenido al panel administrativo. Aquí está un resumen de tu
-          negocio.
+          {order.id}
         </Typography>
       </Box>
 
-      <Grid container spacing={2} sx={{display: 'flex', justifyContent: 'space-between'}}>
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          const isUp = stat.trend === "up";
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
+        <Typography variant="body2" fontWeight={700} sx={{ minWidth: 80, textAlign: "right" }}>
+          {order.amount}
+        </Typography>
+        <Chip
+          size="small"
+          label={order.status}
+          color={getStatusColor(order.status)}
+          sx={{ fontWeight: 600, minWidth: 90 }}
+        />
+      </Box>
+    </Box>
+  );
+});
 
-          return (
-            <Grid size={{sm: 6, md: 3, lg: 2}} key={stat.title}>
-              <Card variant="outlined">
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      mb: 1,
-                    }}
-                  >
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ fontWeight: 500 }}
-                    >
-                      {stat.title}
-                    </Typography>
-                    <Icon size={18} />
-                  </Box>
+// Memoizar el componente de actividad con diseño moderno
+const ActivityItem = memo(function ActivityItem({
+  color,
+  title,
+  time,
+}: {
+  color: string;
+  title: string;
+  time: string;
+}) {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        gap: 1.5,
+        p: 1.5,
+        borderRadius: 2,
+        transition: "all 0.2s ease-in-out",
+        "&:hover": {
+          bgcolor: alpha("#f5f5f5", 0.5),
+        },
+      }}
+    >
+      <Box
+        sx={{
+          width: 10,
+          height: 10,
+          borderRadius: "50%",
+          bgcolor: color,
+          mt: 0.75,
+          boxShadow: `0 0 0 4px ${alpha(color, 0.15)}`,
+        }}
+      />
+      <Box sx={{ flex: 1 }}>
+        <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5 }}>
+          {title}
+        </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem" }}>
+          {time}
+        </Typography>
+      </Box>
+    </Box>
+  );
+});
 
-                  <Typography variant="h5" fontWeight="bold">
-                    {stat.value}
-                  </Typography>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 0.5,
-                      mt: 0.5,
-                    }}
-                  >
-                    {isUp ? (
-                      <ArrowUpRight size={16} />
-                    ) : (
-                      <ArrowDownRight size={16} />
-                    )}
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        fontWeight: 600,
-                        color: isUp ? "success.main" : "error.main",
-                      }}
-                    >
-                      {stat.change}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ ml: 0.5 }}
-                    >
-                      vs mes anterior
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
+export default function AdminHomePage() {
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      {/* Tarjetas de estadísticas */}
+      <Grid container spacing={3}>
+        {mockDashboardStats.map((stat) => (
+          <StatCard key={stat.title} stat={stat} />
+        ))}
       </Grid>
 
-      <Grid container spacing={2}>
-        <Grid size={{sm: 6, md: 8, lg: 5}} >
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+      {/* Órdenes recientes y actividad */}
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: "divider",
+              height: "100%",
+            }}
+          >
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight={700} sx={{ mb: 3 }}>
                 Órdenes Recientes
               </Typography>
               <Box>
-                {recentOrders.map((order, index) => (
-                  <Box
+                {mockRecentOrders.map((order, index) => (
+                  <RecentOrderRow
                     key={order.id}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      py: 1.5,
-                      borderBottom:
-                        index === recentOrders.length - 1
-                          ? "none"
-                          : "1px solid",
-                      borderColor:
-                        index === recentOrders.length - 1
-                          ? "transparent"
-                          : "divider",
-                    }}
-                  >
-                    <Box sx={{ display: "flex", flexDirection: "column" }}>
-                      <Typography variant="body2" fontWeight={500}>
-                        {order.customer}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                      >
-                        {order.id}
-                      </Typography>
-                    </Box>
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                      }}
-                    >
-                      <Typography variant="body2" fontWeight={500}>
-                        {order.amount}
-                      </Typography>
-                      <Chip
-                        size="small"
-                        label={order.status}
-                        color={getStatusColor(order.status)}
-                      />
-                    </Box>
-                  </Box>
+                    order={order}
+                    isLast={index === mockRecentOrders.length - 1}
+                  />
                 ))}
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid size={{sm: 6, md: 8, lg: 5}} >
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: "divider",
+              height: "100%",
+            }}
+          >
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
                 Actividad Reciente
               </Typography>
 
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <Box sx={{ display: "flex", gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      bgcolor: "primary.main",
-                      mt: 0.75,
-                    }}
-                  />
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2" fontWeight={500}>
-                      Nueva orden recibida
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                    >
-                      Hace 5 minutos
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box sx={{ display: "flex", gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      bgcolor: "success.main",
-                      mt: 0.75,
-                    }}
-                  />
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2" fontWeight={500}>
-                      Producto agregado al inventario
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                    >
-                      Hace 1 hora
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box sx={{ display: "flex", gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      bgcolor: "info.main",
-                      mt: 0.75,
-                    }}
-                  />
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2" fontWeight={500}>
-                      Nuevo usuario registrado
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                    >
-                      Hace 3 horas
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box sx={{ display: "flex", gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      bgcolor: "warning.main",
-                      mt: 0.75,
-                    }}
-                  />
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2" fontWeight={500}>
-                      Alerta de inventario bajo
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                    >
-                      Hace 5 horas
-                    </Typography>
-                  </Box>
-                </Box>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                <ActivityItem
+                  color="#ff3d3d"
+                  title="Nueva orden recibida"
+                  time="Hace 5 minutos"
+                />
+                <ActivityItem
+                  color="#4caf50"
+                  title="Producto agregado al inventario"
+                  time="Hace 1 hora"
+                />
+                <ActivityItem
+                  color="#004ec3"
+                  title="Nuevo usuario registrado"
+                  time="Hace 3 horas"
+                />
+                <ActivityItem
+                  color="#FCB500"
+                  title="Alerta de inventario bajo"
+                  time="Hace 5 horas"
+                />
               </Box>
             </CardContent>
           </Card>

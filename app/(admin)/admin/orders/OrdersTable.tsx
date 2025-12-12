@@ -1,28 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import {
-  Box,
-  Button,
-  Chip,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  SelectChangeEvent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { useMemo, useState, useCallback, memo } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import type { SelectChangeEvent } from "@mui/material/Select";
+
 import { Search, Filter, Eye, Download, MoreVertical } from "lucide-react";
 import Link from "next/link";
 
@@ -53,12 +52,73 @@ interface OrdersTableProps {
   initialData: IOrderTable[];
 }
 
-export default function OrdersTable({ initialData }: OrdersTableProps) {
+// Memoizar el componente de fila individual
+const OrderRow = memo(function OrderRow({ order }: { order: IOrderTable }) {
+  return (
+    <TableRow hover>
+      <TableCell>
+        <Typography
+          variant="body2"
+          sx={{ fontFamily: "monospace", fontWeight: 600 }}
+        >
+          {order.id}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <Typography variant="body2" fontWeight={500}>
+          {order.customer}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <Chip
+          size="small"
+          label={statusConfig[order.status].label}
+          color={statusConfig[order.status].color}
+          variant="outlined"
+        />
+      </TableCell>
+      <TableCell align="right">
+        <Typography variant="body2" fontWeight={700}>
+          Q{order.total.toFixed(2)}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <Typography variant="body2" color="text.secondary">
+          {order.createdAt}
+        </Typography>
+      </TableCell>
+      <TableCell align="right">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 1,
+          }}
+        >
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<Eye size={16} />}
+            component={Link}
+            href={`/admin/orders/${order.id}`}
+          >
+            Ver
+          </Button>
+          <IconButton size="small">
+            <MoreVertical size={18} />
+          </IconButton>
+        </Box>
+      </TableCell>
+    </TableRow>
+  );
+});
+
+function OrdersTable({ initialData }: OrdersTableProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<
     "all" | IOrderTable["status"]
   >("all");
-  const [page, setPage] = useState(0); // MUI usa 0-based
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const filtered = useMemo(() => {
@@ -77,24 +137,35 @@ export default function OrdersTable({ initialData }: OrdersTableProps) {
       });
   }, [initialData, search, statusFilter]);
 
-  const handleChangePage = (_: unknown, newPage: number) => {
+  const paged = useMemo(() => {
+    const start = page * rowsPerPage;
+    return filtered.slice(start, start + rowsPerPage);
+  }, [filtered, page, rowsPerPage]);
+
+  const handleChangePage = useCallback((_: unknown, newPage: number) => {
     setPage(newPage);
-  };
+  }, []);
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(+event.target.value);
+  const handleChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(+event.target.value);
+      setPage(0);
+    },
+    []
+  );
+
+  const handleStatusChange = useCallback((event: SelectChangeEvent) => {
+    setStatusFilter(event.target.value as "all" | IOrderTable["status"]);
     setPage(0);
-  };
+  }, []);
 
-  const handleStatusChange = (event: SelectChangeEvent) => {
-    setStatusFilter(event.target.value as any);
-    setPage(0);
-  };
-
-  const start = page * rowsPerPage;
-  const paged = filtered.slice(start, start + rowsPerPage);
+  const handleSearchChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearch(event.target.value);
+      setPage(0);
+    },
+    []
+  );
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -121,10 +192,7 @@ export default function OrdersTable({ initialData }: OrdersTableProps) {
             size="small"
             placeholder="Buscar por # de orden o cliente"
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(0);
-            }}
+            onChange={handleSearchChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -219,61 +287,7 @@ export default function OrdersTable({ initialData }: OrdersTableProps) {
               )}
 
               {paged.map((order) => (
-                <TableRow hover key={order.id}>
-                  <TableCell>
-                    <Typography
-                      variant="body2"
-                      sx={{ fontFamily: "monospace", fontWeight: 600 }}
-                    >
-                      {order.id}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" fontWeight={500}>
-                      {order.customer}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      size="small"
-                      label={statusConfig[order.status].label}
-                      color={statusConfig[order.status].color}
-                      variant="outlined"
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography variant="body2" fontWeight={700}>
-                      Q{order.total.toFixed(2)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" color="text.secondary">
-                      {order.createdAt}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        gap: 1,
-                      }}
-                    >
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        startIcon={<Eye size={16} />}
-                        component={Link}
-                        href={`/admin/orders/${order.id}`} 
-                      >
-                        Ver
-                      </Button>
-                      <IconButton size="small">
-                        <MoreVertical size={18} />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
-                </TableRow>
+                <OrderRow key={order.id} order={order} />
               ))}
             </TableBody>
           </Table>
@@ -298,3 +312,5 @@ export default function OrdersTable({ initialData }: OrdersTableProps) {
     </Box>
   );
 }
+
+export default memo(OrdersTable);

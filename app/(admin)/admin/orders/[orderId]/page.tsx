@@ -4,34 +4,32 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import {
-  Box,
-  Breadcrumbs,
-  Button,
-  Chip,
-  Divider,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  SelectChangeEvent,
-  Step,
-  StepLabel,
-  Stepper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
+import type { SelectChangeEvent } from "@mui/material/Select";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 
 import { ArrowLeft, Save, Truck } from "lucide-react";
 import { IOrder } from "../core/interfaces/order.interface";
-import { mockOrders } from "../core/mock/ordersMock";
+import { getOrderByNumber } from "@/mocks/admin";
 
 
 const trackingSteps: {
@@ -57,7 +55,7 @@ export default function OrderDetailPage() {
   const params = useParams<{ orderId: string }>();
 
   const order = useMemo(
-    () => mockOrders.find((o) => o.orderNumber === params.orderId),
+    () => getOrderByNumber(params.orderId),
     [params.orderId]
   );
 
@@ -165,15 +163,15 @@ export default function OrderDetailPage() {
 
       <Grid container spacing={2}>
         <Grid size={{sm: 12, md: 4, lg: 3, xs: 12}} >
-          <Paper sx={{ p: 2, mb: 2 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+          <Paper sx={{ p: 3, mb: 2, borderRadius: 3 }}>
+            <Typography variant="subtitle1" fontWeight={700} gutterBottom>
               Información del cliente
             </Typography>
-            <Divider sx={{ mb: 1.5 }} />
+            <Divider sx={{ mb: 2 }} />
             <Typography variant="body2" fontWeight={600}>
               {order.customer.name}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               {order.customer.email}
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -181,11 +179,11 @@ export default function OrderDetailPage() {
             </Typography>
           </Paper>
 
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+          <Paper sx={{ p: 3, borderRadius: 3 }}>
+            <Typography variant="subtitle1" fontWeight={700} gutterBottom>
               Dirección de envío
             </Typography>
-            <Divider sx={{ mb: 1.5 }} />
+            <Divider sx={{ mb: 2 }} />
             <Typography variant="body2">{order.shippingAddress.address}</Typography>
             <Typography variant="body2">
               {order.shippingAddress.city}, {order.shippingAddress.country}
@@ -206,7 +204,7 @@ export default function OrderDetailPage() {
         </Grid>
 
         <Grid size={{sm: 12, md: 8, lg: 8}} >
-          <Paper sx={{ p: 2, mb: 3 }}>
+          <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
             <Box
               sx={{
                 display: "flex",
@@ -214,12 +212,25 @@ export default function OrderDetailPage() {
                 alignItems: { xs: "flex-start", sm: "center" },
                 justifyContent: "space-between",
                 flexDirection: { xs: "column", sm: "row" },
-                mb: 2,
+                mb: 3,
               }}
             >
-              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                <Truck size={18} />
-                <Typography variant="subtitle1" fontWeight={600}>
+              <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: "primary.main",
+                    color: "white",
+                  }}
+                >
+                  <Truck size={20} />
+                </Box>
+                <Typography variant="subtitle1" fontWeight={700}>
                   Estado de envío
                 </Typography>
               </Box>
@@ -267,11 +278,11 @@ export default function OrderDetailPage() {
           </Paper>
 
           {/* Productos */}
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+          <Paper sx={{ p: 3, borderRadius: 3 }}>
+            <Typography variant="subtitle1" fontWeight={700} gutterBottom>
               Productos de la orden
             </Typography>
-            <Divider sx={{ mb: 1.5 }} />
+            <Divider sx={{ mb: 2 }} />
 
             <TableContainer>
               <Table size="small">
