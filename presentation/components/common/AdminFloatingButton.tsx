@@ -8,7 +8,6 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { Settings, ArrowRight } from "lucide-react";
 import { useIsAdmin } from "@/presentation/hooks/useIsAdmin";
-import { alpha } from "@mui/material/styles";
 
 export const AdminFloatingButton = memo(function AdminFloatingButton() {
   const { isAdmin, isLoading } = useIsAdmin();
