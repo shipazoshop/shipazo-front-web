@@ -23,6 +23,13 @@ export function useIsAdmin() {
 
         // Verificar si es admin usando el servicio
         const isAdminUser = authClientService.isAdminFromStorage(encryptedStorage);
+
+        if (!isAdminUser) {
+          setIsAdmin(false);
+          setIsLoading(false);
+          return;
+        }
+
         setIsAdmin(true);
         setIsLoading(false);
       } catch (error) {
