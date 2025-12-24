@@ -36,7 +36,7 @@ export default function page() {
 
       <OrderDetails />
 
-      <RecentProducts />
+      {/* <RecentProducts /> */}
       <Features2 />
       <Footer1 />
     </>

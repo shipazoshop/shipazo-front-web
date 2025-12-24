@@ -45,6 +45,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: '**victoriassecret.com'
+      },
+      {
+        protocol: "https",
+        hostname: "**static.nike.com"
       }
     ],
     // Optimize with modern formats

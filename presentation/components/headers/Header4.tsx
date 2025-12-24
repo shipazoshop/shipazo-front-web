@@ -5,8 +5,12 @@ import Image from "next/image";
 import SearchForm from "./SearchForm";
 import LanguageSelect from "../common/LanguageSelect";
 import CurrencySelect from "../common/CurrencySelect";
-import UserMenu from "./UserMenu";
+import { useCartProducts } from "@/application";
+
 export default function Header4({ fullWidth = false }) {
+
+  const cartProducts = useCartProducts();
+
   return (
     <header className="tf-header">
       <div className="inner-header line-bt">
@@ -63,7 +67,7 @@ export default function Header4({ fullWidth = false }) {
                         </svg>
                       </span>
                       <span className="count-box style-pst-2 d-none d-xxl-flex">
-                        0
+                        {cartProducts.length}
                       </span>
                       <p className="body-small">Your cart:</p>
                     </a>

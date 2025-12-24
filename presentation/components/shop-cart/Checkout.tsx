@@ -1,12 +1,158 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { MapPinHouse, Edit, User, Phone, CreditCard } from "lucide-react";
 import { useCartProducts, useCartTotalPrice } from "@/application/stores/useCartStore";
+import { useAddressRepository } from "@/presentation/hooks/repositories/useAddressRepository";
+import { useCustomerInfoRepository } from "@/presentation/hooks/repositories/useCustomerInfoRepository";
+import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
+import { useNewOrderStore } from "@/application/stores/useNewOrderStore";
+import { formatGTQ } from "@/shared/utils";
+import type { CreateOrderDto } from "@/domain/entities/order.entity";
 
 export default function Checkout() {
+  const router = useRouter();
   const cartProducts = useCartProducts();
   const totalPrice = useCartTotalPrice();
+
+  // Obtener datos del cliente y direcciones
+  const { getCustomerInfo } = useCustomerInfoRepository();
+  const { getAddresses } = useAddressRepository();
+  const { createOrder } = useOrdersRepository();
+  const setOrder = useNewOrderStore((state) => state.setOrder);
+
+  const customerInfoQuery = getCustomerInfo();
+  const addressesQuery = getAddresses();
+  const createOrderMutation = createOrder();
+
+  const customerInfo = customerInfoQuery.data;
+  const addresses = addressesQuery.data || [];
+
+  // Estado para la dirección seleccionada
+  const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const selectedAddress = addresses.find((addr) => addr.id === selectedAddressId);
+
+  // Seleccionar la dirección por defecto al cargar
+  useEffect(() => {
+    if (addresses.length > 0 && !selectedAddressId) {
+      const defaultAddress = addresses.find((addr) => addr.isDefault);
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress.id);
+      } else {
+        // Si no hay dirección por defecto, seleccionar la primera
+        setSelectedAddressId(addresses[0].id);
+      }
+    }
+  }, [addresses, selectedAddressId]);
+
+  // Función para truncar texto
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
+  // Función para editar dirección
+  const handleEditAddress = () => {
+    if (selectedAddressId) {
+      // Guardar la ruta actual para volver después de editar
+      sessionStorage.setItem("redirectAfterAddressEdit", "/checkout");
+      router.push(`/configurations/address/edit/${selectedAddressId}`);
+    }
+  };
+
+  // Validación y creación de orden
+  const handleCreateOrder = async () => {
+    // Validar que exista información del cliente
+    if (!customerInfo) {
+      alert("Por favor, complete su información de contacto primero.");
+      return;
+    }
+
+    // Validar que haya una dirección seleccionada
+    if (!selectedAddressId || !selectedAddress) {
+      alert("Por favor, seleccione una dirección de entrega.");
+      return;
+    }
+
+    // Validar que haya productos en el carrito
+    if (cartProducts.length === 0) {
+      alert("El carrito está vacío. Agrega productos para crear una orden.");
+      return;
+    }
+
+    // VALIDACIONES DE PAGO - ACTUALMENTE DESHABILITADAS
+    // Descomentar estas validaciones cuando se implemente la pasarela de pago:
+    /*
+    const paymentMethod = document.querySelector<HTMLInputElement>(
+      'input[name="payment-method"]:checked'
+    );
+
+    if (!paymentMethod) {
+      alert("Por favor, seleccione un método de pago.");
+      return;
+    }
+
+    const cardNumber = document.querySelector<HTMLInputElement>(
+      '.number-credit-card'
+    )?.value;
+
+    if (!cardNumber || cardNumber.trim() === "") {
+      alert("Por favor, ingrese el número de tarjeta.");
+      return;
+    }
+
+    // Agregar más validaciones de campos de pago según sea necesario
+    */
+
+    // Crear el DTO para la orden
+    const orderData: CreateOrderDto = {
+      products: cartProducts.map((item) => ({
+        storeLink: item.url,
+        productDetails: {
+          name: item.productData.title,
+          description: item.productData.description || "",
+          price: item.productData.price_details.calculatedPriceGtq,
+          imageUrl: item.productData.images?.[0] || "",
+          additionalInfo: {
+            brand: item.productData.brand,
+            weight: item.productData.weight,
+            dimensions: item.productData.dimensions,
+          },
+        },
+        quantity: item.quantity,
+      })),
+      shippingAddressId: selectedAddressId,
+      paymentMethod: "pending", // Cambiar cuando se implemente la pasarela de pago
+    };
+
+    setIsCreatingOrder(true);
+
+    try {
+      // Crear la orden
+      createOrderMutation.mutate(orderData, {
+        onSuccess: (response) => {
+          // Guardar la orden en el store
+          setOrder(response.data);
+          // Navegar a order-details
+          router.push("/order-details");
+        },
+        onError: (error: any) => {
+          console.error("Error al crear la orden:", error);
+          alert(
+            error?.message || "Ocurrió un error al crear la orden. Intenta nuevamente."
+          );
+          setIsCreatingOrder(false);
+        },
+      });
+    } catch (error) {
+      console.error("Error al crear la orden:", error);
+      alert("Ocurrió un error al crear la orden. Intenta nuevamente.");
+      setIsCreatingOrder(false);
+    }
+  };
 
   return (
     <section className="tf-sp-2">
@@ -45,99 +191,197 @@ export default function Checkout() {
         </div>
         <div className="tf-checkout-wrap flex-lg-nowrap">
           <div className="page-checkout">
+            {/* SECCIÓN DE CONTACTO */}
             <div className="wrap">
               <h5 className="title has-account">
                 <span className="fw-semibold">Contact</span>
-                <span className="body-text-3">
-                  Have an account?
-                  <a
-                    href="#register"
-                    data-bs-toggle="modal"
-                    className="body-text-3 text-secondary link"
-                  >
-                    Login
-                  </a>
-                </span>
               </h5>
-              <form action="#" className="form-checkout-contact">
-                <label className="body-md-2 fw-semibold">Email or Phone</label>
-                <input
-                  className="def"
-                  type="text"
-                  placeholder="Your contact"
-                  required
-                />
-                <p className="caption text-main-2 font-2">
-                  Order information will be sent to your email
-                </p>
-              </form>
+              {customerInfoQuery.isLoading ? (
+                <div className="p-4 text-center">
+                  <p>Cargando información del cliente...</p>
+                </div>
+              ) : customerInfo ? (
+                <div
+                  className="customer-info-card"
+                  style={{
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    padding: "20px",
+                    backgroundColor: "#f9fafb",
+                  }}
+                >
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <User size={20} style={{ color: "var(--primary)" }} />
+                      <div>
+                        <p className="body-text-3 text-main-2 mb-0">Nombre</p>
+                        <p className="body-md-2 fw-semibold mb-0">
+                          {customerInfo.recipientName}
+                        </p>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <Phone size={20} style={{ color: "var(--primary)" }} />
+                      <div>
+                        <p className="body-text-3 text-main-2 mb-0">Teléfono</p>
+                        <p className="body-md-2 fw-semibold mb-0">
+                          {customerInfo.phoneNumber}
+                        </p>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <CreditCard size={20} style={{ color: "var(--primary)" }} />
+                      <div>
+                        <p className="body-text-3 text-main-2 mb-0">NIT/DPI</p>
+                        <p className="body-md-2 fw-semibold mb-0">
+                          {customerInfo.identificationNumber}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="caption text-main-2 font-2 mt-3 mb-0">
+                    La información de la orden será enviada a tu correo electrónico
+                  </p>
+                </div>
+              ) : (
+                <div className="p-4 text-center">
+                  <p>No se encontró información del cliente</p>
+                </div>
+              )}
             </div>
+
+            {/* SECCIÓN DE ENTREGA */}
             <div className="wrap">
               <h5 className="title fw-semibold">Delivery</h5>
-              <form action="#" className="def">
-                <fieldset>
-                  <label>Country/Region</label>
-                  <div className="tf-select">
-                    <select>
-                      <option>Select your Country/Region</option>
-                      <option>American</option>
-                    </select>
-                  </div>
-                </fieldset>
-                <div className="cols">
-                  <fieldset>
-                    <label>First name</label>
-                    <input type="text" placeholder="e.g. Jonn" required />
-                  </fieldset>
-                  <fieldset>
-                    <label>Last name</label>
-                    <input type="text" placeholder="e.g. Doe" required />
-                  </fieldset>
+              {addressesQuery.isLoading ? (
+                <div className="p-4 text-center">
+                  <p>Cargando direcciones...</p>
                 </div>
-                <div className="cols">
-                  <fieldset>
-                    <label>City</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. New York"
-                      required
-                    />
-                  </fieldset>
-                  <fieldset>
-                    <label>State</label>
+              ) : addresses.length > 0 ? (
+                <div>
+                  {/* Select de direcciones */}
+                  <div style={{ marginBottom: "20px" }}>
+                    <label className="body-md-2 fw-semibold mb-2">
+                      Selecciona tu dirección de entrega
+                    </label>
                     <div className="tf-select">
-                      <select>
-                        <option>Select</option>
-                        <option>Alabam</option>
-                        <option>Alaska</option>
-                        <option>California</option>
-                        <option>Georgia</option>
-                        <option>Washington</option>
+                      <select
+                        value={selectedAddressId}
+                        onChange={(e) => setSelectedAddressId(e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "12px",
+                          borderRadius: "6px",
+                          border: "1px solid #e5e7eb",
+                        }}
+                      >
+                        {addresses.map((address) => (
+                          <option key={address.id} value={address.id}>
+                            {address.alias} - {truncateText(address.address, 15)}
+                          </option>
+                        ))}
                       </select>
                     </div>
-                  </fieldset>
-                  <fieldset>
-                    <label>ZIP code</label>
-                    <input type="text" placeholder="e.g. 83254" required />
-                  </fieldset>
+                  </div>
+
+                  {/* Card con detalles de la dirección seleccionada */}
+                  {selectedAddress && (
+                    <div
+                      className="address-detail-card"
+                      style={{
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                        padding: "20px",
+                        backgroundColor: "#f9fafb",
+                        position: "relative",
+                      }}
+                    >
+                      <div style={{ display: "flex", gap: "15px", marginBottom: "15px" }}>
+                        <MapPinHouse
+                          size={24}
+                          style={{ color: "var(--primary)", flexShrink: 0 }}
+                        />
+                        <div style={{ flex: 1 }}>
+                          <h6 className="fw-semibold mb-2">{selectedAddress.alias}</h6>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            <div>
+                              <p className="body-text-3 text-main-2 mb-0">Dirección</p>
+                              <p className="body-md-2 mb-0">{selectedAddress.address}</p>
+                            </div>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                              <div>
+                                <p className="body-text-3 text-main-2 mb-0">Ciudad</p>
+                                <p className="body-md-2 mb-0">{selectedAddress.city}</p>
+                              </div>
+                              <div>
+                                <p className="body-text-3 text-main-2 mb-0">
+                                  Código Postal
+                                </p>
+                                <p className="body-md-2 mb-0">
+                                  {selectedAddress.postalCode}
+                                </p>
+                              </div>
+                            </div>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                              <div>
+                                <p className="body-text-3 text-main-2 mb-0">
+                                  Departamento
+                                </p>
+                                <p className="body-md-2 mb-0">
+                                  {selectedAddress.stateProvince}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="body-text-3 text-main-2 mb-0">País</p>
+                                <p className="body-md-2 mb-0">
+                                  {selectedAddress.countryCode}
+                                </p>
+                              </div>
+                            </div>
+                            {selectedAddress.additionalSpecifications && (
+                              <div>
+                                <p className="body-text-3 text-main-2 mb-0">
+                                  Información adicional
+                                </p>
+                                <p className="body-md-2 mb-0">
+                                  {selectedAddress.additionalSpecifications}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleEditAddress}
+                        className="tf-btn btn-gray-2"
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        <Edit size={18} />
+                        <span>Editar dirección</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <fieldset>
-                  <label>Address</label>
-                  <input
-                    type="email"
-                    placeholder="Your detailed address"
-                    required
-                  />
-                </fieldset>
-                <fieldset>
-                  <label>Order note</label>
-                  <textarea
-                    placeholder="Note on your order"
-                    defaultValue={""}
-                  />
-                </fieldset>
-              </form>
+              ) : (
+                <div className="p-4 text-center">
+                  <p>No tienes direcciones registradas</p>
+                  <Link
+                    href="/configurations/address/create"
+                    className="tf-btn mt-3"
+                  >
+                    Crear Dirección
+                  </Link>
+                </div>
+              )}
             </div>
+
+            {/* SECCIÓN DE PAGO */}
             <div className="wrap">
               <h5 className="title">Payment</h5>
               <form action="#" className="form-payment">
@@ -194,34 +438,18 @@ export default function Checkout() {
                       </div>
                     </div>
                   </div>
-                  <div className="payment-item">
-                    <label
-                      htmlFor="delivery-method"
-                      className="payment-header radio-item collapsed"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#delivery-payment"
-                      aria-controls="delivery-payment"
-                      aria-expanded="false"
-                    >
-                      <input
-                        type="radio"
-                        name="payment-method"
-                        className="tf-check-rounded"
-                        id="delivery-method"
-                      />
-                      <span className="body-text-3">Cash on delivery</span>
-                    </label>
-                    <div
-                      id="delivery-payment"
-                      className="collapse"
-                      data-bs-parent="#payment-box"
-                    />
-                  </div>
                 </div>
                 <div className="box-btn">
-                  <Link href={`/order-details`} className="tf-btn w-100">
-                    <span className="text-white">Place order</span>
-                  </Link>
+                  <button
+                    onClick={handleCreateOrder}
+                    className="tf-btn w-100"
+                    disabled={isCreatingOrder}
+                    style={{ opacity: isCreatingOrder ? 0.6 : 1 }}
+                  >
+                    <span className="text-white">
+                      {isCreatingOrder ? "Creando orden..." : "Crear orden"}
+                    </span>
+                  </button>
                 </div>
               </form>
             </div>
@@ -249,12 +477,12 @@ export default function Checkout() {
                           {product.productData.title}
                         </a>
                         <p className="price-quantity price-text fw-semibold">
-                          ${product.productData.price.toFixed(2)}
+                          {formatGTQ(product.productData.price_details.calculatedPriceGtq)}
                           <span className="body-md-2 text-main-2 fw-normal">
                             X{product.quantity}
                           </span>
                         </p>
-                        <p className="body-md-2 text-main-2">Gray</p>
+                        <p className="body-md-2 text-main-2">{product.productData.brand}</p>
                       </div>
                     </li>
                   ))}
@@ -290,7 +518,7 @@ export default function Checkout() {
               <ul className="sec-total-price">
                 <li>
                   <span className="body-text-3">Sub total</span>
-                  <span className="body-text-3">${totalPrice.toFixed(2)}</span>
+                  <span className="body-text-3">{formatGTQ(totalPrice)}</span>
                 </li>
                 <li>
                   <span className="body-text-3">Shipping</span>
@@ -299,7 +527,7 @@ export default function Checkout() {
                 <li>
                   <span className="body-md-2 fw-semibold">Total</span>
                   <span className="body-md-2 fw-semibold text-primary">
-                    ${totalPrice.toFixed(2)}
+                    {formatGTQ(totalPrice)}
                   </span>
                 </li>
               </ul>
@@ -310,4 +538,3 @@ export default function Checkout() {
     </section>
   );
 }
-

@@ -1,37 +1,17 @@
 import React from "react";
 import Link from "next/link";
+import { useCartProducts } from "@/application";
+import { Heart } from "lucide-react";
 export default function Toolbar() {
+  const cartProducts = useCartProducts();
   return (
     <div className="tf-toolbar-bottom d-xl-none">
       <div className="toolbar-item">
         <Link href={`/shop-default`}>
           <span className="toolbar-icon">
-            <svg
-              width={20}
-              height={20}
-              viewBox="0 0 22 23"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6.5 1H2.5C1.5 1 1 1.5 1 2.5V6.5C1 7.5 1.5 8 2.5 8H6.5C7.5 8 8 7.5 8 6.5V2.5C8 1.5 7.5 1 6.5 1ZM7 6.5C7 6.75 6.75 7 6.5 7H2.5C2.25 7 2 6.75 2 6.5V2.5C2 2.25 2.25 2 2.5 2H6.5C6.75 2 7 2.25 7 2.5V6.5Z"
-                fill="black"
-              />
-              <path
-                d="M17.5 1H13.5C12.5 1 12 1.5 12 2.5V6.5C12 7.5 12.5 8 13.5 8H17.5C18.5 8 19 7.5 19 6.5V2.5C19 1.5 18.5 1 17.5 1ZM18 6.5C18 6.75 17.75 7 17.5 7H13.5C13.25 7 13 6.75 13 6.5V2.5C13 2.25 13.25 2 13.5 2H17.5C17.75 2 18 2.25 18 2.5V6.5Z"
-                fill="black"
-              />
-              <path
-                d="M6.5 12H2.5C1.5 12 1 12.5 1 13.5V17.5C1 18.5 1.5 19 2.5 19H6.5C7.5 19 8 18.5 8 17.5V13.5C8 12.5 7.5 12 6.5 12ZM7 17.5C7 17.75 6.75 18 6.5 18H2.5C2.25 18 2 17.75 2 17.5V13.5C2 13.25 2.25 13 2.5 13H6.5C6.75 13 7 13.25 7 13.5V17.5Z"
-                fill="black"
-              />
-              <path
-                d="M17.5 12H13.5C12.5 12 12 12.5 12 13.5V17.5C12 18.5 12.5 19 13.5 19H17.5C18.5 19 19 18.5 19 17.5V13.5C19 12.5 18.5 12 17.5 12ZM18 17.5C18 17.75 17.75 18 17.5 18H13.5C13.25 18 13 17.75 13 17.5V13.5C13 13.25 13.25 13 13.5 13H17.5C17.75 13 18 13.25 18 13.5V17.5Z"
-                fill="black"
-              />
-            </svg>
+            <Heart width={20} height={20} />
           </span>
-          <span className="toolbar-label">Shop</span>
+          <span className="toolbar-label">Wishlist</span>
         </Link>
       </div>
       <div className="toolbar-item">
@@ -106,7 +86,7 @@ export default function Toolbar() {
                 fill="#333E48"
               />
             </svg>
-            <span className="toolbar-count">10</span>
+            <span className="toolbar-count">{cartProducts.length}</span>
           </span>
           <span className="toolbar-label">Cart</span>
         </a>
