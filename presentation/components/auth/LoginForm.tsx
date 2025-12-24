@@ -1,12 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useAuthRepository } from "@/presentation/hooks/repositories/useAuthRepository";
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { googleAuth } = useAuthRepository();
+  const searchParams = useSearchParams();
+
+  // Guardar el redirect en sessionStorage si viene en la URL
+  useEffect(() => {
+    const redirect = searchParams.get("redirect");
+    if (redirect) {
+      sessionStorage.setItem("redirectAfterLogin", redirect);
+    }
+  }, [searchParams]);
 
   const handleGoogleLogin = () => {
     setIsLoading(true);

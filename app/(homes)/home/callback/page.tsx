@@ -16,8 +16,30 @@ function AuthCallbackContent() {
     if (accessToken) {
       setAccessToken(accessToken);
 
-      globalThis.history.replaceState({}, '', '/callback');
-      router.push("/home");
+      // Sincronizar localStorage con cookies después de un breve delay
+      // para asegurar que Zustand persist haya terminado de guardar
+      setTimeout(() => {
+        const encryptedStorage = localStorage.getItem('auth-storage');
+        if (encryptedStorage) {
+          // Copiar el storage encriptado a las cookies
+          document.cookie = `auth-storage=${encryptedStorage}; path=/; max-age=2592000; SameSite=Lax`;
+        }
+
+        // Limpiar la URL
+        globalThis.history.replaceState({}, '', '/callback');
+
+        // Verificar si hay una URL de redirección guardada
+        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+
+        if (redirectUrl) {
+          // Limpiar el sessionStorage y redirigir a la URL guardada
+          sessionStorage.removeItem('redirectAfterLogin');
+          router.push(redirectUrl);
+        } else {
+          // Redirección por defecto
+          router.push("/home");
+        }
+      }, 100);
     } else {
       // Si no hay token, mostrar error
       setError("No se recibió el token de autenticación");
@@ -25,7 +47,7 @@ function AuthCallbackContent() {
         router.push("/login");
       }, 3000);
     }
-  }, [searchParams]);
+  }, [searchParams, router, setAccessToken]);
 
   return (
     <div style={{

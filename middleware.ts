@@ -53,6 +53,30 @@ export function middleware(request: NextRequest) {
   //   }
   // }
 
+  // Proteger rutas de checkout y order-details
+  if (pathname.startsWith("/checkout") || pathname.startsWith("/order-details")) {
+    // Obtener el storage encriptado de las cookies
+    const encryptedStorage = request.cookies.get("auth-storage")?.value;
+
+    // Si no hay storage, redirigir al login con redirect parameter
+    if (!encryptedStorage) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Verificar que el usuario esté autenticado
+    const isAuthenticated = authMiddlewareService.isAuthenticated(encryptedStorage);
+
+    if (!isAuthenticated) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Usuario autenticado - permitir acceso
+  }
+
   return NextResponse.next();
 }
 
@@ -63,13 +87,15 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match todas las rutas admin y configurations excepto:
+     * Match todas las rutas admin, checkout, order-details y configurations excepto:
      * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
     "/admin/:path*",
+    "/checkout/:path*",
+    "/order-details/:path*",
     //"/configurations/:path*",
   ],
 };

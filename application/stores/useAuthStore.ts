@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import { encryptionService } from "@/infrastructure";
@@ -6,10 +8,12 @@ interface AuthStore {
   // State
   accessToken: string | null;
   isAuthenticated: boolean;
+  isHydrated: boolean; // Indica si el store ya se hidrato desde localStorage
 
   // Actions
   setAccessToken: (token: string) => void;
   clearAuth: () => void;
+  setHydrated: () => void;
 }
 
 // Storage encriptado personalizado
@@ -47,6 +51,7 @@ export const useAuthStore = create<AuthStore>()(
       // Initial state
       accessToken: null,
       isAuthenticated: false,
+      isHydrated: false,
 
       // Actions
       setAccessToken: (token: string) => {
@@ -61,6 +66,15 @@ export const useAuthStore = create<AuthStore>()(
           accessToken: null,
           isAuthenticated: false,
         });
+
+        // Eliminar la cookie de autenticación
+        if (typeof document !== 'undefined') {
+          document.cookie = 'auth-storage=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        }
+      },
+
+      setHydrated: () => {
+        set({ isHydrated: true });
       },
     }),
     {
@@ -70,6 +84,18 @@ export const useAuthStore = create<AuthStore>()(
         accessToken: state.accessToken,
         isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Este callback se ejecuta cuando termina la hidratación
+        state?.setHydrated();
+
+        // Sincronizar localStorage con cookies después de hidratar
+        if (globalThis.window !== undefined) {
+          const encryptedStorage = localStorage.getItem('auth-storage');
+          if (encryptedStorage && state?.isAuthenticated) {
+            document.cookie = `auth-storage=${encryptedStorage}; path=/; max-age=2592000; SameSite=Lax`;
+          }
+        }
+      },
     }
   )
 );
@@ -77,5 +103,6 @@ export const useAuthStore = create<AuthStore>()(
 // Selectors
 export const useAccessToken = () => useAuthStore((state) => state.accessToken);
 export const useIsAuthenticated = () => useAuthStore((state) => state.isAuthenticated);
+export const useIsHydrated = () => useAuthStore((state) => state.isHydrated);
 export const useSetAccessToken = () => useAuthStore((state) => state.setAccessToken);
 export const useClearAuth = () => useAuthStore((state) => state.clearAuth);
