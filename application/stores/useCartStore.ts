@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { CartProduct } from "@/domain/mappers/product.mapper";
@@ -65,7 +67,7 @@ export const useCartStore = create<CartStore>()(
         set((state) => {
           const newCartProducts = [...state.cartProducts, productToAdd];
           const newTotalPrice = newCartProducts.reduce(
-            (acc, p) => acc + p.quantity * (p.productData.price ?? 0),
+            (acc, p) => acc + p.quantity * (p.productData.price_details.calculatedPriceGtq ?? 0),
             0
           );
 
@@ -109,7 +111,7 @@ export const useCartStore = create<CartStore>()(
           );
 
           const newTotalPrice = newCartProducts.reduce(
-            (acc, p) => acc + p.quantity * (p.productData.price ?? 0),
+            (acc, p) => acc + p.quantity * (p.productData.price_details.calculatedPriceGtq ?? 0),
             0
           );
 
@@ -124,7 +126,7 @@ export const useCartStore = create<CartStore>()(
         set((state) => {
           const newCartProducts = state.cartProducts.filter((item) => item.productData.product_id !== id);
           const newTotalPrice = newCartProducts.reduce(
-            (acc, p) => acc + p.quantity * (p.productData.price ?? 0),
+            (acc, p) => acc + p.quantity * (p.productData.price_details.calculatedPriceGtq ?? 0),
             0
           );
 
@@ -147,7 +149,7 @@ export const useCartStore = create<CartStore>()(
       _calculateTotalPrice: () => {
         set((state) => ({
           totalPrice: state.cartProducts.reduce(
-            (acc, p) => acc + p.quantity * (p.productData.price ?? 0),
+            (acc, p) => acc + p.quantity * (p.productData.price_details.calculatedPriceGtq ?? 0),
             0
           ),
         }));
