@@ -1,6 +1,7 @@
 import QueryProvider from "@/application/providers/QueryProvider";
 import ClientLayout from "./ClientLayout";
 import Modals from "./Modals";
+import { GlobalSnackbar } from "@/presentation/components/common/GlobalSnackbar";
 import "../public/scss/main.scss";
 import "photoswipe/dist/photoswipe.css";
 import type { ReactNode } from "react";
@@ -37,6 +38,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
           <QueryProvider>
             {children}
             <Modals />
+            <GlobalSnackbar />
           </QueryProvider>
         </div>
       </body>

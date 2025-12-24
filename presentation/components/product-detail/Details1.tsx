@@ -214,12 +214,12 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         <i className={`icon-heart ${isInWishlist ? 'text-danger' : ''}`} style={{ fontSize: '18px' }} />
                         {isInWishlist ? 'In Wishlist' : 'Add to Wishlist'}
                       </button>
-                      <Link
+                      {/* <Link
                         href={`/shop-cart`}
                         className="tf-btn text-white btn-gray"
                       >
                         Buy now
-                      </Link>
+                      </Link> */}
                     </div>
                     <div className="product-detail">
                       <p className="caption">Details</p>

@@ -7,12 +7,13 @@ export default function ClientLayout() {
   const bootstrapRef = useRef<any>(null);
   const wowRef = useRef<any>(null);
 
-  // Skip e-commerce specific effects on admin and configurations routes
+  // Skip e-commerce specific effects on admin, configurations and orders routes
   const isAdminRoute = pathname.startsWith("/admin");
   const isConfigurationsRoute = pathname.startsWith("/configurations");
-  const skipEcommerceEffects = isAdminRoute || isConfigurationsRoute;
+  const isOrdersRoute = pathname.startsWith("/orders");
+  const skipEcommerceEffects = isAdminRoute || isConfigurationsRoute || isOrdersRoute;
 
-  // Bootstrap - Load only once on mount (skip on admin and configurations routes)
+  // Bootstrap - Load only once on mount (skip on admin, configurations and orders routes)
   useEffect(() => {
     if (skipEcommerceEffects) return;
 
@@ -40,7 +41,7 @@ export default function ClientLayout() {
 
   // Header scroll behavior - Optimized with requestAnimationFrame
   useEffect(() => {
-    // Skip on admin and configurations routes - they use MUI layout
+    // Skip on admin, configurations and orders routes - they use MUI layout
     if (skipEcommerceEffects) return;
 
     let lastScrollTop = 0;
@@ -93,7 +94,7 @@ export default function ClientLayout() {
 
   // WOW animations - Load only once on mount
   useEffect(() => {
-    // Skip on admin and configurations routes - they don't use WOW animations
+    // Skip on admin, configurations and orders routes - they don't use WOW animations
     if (skipEcommerceEffects) return;
 
     if (globalThis.window !== undefined && !wowRef.current) {

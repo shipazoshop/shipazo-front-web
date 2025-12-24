@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Nav from "./Nav";
 import Link from "next/link";
@@ -6,7 +8,6 @@ import SearchForm from "./SearchForm";
 import LanguageSelect from "../common/LanguageSelect";
 import CurrencySelect from "../common/CurrencySelect";
 import { useCartProducts } from "@/application";
-
 export default function Header4({ fullWidth = false }) {
 
   const cartProducts = useCartProducts();
@@ -36,8 +37,6 @@ export default function Header4({ fullWidth = false }) {
             <div className=" col-lg-2 col-6 d-flex align-items-center justify-content-end">
               <div className="header-right">
                 <ul className="nav-icon justify-content-xl-center">
-                  <UserMenu />
-
                   <li className="nav-cart">
                     <a
                       href="#shoppingCart"

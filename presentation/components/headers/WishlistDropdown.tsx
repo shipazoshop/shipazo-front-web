@@ -34,7 +34,7 @@ export default function WishlistDropdown() {
             <ul className="row-demo" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
               {displayedProducts.map((product) => (
                 <li key={product.productData.product_id} className="demo-item">
-                  <Link href={`/product-detail/${product.productData.product_id}`}>
+                  <Link href={`/product-detail/${product.productData.product_id}?url=${product.url}`}>
                     <div className="demo-image relative">
                       <Image
                         src={product.productData.images?.[0] || "/images/product/default.jpg"}

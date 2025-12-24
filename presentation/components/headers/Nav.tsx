@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NavMenuItem from "./NavMenuItem";
 import WishlistDropdown from "./WishlistDropdown";
+import { Heart } from "lucide-react";
 
 export default function Nav() {
   const pathname = usePathname();
@@ -20,8 +21,8 @@ export default function Nav() {
               style={{
                 aspectRatio: "185 / 41"
               }}
-              width={300}
-              height={100}
+              width={145}
+              height={41}
             />
           </Link>
         </div>
@@ -29,7 +30,7 @@ export default function Nav() {
       <NavMenuItem
         label="Wishlist"
         icon={
-          <i className="icon-hearth" style={{ fontSize: '18px' }} />
+          <Heart width={20} height={20} />
         }
         isActive={pathname === "/wishlist"}
       >

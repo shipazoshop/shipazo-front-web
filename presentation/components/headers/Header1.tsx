@@ -5,6 +5,7 @@ import Nav from "./Nav";
 import Link from "next/link";
 import CartLength from "../common/CartLength";
 import UserMenu from "./UserMenu";
+import { Package } from "lucide-react";
 
 export default function Header1() {
   return (
@@ -25,47 +26,15 @@ export default function Header1() {
             <div className="col-xl-3 d-none d-xl-flex align-items-center justify-content-end">
               <div className="header-bt-right">
                 <ul className="nav-icon style-2">
-                  <li>
-                    <Link href={`/analytics`} className="d-flex align-items-center" title="Sales Analytics">
-                      <svg
-                        width={26}
-                        height={26}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M3 3V21H21"
-                          stroke="#333E48"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M7 16L12 11L15 14L21 8"
-                          stroke="#333E48"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M21 8V12"
-                          stroke="#333E48"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M17 8H21"
-                          stroke="#333E48"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                  <li className="nav-shop-cart">
+                    <Link
+                      href="/orders"
+                      className="d-flex align-items-center"
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Package size={26} className="text-main link" strokeWidth={1.5} />
                     </Link>
                   </li>
-
                   <li className="nav-shop-cart">
                     <a
                       href="#shoppingCart"

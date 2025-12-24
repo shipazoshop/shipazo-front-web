@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useIsAuthenticated, useClearAuth } from "@/application/stores/useAuthStore";
+import { CircleUserRound } from "lucide-react";
 
 export default function UserMenu() {
   const router = useRouter();
@@ -67,19 +68,7 @@ export default function UserMenu() {
             opacity: 0.5,
           }}
         >
-          <svg
-            width={26}
-            height={26}
-            viewBox="0 0 26 26"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="13" cy="8" r="4" fill="#333E48" />
-            <path
-              d="M5 22C5 17.5817 8.58172 14 13 14C17.4183 14 21 17.5817 21 22"
-              fill="#333E48"
-            />
-          </svg>
+          <CircleUserRound width={30} height={30} strokeWidth={0.75} />
         </div>
       </li>
     );
@@ -100,19 +89,7 @@ export default function UserMenu() {
         }}
         title="Mi cuenta"
       >
-        <svg
-          width={26}
-          height={26}
-          viewBox="0 0 26 26"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle cx="13" cy="8" r="4" fill="#333E48" />
-          <path
-            d="M5 22C5 17.5817 8.58172 14 13 14C17.4183 14 21 17.5817 21 22"
-            fill="#333E48"
-          />
-        </svg>
+        <CircleUserRound width={30} height={30} strokeWidth={0.75} />
       </button>
 
       {/* Dropdown Menu */}

@@ -2,15 +2,47 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCartProducts, useCartTotalPrice, useCartActions } from "@/application/stores/useCartStore";
+import { useIsAuthenticated, useIsHydrated } from "@/application/stores/useAuthStore";
+import { formatGTQ } from "@/shared/utils";
 
 export default function ShopCart() {
+  const router = useRouter();
   const cartProducts = useCartProducts();
   const totalPrice = useCartTotalPrice();
   const { updateQuantity, removeFromCart } = useCartActions();
+  const isAuthenticated = useIsAuthenticated();
+  const isHydrated = useIsHydrated();
 
   const removeItem = (id: string) => {
     removeFromCart(id);
+  };
+
+  const handleProceedToCheckout = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Solo validar si el store ya está hidratado
+    if (!isHydrated) return;
+
+    if (!isAuthenticated) {
+      e.preventDefault();
+      // Guardar la URL actual para volver después del login
+      sessionStorage.setItem('redirectAfterLogin', '/shop-cart');
+      router.push('/login');
+    }
+    // Si está autenticado, el Link normal funcionará
+  };
+
+  const handleContinueShopping = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Solo validar si el store ya está hidratado
+    if (!isHydrated) return;
+
+    if (!isAuthenticated) {
+      e.preventDefault();
+      // Guardar la URL actual para volver después del login
+      sessionStorage.setItem('redirectAfterLogin', '/shop-cart');
+      router.push('/login');
+    }
+    // Si está autenticado, el Link normal funcionará
   };
 
   return (
@@ -81,17 +113,7 @@ export default function ShopCart() {
                             {product.productData.title}
                           </a>
                           <div className="variant-box">
-                            <p className="body-text-3">Color:</p>
-                            <div className="tf-select">
-                              <select>
-                                <option>Yellow</option>
-                                <option>Green</option>
-                                <option>Black</option>
-                                <option>Red</option>
-                                <option>Beige</option>
-                                <option>Pink</option>
-                              </select>
-                            </div>
+                            <p className="body-text-3">Marca: {product.productData.brand}</p>
                           </div>
                         </div>
                       </td>
@@ -100,7 +122,7 @@ export default function ShopCart() {
                         className="tf-cart-item_price"
                       >
                         <p className="cart-price price-on-sale price-text fw-medium">
-                          ${product.productData.price.toFixed(2)}
+                          {formatGTQ(product.productData.price_details.calculatedPriceGtq)}
                         </p>
                       </td>
                       <td
@@ -138,7 +160,7 @@ export default function ShopCart() {
                         className="tf-cart-item_total"
                       >
                         <p className="cart-total total-price price-text fw-medium">
-                          ${(product.productData.price * product.quantity).toFixed(2)}
+                          {formatGTQ((product.productData.price_details.calculatedPriceGtq * product.quantity))}
                         </p>
                       </td>
                       <td
@@ -171,25 +193,26 @@ export default function ShopCart() {
           </div>
           <div className="cart-bottom">
             <div className="ip-discount-code">
-              <input
-                type="text"
-                placeholder="Enter your cupon code"
-                required
-              />
-              <button type="submit" className="tf-btn btn-gray">
-                <span className="text-white">Apply coupon</span>
-              </button>
+
             </div>
             <span className="last-total-price main-title fw-semibold">
-              Total: ${totalPrice.toFixed(2)}
+              Total: {formatGTQ(totalPrice)}
             </span>
           </div>
         </form>
         <div className="box-btn">
-          <Link href={`/product-grid`} className="tf-btn btn-gray">
+          <Link
+            href={`/product-grid`}
+            className="tf-btn btn-gray"
+            onClick={handleContinueShopping}
+          >
             <span className="text-white">Continue shopping</span>
           </Link>
-          <Link href={`/checkout`} className="tf-btn">
+          <Link
+            href={`/checkout`}
+            className="tf-btn"
+            onClick={handleProceedToCheckout}
+          >
             <span className="text-white">Proceed to checkout</span>
           </Link>
         </div>
