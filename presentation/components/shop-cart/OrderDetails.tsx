@@ -10,13 +10,6 @@ export default function OrderDetails() {
   const order = useNewOrderStore((state) => state.order);
   const clearOrder = useNewOrderStore((state) => state.clearOrder);
 
-  // Si no hay orden, redirigir al home
-  useEffect(() => {
-    if (!order) {
-      router.push("/home");
-    }
-  }, [order, router]);
-
   // Limpiar la orden cuando el componente se desmonte
   useEffect(() => {
     return () => {
@@ -24,8 +17,24 @@ export default function OrderDetails() {
     };
   }, [clearOrder]);
 
+  // Si no hay orden, mostrar un mensaje
   if (!order) {
-    return null;
+    return (
+      <section className="tf-sp-2">
+        <div className="container">
+          <div className="tf-order-detail">
+            <div className="order-notice" style={{ backgroundColor: "#f0f0f0" }}>
+              <p>No se encontró información de la orden.</p>
+            </div>
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <Link href="/home" className="tf-btn btn-fill radius-4">
+                Volver al inicio
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
