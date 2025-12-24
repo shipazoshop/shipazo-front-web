@@ -15,21 +15,32 @@ export default function EditAddressPage() {
   const router = useRouter();
   const { getAddresses, updateAddress } = useAddressRepository();
   const addressesQuery = getAddresses();
-  const updateMutation = updateAddress();
 
   const addressId = params.id as string;
   const addresses = addressesQuery.data || [];
   const currentAddress = addresses.find((addr) => addr.id === addressId);
+  console.log("🚀 ~ EditAddressPage ~ currentAddress:", currentAddress)
+  const updateMutation = updateAddress(currentAddress?.id);
 
   const handleSubmit = (data: AddressFormData) => {
     updateMutation.mutate(
       {
         id: addressId,
-        ...data,
+        ...data as Required<AddressFormData>,
       },
       {
         onSuccess: () => {
-          router.push("/configurations/address");
+          // Verificar si hay una URL de redirección guardada
+          const redirectUrl = sessionStorage.getItem("redirectAfterAddressEdit");
+
+          if (redirectUrl) {
+            // Limpiar el sessionStorage y redirigir a la URL guardada
+            sessionStorage.removeItem("redirectAfterAddressEdit");
+            router.push(redirectUrl);
+          } else {
+            // Redirección por defecto
+            router.push("/configurations/address");
+          }
         },
       }
     );

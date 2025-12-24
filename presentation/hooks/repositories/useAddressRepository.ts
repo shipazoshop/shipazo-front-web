@@ -1,10 +1,11 @@
-import { Address, CreateAddressDto, UpdateAddressDto } from '@/domain/entities/address.entity';
+import { Address, CreateAddressDto, UpdateAddressDto, UpdateAddressResponse } from '@/domain/entities/address.entity';
 import { useApiQuery } from '../api/useApiQuery';
 import { useApiMutation } from '../api/useApiMutation';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-const ADDRESSES_QUERY_KEY = ['addresses'];
+// QueryKey que coincide con lo que genera QueryKeyFactory.create(service, endpoint)
+const ADDRESSES_QUERY_KEY = ['scrapper', '/customers/addresses'];
 
 export function useAddressRepository() {
   const queryClient = useQueryClient();
@@ -13,8 +14,7 @@ export function useAddressRepository() {
   const getAddresses = () => {
     return useApiQuery<Address[]>({
       service: 'scrapper',
-      endpoint: '/addresses',
-      queryKey: 'addresses',
+      endpoint: '/customers/addresses',
       queryOptions: {
         staleTime: 5 * 60 * 1000, // 5 minutos
       },
@@ -25,7 +25,7 @@ export function useAddressRepository() {
   const createAddress = () => {
     return useApiMutation<Address, CreateAddressDto>({
       service: 'scrapper',
-      endpoint: '/addresses',
+      endpoint: '/customers/addresses',
       method: 'POST',
       invalidateQueries: [ADDRESSES_QUERY_KEY],
       mutationOptions: {
@@ -67,6 +67,7 @@ export function useAddressRepository() {
           }
         },
         onSuccess: (data) => {
+          const newAdress = data.address
           // Actualizar con datos reales del servidor
           queryClient.setQueryData<Address[]>(ADDRESSES_QUERY_KEY, (old) => {
             if (!old) return [data];
@@ -86,14 +87,15 @@ export function useAddressRepository() {
   };
 
   // Mutation para actualizar una dirección
-  const updateAddress = () => {
-    return useApiMutation<Address, UpdateAddressDto>({
+  const updateAddress = (id: string) => {
+    return useApiMutation<UpdateAddressResponse, UpdateAddressDto>({
       service: 'scrapper',
-      endpoint: '/addresses',
+      endpoint: `/customers/addresses/${id}`,
       method: 'PUT',
       invalidateQueries: [ADDRESSES_QUERY_KEY],
       mutationOptions: {
         onMutate: async (updatedAddress) => {
+
           await queryClient.cancelQueries({ queryKey: ADDRESSES_QUERY_KEY });
 
           const previousAddresses = queryClient.getQueryData<Address[]>(ADDRESSES_QUERY_KEY);
@@ -103,12 +105,12 @@ export function useAddressRepository() {
             if (!old) return [];
 
             return old.map((addr) => {
-              if (addr.id === updatedAddress.id) {
+              if (addr.id === id) {
                 return { ...addr, ...updatedAddress, updatedAt: new Date().toISOString() };
               }
 
               // Si se marca como predeterminada, desmarcar las demás
-              if (updatedAddress.isDefault && addr.id !== updatedAddress.id) {
+              if (updatedAddress.isDefault && addr.id !== id) {
                 return { ...addr, isDefault: false };
               }
 
@@ -126,14 +128,14 @@ export function useAddressRepository() {
         onSuccess: (data) => {
           // Actualizar con datos reales del servidor
           queryClient.setQueryData<Address[]>(ADDRESSES_QUERY_KEY, (old) => {
-            if (!old) return [data];
+            if (!old) return [data.address];
 
             return old.map((addr) => {
-              if (addr.id === data.id) {
-                return data;
+              if (addr.id === data.address.id) {
+                return data.address;
               }
 
-              if (data.isDefault && addr.id !== data.id) {
+              if (data.address.isDefault && addr.id !== data.address.id) {
                 return { ...addr, isDefault: false };
               }
 
@@ -146,10 +148,10 @@ export function useAddressRepository() {
   };
 
   // Mutation para eliminar una dirección
-  const deleteAddress = () => {
+  const deleteAddress = (id: string) => {
     return useApiMutation<void, { id: string }>({
       service: 'scrapper',
-      endpoint: '/addresses',
+      endpoint: `/customers/addresses/${id}`,
       method: 'DELETE',
       invalidateQueries: [ADDRESSES_QUERY_KEY],
       mutationOptions: {
@@ -176,10 +178,10 @@ export function useAddressRepository() {
   };
 
   // Mutation para marcar como predeterminada
-  const setDefaultAddress = () => {
-    return useApiMutation<Address, { id: string }>({
+  const setDefaultAddress = (id: string) => {
+    return useApiMutation<UpdateAddressResponse, { id: string }>({
       service: 'scrapper',
-      endpoint: '/addresses/set-default',
+      endpoint: `/customers/addresses/${id}/set-default`,
       method: 'PATCH',
       invalidateQueries: [ADDRESSES_QUERY_KEY],
       mutationOptions: {
@@ -206,13 +208,14 @@ export function useAddressRepository() {
           }
         },
         onSuccess: (data) => {
+          debugger
           // Actualizar con datos reales del servidor
           queryClient.setQueryData<Address[]>(ADDRESSES_QUERY_KEY, (old) => {
-            if (!old) return [data];
+            if (!old) return [data.address];
 
             return old.map((addr) => ({
               ...addr,
-              isDefault: addr.id === data.id,
+              isDefault: addr.id === data.address.id,
             }));
           });
         },

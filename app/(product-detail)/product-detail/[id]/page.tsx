@@ -20,7 +20,7 @@ function ProductDetailContent() {
   useEffect(() => {
     const fetchProduct = async () => {
       // Si no hay producto en store pero hay URL en params, hacer fetch
-      if (!product && productUrl) {
+      if (!product && productUrl || product && product.url !== productUrl) {
         try {
           const decodedUrl = decodeURIComponent(productUrl);
           const result = await mutateAsync({ url: decodedUrl });

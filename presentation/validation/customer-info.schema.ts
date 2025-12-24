@@ -14,15 +14,15 @@ export const customerInfoSchema = yup.object({
     .string()
     .required('El número de identificación es requerido')
     .matches(
-      /^[0-9]{8}-[0-9]$/,
-      'Formato inválido. Use el formato: 12345678-9'
+      /^[0-9]{13}$/,
+      'Formato inválido. Use el formato: 12345678980101'
     ),
   phoneNumber: yup
     .string()
     .required('El número de teléfono es requerido')
     .matches(
-      /^\+503\s[0-9]{4}-[0-9]{4}$/,
-      'Formato inválido. Use el formato: +503 7890-1234'
+      /^\+502\s[0-9]{4}-[0-9]{4}$/,
+      'Formato inválido. Use el formato: +502 7890-1234'
     ),
 });
 

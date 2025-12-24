@@ -18,7 +18,7 @@ export default function PersonalInfoPage() {
   const { getCustomerInfo, createCustomerInfo, updateCustomerInfo } = useCustomerInfoRepository();
   const customerInfoQuery = getCustomerInfo();
   const createMutation = createCustomerInfo();
-  const updateMutation = updateCustomerInfo();
+  const updateMutation = updateCustomerInfo(customerInfoQuery?.data?.id);
 
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
@@ -27,12 +27,12 @@ export default function PersonalInfoPage() {
   const isError = createMutation.isError || updateMutation.isError;
 
   const handleSubmit = (data: CustomerInfoFormData) => {
+    debugger
     if (customerInfo) {
       // Actualizar información existente
       updateMutation.mutate(
         {
-          id: customerInfo.id,
-          ...data,
+          ...data as Required<CustomerInfoFormData>,
         },
         {
           onSuccess: () => {

@@ -21,17 +21,11 @@ export function CustomerInfoForm({ initialData, onSubmit, formId }: CustomerInfo
     formState: { errors },
   } = useForm<CustomerInfoFormData>({
     resolver: yupResolver(customerInfoSchema) as any,
-    defaultValues: initialData
-      ? {
-        recipientName: initialData.recipientName,
-        identificationNumber: initialData.identificationNumber,
-        phoneNumber: initialData.phoneNumber,
-      }
-      : {
-        recipientName: "",
-        identificationNumber: "",
-        phoneNumber: "",
-      },
+    defaultValues: {
+      recipientName: initialData?.recipientName ?? "",
+      identificationNumber: initialData?.identificationNumber ?? "",
+      phoneNumber: initialData?.phoneNumber ?? "",
+    },
   });
 
   return (
@@ -45,6 +39,7 @@ export function CustomerInfoForm({ initialData, onSubmit, formId }: CustomerInfo
             render={({ field }) => (
               <TextField
                 {...field}
+                value={field.value ?? ""}
                 label="Nombre del destinatario"
                 placeholder="Juan Antonio Pérez García"
                 variant="outlined"
@@ -65,6 +60,7 @@ export function CustomerInfoForm({ initialData, onSubmit, formId }: CustomerInfo
             render={({ field }) => (
               <TextField
                 {...field}
+                value={field.value ?? ""}
                 label="Número de identificación (CUI)"
                 placeholder="1245678910121"
                 variant="outlined"
@@ -85,6 +81,7 @@ export function CustomerInfoForm({ initialData, onSubmit, formId }: CustomerInfo
             render={({ field }) => (
               <TextField
                 {...field}
+                value={field.value ?? ""}
                 label="Número de teléfono"
                 placeholder="+503 7890-1234"
                 variant="outlined"

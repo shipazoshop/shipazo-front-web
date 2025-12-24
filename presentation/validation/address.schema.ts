@@ -19,12 +19,12 @@ export const addressSchema = yup.object({
     .required('La ciudad es requerida')
     .min(2, 'La ciudad debe tener al menos 2 caracteres')
     .max(100, 'La ciudad no puede exceder 100 caracteres'),
-  state: yup
+  stateProvince: yup
     .string()
     .required('El departamento/estado es requerido')
     .min(2, 'El departamento/estado debe tener al menos 2 caracteres')
     .max(100, 'El departamento/estado no puede exceder 100 caracteres'),
-  country: yup
+  countryCode: yup
     .string()
     .required('El país es requerido')
     .length(2, 'El código del país debe ser de 2 caracteres'),

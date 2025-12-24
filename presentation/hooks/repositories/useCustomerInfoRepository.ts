@@ -1,9 +1,10 @@
-import { CustomerInfo, CreateCustomerInfoDto, UpdateCustomerInfoDto } from '@/domain/entities/customer-info.entity';
+import { CustomerInfo, CreateCustomerInfoDto } from '@/domain/entities/customer-info.entity';
 import { useApiQuery } from '../api/useApiQuery';
 import { useApiMutation } from '../api/useApiMutation';
 import { useQueryClient } from '@tanstack/react-query';
 
-const CUSTOMER_INFO_QUERY_KEY = ['customer-info'];
+// QueryKey que coincide con lo que genera QueryKeyFactory.create(service, endpoint)
+const CUSTOMER_INFO_QUERY_KEY = ['scrapper', '/customers/me'];
 
 export function useCustomerInfoRepository() {
   const queryClient = useQueryClient();
@@ -12,8 +13,7 @@ export function useCustomerInfoRepository() {
   const getCustomerInfo = () => {
     return useApiQuery<CustomerInfo>({
       service: 'scrapper',
-      endpoint: '/customer-info',
-      queryKey: 'customer-info',
+      endpoint: '/customers/me',
       queryOptions: {
         staleTime: 10 * 60 * 1000, // 10 minutos
       },
@@ -24,7 +24,7 @@ export function useCustomerInfoRepository() {
   const createCustomerInfo = () => {
     return useApiMutation<CustomerInfo, CreateCustomerInfoDto>({
       service: 'scrapper',
-      endpoint: '/customer-info',
+      endpoint: '/customers',
       method: 'POST',
       invalidateQueries: [CUSTOMER_INFO_QUERY_KEY],
       mutationOptions: {
@@ -59,10 +59,10 @@ export function useCustomerInfoRepository() {
   };
 
   // Mutation para actualizar información del cliente
-  const updateCustomerInfo = () => {
-    return useApiMutation<CustomerInfo, UpdateCustomerInfoDto>({
+  const updateCustomerInfo = (id: string) => {
+    return useApiMutation<CustomerInfo, CreateCustomerInfoDto>({
       service: 'scrapper',
-      endpoint: '/customer-info',
+      endpoint: '/customers/me',
       method: 'PUT',
       invalidateQueries: [CUSTOMER_INFO_QUERY_KEY],
       mutationOptions: {

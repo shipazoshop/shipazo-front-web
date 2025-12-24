@@ -34,27 +34,16 @@ export function AddressForm({
     formState: { errors },
   } = useForm<AddressFormData>({
     resolver: yupResolver(addressSchema) as any,
-    defaultValues: initialData
-      ? {
-        address: initialData.address,
-        postalCode: initialData.postalCode,
-        additionalSpecifications: initialData.additionalSpecifications || "",
-        city: initialData.city,
-        state: initialData.state,
-        country: initialData.country,
-        alias: initialData.alias,
-        isDefault: initialData.isDefault,
-      }
-      : {
-        address: "",
-        postalCode: "",
-        additionalSpecifications: "",
-        city: "",
-        state: "",
-        country: "SV",
-        alias: "",
-        isDefault: false,
-      },
+    defaultValues: {
+      address: initialData?.address ?? "",
+      postalCode: initialData?.postalCode ?? "",
+      additionalSpecifications: initialData?.additionalSpecifications ?? "",
+      city: initialData?.city ?? "",
+      stateProvince: initialData?.stateProvince ?? "",
+      countryCode: initialData?.countryCode ?? "GT",
+      alias: initialData?.alias ?? "",
+      isDefault: initialData?.isDefault ?? false,
+    },
   });
 
   // Si es la primera dirección, marcarla como predeterminada automáticamente
@@ -84,6 +73,7 @@ export function AddressForm({
             render={({ field }) => (
               <TextField
                 {...field}
+                value={field.value ?? ""}
                 label="Alias de la dirección"
                 placeholder="Ej: Casa, Oficina, etc."
                 variant="outlined"
@@ -99,17 +89,18 @@ export function AddressForm({
         {/* País */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Controller
-            name="country"
+            name="countryCode"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
+                value={field.value ?? ""}
                 label="País (código ISO)"
-                placeholder="SV"
+                placeholder="GT"
                 variant="outlined"
                 fullWidth
-                error={!!errors.country}
-                helperText={errors.country?.message || "Código de 2 letras (Ej: SV, GT, HN)"}
+                error={!!errors.countryCode}
+                helperText={errors.countryCode?.message || "Código de 2 letras (Ej: SV, GT, HN)"}
                 required
               />
             )}
@@ -124,6 +115,7 @@ export function AddressForm({
             render={({ field }) => (
               <TextField
                 {...field}
+                value={field.value ?? ""}
                 label="Dirección completa"
                 placeholder="Calle Principal #123, Colonia Centro, entre 5a y 7a Avenida"
                 variant="outlined"
@@ -146,8 +138,9 @@ export function AddressForm({
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Ciudad"
-                placeholder="San Salvador"
+                value={field.value ?? ""}
+                label="Municipio/Ciudad"
+                placeholder="Ciudad de Guatemala"
                 variant="outlined"
                 fullWidth
                 error={!!errors.city}
@@ -161,17 +154,18 @@ export function AddressForm({
         {/* Departamento/Estado */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Controller
-            name="state"
+            name="stateProvince"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
+                value={field.value ?? ""}
                 label="Departamento/Estado"
-                placeholder="San Salvador"
+                placeholder="Guatemala"
                 variant="outlined"
                 fullWidth
-                error={!!errors.state}
-                helperText={errors.state?.message}
+                error={!!errors.stateProvince}
+                helperText={errors.stateProvince?.message}
                 required
               />
             )}
@@ -186,6 +180,7 @@ export function AddressForm({
             render={({ field }) => (
               <TextField
                 {...field}
+                value={field.value ?? ""}
                 label="Código Postal"
                 placeholder="01101"
                 variant="outlined"
@@ -206,6 +201,7 @@ export function AddressForm({
             render={({ field }) => (
               <TextField
                 {...field}
+                value={field.value ?? ""}
                 label="Especificaciones adicionales (opcional)"
                 placeholder="Casa de dos pisos, portón color negro. Llamar al timbre."
                 variant="outlined"
@@ -231,7 +227,7 @@ export function AddressForm({
                 borderColor: "info.main",
               }}
             >
-              <Typography variant="body2" color="info.dark">
+              <Typography variant="body2" color="white">
                 Esta será tu primera dirección y se marcará automáticamente como predeterminada.
               </Typography>
             </Box>

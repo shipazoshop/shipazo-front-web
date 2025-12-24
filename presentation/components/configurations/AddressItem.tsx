@@ -67,7 +67,7 @@ export function AddressItem({
               {truncateText(address.address, 90)}
             </Typography>
             <Typography variant="caption" color="text.disabled">
-              {address.city}, {address.state} - CP: {address.postalCode}
+              {address.city}, {address.stateProvince} - CP: {address.postalCode}
             </Typography>
           </Box>
 
@@ -79,8 +79,8 @@ export function AddressItem({
                 isSingleAddress
                   ? "No puedes desmarcar la única dirección"
                   : address.isDefault
-                  ? "Esta es tu dirección predeterminada"
-                  : "Marcar como predeterminada"
+                    ? "Esta es tu dirección predeterminada"
+                    : "Marcar como predeterminada"
               }
             >
               <FormControlLabel

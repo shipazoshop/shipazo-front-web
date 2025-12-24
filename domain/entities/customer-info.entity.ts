@@ -14,6 +14,3 @@ export interface CreateCustomerInfoDto {
   phoneNumber: string;
 }
 
-export interface UpdateCustomerInfoDto extends Partial<CreateCustomerInfoDto> {
-  id: string;
-}

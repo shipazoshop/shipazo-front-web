@@ -17,13 +17,13 @@ export default function AddressPage() {
   const router = useRouter();
   const { getAddresses, deleteAddress, setDefaultAddress } = useAddressRepository();
   const addressesQuery = getAddresses();
-  const deleteMutation = deleteAddress();
-  const setDefaultMutation = setDefaultAddress();
 
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [defaultModalOpen, setDefaultModalOpen] = useState(false);
-  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
 
+  const deleteMutation = deleteAddress(selectedAddressId);
+  const setDefaultMutation = setDefaultAddress(selectedAddressId);
   const addresses = addressesQuery.data || [];
   const isSingleAddress = addresses.length === 1;
 
@@ -90,6 +90,7 @@ export default function AddressPage() {
       </Box>
     );
   }
+  console.log("🚀 ~ AddressPage ~ addresses:", addresses)
 
   return (
     <Box>
