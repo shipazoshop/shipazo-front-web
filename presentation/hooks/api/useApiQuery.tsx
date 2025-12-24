@@ -5,8 +5,9 @@ import { HttpClientFactory } from '@/infrastructure/http/http-client.factory';
 import { ApiErrorHandler } from '@/infrastructure/query/error-handler';
 import { QueryKeyFactory } from '@/infrastructure/query/query-key.factory';
 import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/application/stores/useAuthStore';
+import { useShowSnackbar } from '@/application/stores/useSnackbarStore';
 
 export interface UseApiQueryConfig<TData> {
   service: ApiService;
@@ -16,6 +17,7 @@ export interface UseApiQueryConfig<TData> {
   enabled?: boolean;
   queryOptions?: Omit<UseQueryOptions<TData, ApiError>, 'queryKey' | 'queryFn'>;
   onError?: (error: ApiError) => void;
+  showErrorSnackbar?: boolean; // Mostrar snackbar de error automáticamente (default: true)
 }
 
 export interface ManualFetchParams {
@@ -33,8 +35,10 @@ export function useApiQuery<TData = unknown>({
   enabled = true,
   queryOptions,
   onError,
+  showErrorSnackbar = true,
 }: UseApiQueryConfig<TData>) {
   const queryClient = useQueryClient();
+  const showSnackbar = useShowSnackbar();
 
   // Estado para el fetch manual
   const [manualFetchState, setManualFetchState] = useState<{
@@ -53,8 +57,9 @@ export function useApiQuery<TData = unknown>({
     [service, endpoint, params, customQueryKey]
   );
 
-  // Obtener token de autenticación del store
+  // Obtener token de autenticación y estado de hidratación del store
   const accessToken = useAuthStore((state) => state.accessToken);
+  const isHydrated = useAuthStore((state) => state.isHydrated);
 
   // Obtener cliente HTTP con token de autenticación si existe
   const httpClient = useMemo(
@@ -83,14 +88,34 @@ export function useApiQuery<TData = unknown>({
   }, [httpClient, endpoint, params, errorHandler]);
 
   // Configuración del query
+  // Solo habilitar la query si el store está hidratado y la condición enabled es true
   const query = useQuery<TData, ApiError>({
     queryKey,
     queryFn,
-    enabled,
+    enabled: isHydrated && enabled,
     refetchOnWindowFocus: false,
     retry: false,
     ...queryOptions,
   });
+
+  // Ref para evitar mostrar el mismo error múltiples veces
+  const lastShownErrorRef = useRef<string | null>(null);
+
+  // Efecto para mostrar snackbar cuando hay error
+  useEffect(() => {
+    if (query.isError && query.error && showErrorSnackbar) {
+      const errorMessage = query.error.message || 'Error al cargar los datos';
+
+      // Solo mostrar si el mensaje de error cambió
+      if (lastShownErrorRef.current !== errorMessage) {
+        lastShownErrorRef.current = errorMessage;
+        showSnackbar(errorMessage, 'error');
+      }
+    } else if (!query.isError) {
+      // Resetear cuando no hay error
+      lastShownErrorRef.current = null;
+    }
+  }, [query.isError, query.error?.message, showErrorSnackbar]);
 
   // Utilidades
   const invalidate = useCallback(() => {
