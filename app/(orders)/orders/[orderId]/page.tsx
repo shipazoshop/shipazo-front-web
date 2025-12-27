@@ -37,7 +37,8 @@ export default function OrderDetailPage() {
   const params = useParams<{ orderId: string }>();
 
   const { getOrderDetail } = useOrdersRepository();
-  const { data: order, isLoading, isError } = getOrderDetail(params.orderId);
+  const { data, isLoading, isError } = getOrderDetail(params.orderId);
+  const order = data?.data;
 
   if (isLoading) {
     return (
@@ -79,7 +80,7 @@ export default function OrderDetailPage() {
       </Box>
     );
   }
-
+  debugger
   // Encontrar el paso actual del tracking basado en position
   const currentTrackingStage = order.tracking.find((t) => t.name === order.currentTrackingStage);
   const currentStepIndex = currentTrackingStage ? currentTrackingStage.position : 0;

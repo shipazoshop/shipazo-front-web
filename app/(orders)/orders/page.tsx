@@ -39,7 +39,7 @@ const trackingStatusColors: Record<
 
 export default function OrdersPage() {
   const { getOrders } = useOrdersRepository();
-  const { data, isLoading, isError } = getOrders();
+  const { data, isLoading, isError } = getOrders(true);
 
   const orders = data?.data || [];
 
@@ -231,7 +231,7 @@ export default function OrdersPage() {
                     <TableCell align="center">
                       <Button
                         component={Link}
-                        href={`/orders/${order.id}`}
+                        href={`/orders/${order.correlative}`}
                         variant="outlined"
                         size="small"
                         startIcon={<Eye size={16} />}

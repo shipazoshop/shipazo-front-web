@@ -29,7 +29,7 @@ const paymentStatusConfig: Record<
 export default function OrdersHistoryPage() {
   const { getOrders } = useOrdersRepository();
   // Filter only delivered orders by status
-  const { data, isLoading, isError } = getOrders({ status: "entregado" });
+  const { data, isLoading, isError } = getOrders(false, { status: "entregado" });
 
   const deliveredOrders = data?.data || [];
 
