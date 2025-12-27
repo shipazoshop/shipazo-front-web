@@ -20,40 +20,43 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 import type { SelectChangeEvent } from "@mui/material/Select";
 
-import { Search, Filter, Eye, Download, MoreVertical } from "lucide-react";
+import { Search, Filter, Eye, Download, MoreVertical, Calendar } from "lucide-react";
 import Link from "next/link";
+import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
+import type { Order } from "@/domain/entities/order.entity";
+import { formatGTQ } from "@/shared/utils";
 
-export interface IOrderTable {
-  id: string;
-  customer: string;
-  status: "pending" | "completed" | "cancelled";
-  total: number;
-  createdAt: string;
-}
-
-const statusConfig = {
-  completed: {
-    label: "Completada",
+const paymentStatusConfig = {
+  paid: {
+    label: "Pagado",
     color: "success" as const,
   },
   pending: {
     label: "Pendiente",
     color: "warning" as const,
   },
-  cancelled: {
-    label: "Cancelada",
+  failed: {
+    label: "Fallido",
     color: "error" as const,
   },
 };
 
-interface OrdersTableProps {
-  initialData: IOrderTable[];
-}
+const trackingStatusColors: Record<
+  string,
+  "default" | "primary" | "secondary" | "success" | "warning" | "info"
+> = {
+  orden_recibida: "default",
+  paquete_en_camino: "info",
+  paquete_recibido_empresa: "primary",
+  pedido_en_ruta: "warning",
+  entregado: "success",
+};
 
 // Memoizar el componente de fila individual
-const OrderRow = memo(function OrderRow({ order }: { order: IOrderTable }) {
+const OrderRow = memo(function OrderRow({ order }: { order: Order }) {
   return (
     <TableRow hover>
       <TableCell>
@@ -61,30 +64,52 @@ const OrderRow = memo(function OrderRow({ order }: { order: IOrderTable }) {
           variant="body2"
           sx={{ fontFamily: "monospace", fontWeight: 600 }}
         >
-          {order.id}
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <Typography variant="body2" fontWeight={500}>
-          {order.customer}
+          {order.correlative}
         </Typography>
       </TableCell>
       <TableCell>
         <Chip
           size="small"
-          label={statusConfig[order.status].label}
-          color={statusConfig[order.status].color}
+          label={order.currentTrackingStageName}
+          color={
+            trackingStatusColors[order.currentTrackingStageName.toLowerCase()] ||
+            "default"
+          }
+        />
+      </TableCell>
+      <TableCell>
+        <Chip
+          size="small"
+          label={
+            paymentStatusConfig[
+              order.paymentStatus as keyof typeof paymentStatusConfig
+            ]?.label || order.paymentStatus
+          }
+          color={
+            paymentStatusConfig[
+              order.paymentStatus as keyof typeof paymentStatusConfig
+            ]?.color || "info"
+          }
           variant="outlined"
         />
       </TableCell>
       <TableCell align="right">
         <Typography variant="body2" fontWeight={700}>
-          Q{order.total.toFixed(2)}
+          {formatGTQ(order.totalAmount)}
         </Typography>
       </TableCell>
       <TableCell>
         <Typography variant="body2" color="text.secondary">
-          {order.createdAt}
+          {new Date(order.createdAt).toLocaleDateString("es-GT", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <Typography variant="body2" color="text.secondary">
+          {order.itemsCount} {order.itemsCount === 1 ? "producto" : "productos"}
         </Typography>
       </TableCell>
       <TableCell align="right">
@@ -100,7 +125,7 @@ const OrderRow = memo(function OrderRow({ order }: { order: IOrderTable }) {
             variant="outlined"
             startIcon={<Eye size={16} />}
             component={Link}
-            href={`/admin/orders/${order.id}`}
+            href={`/admin/orders/${order.correlative}`}
           >
             Ver
           </Button>
@@ -113,34 +138,54 @@ const OrderRow = memo(function OrderRow({ order }: { order: IOrderTable }) {
   );
 });
 
-function OrdersTable({ initialData }: OrdersTableProps) {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<
-    "all" | IOrderTable["status"]
-  >("all");
+function OrdersTable() {
+  // Filtros locales
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState<string>("all");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  // Paginación
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const filtered = useMemo(() => {
-    return initialData
-      .filter((order) => {
-        const term = search.toLowerCase().trim();
-        if (!term) return true;
-        return (
-          order.id.toLowerCase().includes(term) ||
-          order.customer.toLowerCase().includes(term)
-        );
-      })
-      .filter((order) => {
-        if (statusFilter === "all") return true;
-        return order.status === statusFilter;
-      });
-  }, [initialData, search, statusFilter]);
+  // Construir parámetros para el API
+  const apiParams = useMemo(() => {
+    const params: any = {
+      page: page + 1, // API usa paginación base 1
+      limit: rowsPerPage,
+    };
 
-  const paged = useMemo(() => {
-    const start = page * rowsPerPage;
-    return filtered.slice(start, start + rowsPerPage);
-  }, [filtered, page, rowsPerPage]);
+    if (searchTerm.trim()) {
+      params.orderNumber = searchTerm.trim();
+    }
+
+    if (statusFilter !== "all") {
+      params.status = statusFilter;
+    }
+
+    if (paymentStatusFilter !== "all") {
+      params.paymentStatus = paymentStatusFilter;
+    }
+
+    if (startDate) {
+      params.startDate = startDate;
+    }
+
+    if (endDate) {
+      params.endDate = endDate;
+    }
+
+    return params;
+  }, [searchTerm, statusFilter, paymentStatusFilter, startDate, endDate, page, rowsPerPage]);
+
+  // Obtener datos del repositorio
+  const { getOrders } = useOrdersRepository();
+  const { data, isLoading, isError } = getOrders(true, apiParams);
+
+  const orders = data?.data || [];
+  const totalItems = data?.meta?.totalItems || 0;
 
   const handleChangePage = useCallback((_: unknown, newPage: number) => {
     setPage(newPage);
@@ -155,43 +200,69 @@ function OrdersTable({ initialData }: OrdersTableProps) {
   );
 
   const handleStatusChange = useCallback((event: SelectChangeEvent) => {
-    setStatusFilter(event.target.value as "all" | IOrderTable["status"]);
+    setStatusFilter(event.target.value);
+    setPage(0);
+  }, []);
+
+  const handlePaymentStatusChange = useCallback((event: SelectChangeEvent) => {
+    setPaymentStatusFilter(event.target.value);
     setPage(0);
   }, []);
 
   const handleSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearch(event.target.value);
+      setSearchTerm(event.target.value);
       setPage(0);
     },
     []
   );
 
+  const handleClearFilters = useCallback(() => {
+    setSearchTerm("");
+    setStatusFilter("all");
+    setPaymentStatusFilter("all");
+    setStartDate("");
+    setEndDate("");
+    setPage(0);
+  }, []);
+
+  if (isError) {
+    return (
+      <Paper sx={{ p: 4, textAlign: "center" }}>
+        <Typography variant="h6" color="error" gutterBottom>
+          Error al cargar las órdenes
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Por favor, intenta nuevamente más tarde
+        </Typography>
+      </Paper>
+    );
+  }
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      {/* Filtros */}
       <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", md: "row" },
+          flexDirection: "column",
           gap: 2,
-          alignItems: { md: "center" },
-          justifyContent: "space-between",
         }}
       >
+        {/* Primera fila de filtros */}
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", md: "row" },
             gap: 2,
-            flex: 1,
-            maxWidth: 700,
-            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { md: "center" },
           }}
         >
           <TextField
             fullWidth
             size="small"
-            placeholder="Buscar por # de orden o cliente"
-            value={search}
+            placeholder="Buscar por # de orden"
+            value={searchTerm}
             onChange={handleSearchChange}
             InputProps={{
               startAdornment: (
@@ -200,13 +271,14 @@ function OrdersTable({ initialData }: OrdersTableProps) {
                 </InputAdornment>
               ),
             }}
+            sx={{ maxWidth: { md: 350 } }}
           />
 
           <FormControl size="small" sx={{ minWidth: 180 }}>
             <InputLabel id="status-filter-label">
               <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
                 <Filter size={14} />
-                Estado
+                Estado de Envío
               </Box>
             </InputLabel>
             <Select
@@ -214,55 +286,145 @@ function OrdersTable({ initialData }: OrdersTableProps) {
               value={statusFilter}
               label={
                 <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
-                  <Filter size={14} /> Estado
+                  <Filter size={14} /> Estado de Envío
                 </Box>
               }
               onChange={handleStatusChange}
             >
               <MenuItem value="all">Todos</MenuItem>
-              <MenuItem value="pending">Pendientes</MenuItem>
-              <MenuItem value="completed">Completadas</MenuItem>
-              <MenuItem value="cancelled">Canceladas</MenuItem>
+              <MenuItem value="orden_recibida">Orden Recibida</MenuItem>
+              <MenuItem value="paquete_en_camino">Paquete en Camino</MenuItem>
+              <MenuItem value="paquete_recibido_empresa">
+                Paquete Recibido
+              </MenuItem>
+              <MenuItem value="pedido_en_ruta">Pedido en Ruta</MenuItem>
+              <MenuItem value="entregado">Entregado</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel id="payment-status-filter-label">Estado de Pago</InputLabel>
+            <Select
+              labelId="payment-status-filter-label"
+              value={paymentStatusFilter}
+              label="Estado de Pago"
+              onChange={handlePaymentStatusChange}
+            >
+              <MenuItem value="all">Todos</MenuItem>
+              <MenuItem value="pending">Pendiente</MenuItem>
+              <MenuItem value="paid">Pagado</MenuItem>
+              <MenuItem value="failed">Fallido</MenuItem>
             </Select>
           </FormControl>
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Typography variant="body2" color="text.secondary">
-            {filtered.length} resultado
-            {filtered.length !== 1 ? "s" : ""}
-          </Typography>
-          <Button
-            variant="outlined"
+        {/* Segunda fila - filtros de fecha */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            alignItems: { sm: "center" },
+          }}
+        >
+          <TextField
             size="small"
-            startIcon={<Download size={16} />}
-          >
-            Exportar
-          </Button>
+            type="date"
+            label="Fecha Inicio"
+            value={startDate}
+            onChange={(e) => {
+              setStartDate(e.target.value);
+              setPage(0);
+            }}
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Calendar size={16} />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ maxWidth: 200 }}
+          />
+
+          <TextField
+            size="small"
+            type="date"
+            label="Fecha Fin"
+            value={endDate}
+            onChange={(e) => {
+              setEndDate(e.target.value);
+              setPage(0);
+            }}
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Calendar size={16} />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ maxWidth: 200 }}
+          />
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2, ml: "auto" }}>
+            {(searchTerm || statusFilter !== "all" || paymentStatusFilter !== "all" || startDate || endDate) && (
+              <Button
+                size="small"
+                variant="text"
+                onClick={handleClearFilters}
+              >
+                Limpiar filtros
+              </Button>
+            )}
+
+            <Typography variant="body2" color="text.secondary">
+              {totalItems} resultado{totalItems !== 1 ? "s" : ""}
+            </Typography>
+
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<Download size={16} />}
+              disabled
+            >
+              Exportar
+            </Button>
+          </Box>
         </Box>
       </Box>
 
+      {/* Tabla */}
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+        <TableContainer sx={{ maxHeight: 600 }}>
           <Table stickyHeader size="small" aria-label="tabla de órdenes">
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Orden</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Cliente</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Estado</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Estado Envío</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Estado Pago</TableCell>
                 <TableCell sx={{ fontWeight: 600 }} align="right">
                   Total
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Fecha</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Productos</TableCell>
                 <TableCell sx={{ fontWeight: 600 }} align="right">
                   Acciones
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {paged.length === 0 && (
+              {isLoading && (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
+                  <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                    <CircularProgress size={40} />
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {!isLoading && orders.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
                     <Box
                       sx={{
                         display: "flex",
@@ -275,10 +437,7 @@ function OrdersTable({ initialData }: OrdersTableProps) {
                       <Typography variant="subtitle2">
                         No se encontraron órdenes
                       </Typography>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                      >
+                      <Typography variant="caption" color="text.secondary">
                         Intenta ajustar los filtros de búsqueda
                       </Typography>
                     </Box>
@@ -286,7 +445,7 @@ function OrdersTable({ initialData }: OrdersTableProps) {
                 </TableRow>
               )}
 
-              {paged.map((order) => (
+              {!isLoading && orders.map((order) => (
                 <OrderRow key={order.id} order={order} />
               ))}
             </TableBody>
@@ -294,17 +453,16 @@ function OrdersTable({ initialData }: OrdersTableProps) {
         </TableContainer>
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50]}
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
           component="div"
-          count={filtered.length}
+          count={totalItems}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Filas por página"
           labelDisplayedRows={({ from, to, count }) =>
-            `Mostrando ${from}-${to} de ${
-              count !== -1 ? count : `más de ${to}`
+            `Mostrando ${from}-${to} de ${count !== -1 ? count : `más de ${to}`
             }`
           }
         />
