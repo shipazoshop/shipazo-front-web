@@ -21,7 +21,7 @@ export default function Checkout() {
   const { getCustomerInfo } = useCustomerInfoRepository();
   const { getAddresses } = useAddressRepository();
   const { createOrder } = useOrdersRepository();
-  const setOrder = useNewOrderStore((state) => state.setOrder);
+  const { setOrder } = useNewOrderStore();
 
   const customerInfoQuery = getCustomerInfo();
   const addressesQuery = getAddresses();

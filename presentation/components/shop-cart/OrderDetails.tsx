@@ -1,21 +1,11 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useNewOrderStore } from "@/application/stores/useNewOrderStore";
 import { formatGTQ } from "@/shared/utils";
 
 export default function OrderDetails() {
-  const router = useRouter();
   const order = useNewOrderStore((state) => state.order);
-  const clearOrder = useNewOrderStore((state) => state.clearOrder);
-
-  // Limpiar la orden cuando el componente se desmonte
-  useEffect(() => {
-    return () => {
-      clearOrder();
-    };
-  }, [clearOrder]);
 
   // Si no hay orden, mostrar un mensaje
   if (!order) {
