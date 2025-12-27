@@ -23,7 +23,7 @@ export function useAddressRepository() {
 
   // Mutation para crear una nueva dirección
   const createAddress = () => {
-    return useApiMutation<Address, CreateAddressDto>({
+    return useApiMutation<UpdateAddressResponse, CreateAddressDto>({
       service: 'scrapper',
       endpoint: '/customers/addresses',
       method: 'POST',
@@ -67,19 +67,19 @@ export function useAddressRepository() {
           }
         },
         onSuccess: (data) => {
-          const newAdress = data.address
+          const newAddress = data.address
           // Actualizar con datos reales del servidor
           queryClient.setQueryData<Address[]>(ADDRESSES_QUERY_KEY, (old) => {
-            if (!old) return [data];
+            if (!old) return [newAddress];
 
             // Reemplazar el optimistic update con datos reales
             const filtered = old.filter((addr) => !addr.id.startsWith('temp-'));
 
-            if (data.isDefault) {
-              return [...filtered.map(addr => ({ ...addr, isDefault: false })), data];
+            if (newAddress.isDefault) {
+              return [...filtered.map(addr => ({ ...addr, isDefault: false })), newAddress];
             }
 
-            return [...filtered, data];
+            return [...filtered, newAddress];
           });
         },
       },
@@ -208,7 +208,6 @@ export function useAddressRepository() {
           }
         },
         onSuccess: (data) => {
-          debugger
           // Actualizar con datos reales del servidor
           queryClient.setQueryData<Address[]>(ADDRESSES_QUERY_KEY, (old) => {
             if (!old) return [data.address];
