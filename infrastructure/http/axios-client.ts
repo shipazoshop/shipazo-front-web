@@ -17,12 +17,30 @@ export class AxiosHttpClient implements HttpClient {
   }
 
   private setupInterceptors(): void {
+    // Request interceptor
     this.client.interceptors.request.use((config) => {
       if (this.authToken) {
         config.headers.Authorization = `Bearer ${this.authToken}`;
       }
       return config;
     });
+
+    // Response interceptor para manejar errores
+    this.client.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        // Si el error es 401 (Unauthorized), redirigir al login
+        if (error.response?.status === 401) {
+          // Limpiar cualquier token almacenado
+          if (globalThis.window !== undefined) {
+            globalThis.localStorage.removeItem('authToken');
+            // Redirigir al login
+            globalThis.location.href = '/login';
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 
   setAuthToken(token: string): void {

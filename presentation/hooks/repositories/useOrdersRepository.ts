@@ -3,7 +3,6 @@ import {
   CreateOrderResponse,
   GetOrdersParams,
   OrdersListResponse,
-  OrderDetail,
 } from '@/domain/entities/order.entity';
 import { useApiQuery } from '../api/useApiQuery';
 import { useApiMutation } from '../api/useApiMutation';
@@ -13,11 +12,12 @@ export function useOrdersRepository() {
    * Servicio para listar órdenes con filtros opcionales
    * GET /api/v1/orders
    */
-  const getOrders = (params?: GetOrdersParams) => {
+  const getOrders = (showError = false, params?: GetOrdersParams) => {
     return useApiQuery<OrdersListResponse>({
       service: 'scrapper',
       endpoint: '/orders',
       params,
+      showErrorSnackbar: showError,
       queryOptions: {
         staleTime: 5 * 60 * 1000, // 5 minutos
       },
@@ -29,9 +29,9 @@ export function useOrdersRepository() {
    * GET /api/v1/orders/:orderId
    */
   const getOrderDetail = (orderId: string) => {
-    return useApiQuery<OrderDetail>({
+    return useApiQuery<CreateOrderResponse>({
       service: 'scrapper',
-      endpoint: `/orders/${orderId}`,
+      endpoint: `/orders/track/${orderId}`,
       enabled: !!orderId,
       queryOptions: {
         staleTime: 5 * 60 * 1000, // 5 minutos
