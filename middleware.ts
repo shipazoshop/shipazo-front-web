@@ -34,24 +34,24 @@ export function middleware(request: NextRequest) {
   }
 
   // Proteger todas las rutas que comiencen con /configurations
-  // if (pathname.startsWith("/configurations")) {
-  //   // Obtener el storage encriptado de las cookies
-  //   const encryptedStorage = request.cookies.get("auth-storage")?.value;
+  if (pathname.startsWith("/configurations")) {
+    // Obtener el storage encriptado de las cookies
+    const encryptedStorage = request.cookies.get("auth-storage")?.value;
 
-  //   // Si no hay storage, redirigir al home o login
-  //   if (!encryptedStorage) {
-  //     const homeUrl = new URL("/home", request.url);
-  //     return NextResponse.redirect(homeUrl);
-  //   }
+    // Si no hay storage, redirigir al home o login
+    if (!encryptedStorage) {
+      const homeUrl = new URL("/home", request.url);
+      return NextResponse.redirect(homeUrl);
+    }
 
-  //   // Verificar que el usuario esté autenticado
-  //   const isAuthenticated = authMiddlewareService.isAuthenticated(encryptedStorage);
+    // Verificar que el usuario esté autenticado
+    const isAuthenticated = authMiddlewareService.isAuthenticated(encryptedStorage);
 
-  //   if (!isAuthenticated) {
-  //     const homeUrl = new URL("/home", request.url);
-  //     return NextResponse.redirect(homeUrl);
-  //   }
-  // }
+    if (!isAuthenticated) {
+      const homeUrl = new URL("/home", request.url);
+      return NextResponse.redirect(homeUrl);
+    }
+  }
 
   // Proteger rutas de checkout y order-details
   if (pathname.startsWith("/checkout") || pathname.startsWith("/order-details")) {
