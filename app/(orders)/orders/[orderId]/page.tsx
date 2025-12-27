@@ -80,7 +80,6 @@ export default function OrderDetailPage() {
       </Box>
     );
   }
-  debugger
   // Encontrar el paso actual del tracking basado en position
   const currentTrackingStage = order.tracking.find((t) => t.name === order.currentTrackingStage);
   const currentStepIndex = currentTrackingStage ? currentTrackingStage.position : 0;
@@ -281,6 +280,14 @@ export default function OrderDetailPage() {
               sx={{
                 "& .MuiStepLabel-label": {
                   fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                },
+                // Evitar que se coloree el conector después del paso activo
+                "& .MuiStepConnector-root": {
+                  "&.Mui-active": {
+                    "& .MuiStepConnector-line": {
+                      borderColor: "rgba(0, 0, 0, 0.38)", // Color por defecto (gris)
+                    },
+                  },
                 },
               }}
             >
