@@ -121,6 +121,8 @@ export default function Checkout() {
             weight: item.productData.weight,
             dimensions: item.productData.dimensions,
           },
+          // TODO: Descomentar cuando el backend soporte este campo
+          // productSpecification: item.productSpecification || undefined,
         },
         quantity: item.quantity,
       })),

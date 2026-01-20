@@ -1,16 +1,42 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Slider1 from "./sliders/Slider1";
 import Link from "next/link";
+import { HelpCircle } from "lucide-react";
 import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
 import { LoadingScreen } from "../common/LoadingScreen";
-import { useCartActions } from "@/application/stores/useCartStore";
+import { useCartActions, useCartProducts } from "@/application/stores/useCartStore";
 import { useWishlistActions, useWishlist } from "@/application/stores/useWishlistStore";
 
 export default function Details1({ product }: Readonly<{ product: IImportProductResponse }>) {
   const [quantity, setQuantity] = useState(1);
-  const { addProductToCart, isAddedToCartProducts } = useCartActions();
+  const [specification, setSpecification] = useState("");
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const { addProductToCart, isAddedToCartProducts, updateProductSpecification, getProductSpecification } = useCartActions();
   const { toggleWishlist } = useWishlistActions();
+  const cartProducts = useCartProducts();
+
+  // Verificar si el producto está en el carrito
+  const isInCart = product ? isAddedToCartProducts(product.productData.product_id) : false;
+
+  // Cargar la especificación guardada cuando el producto está en el carrito
+  useEffect(() => {
+    if (isInCart && product) {
+      const savedSpec = getProductSpecification(product.productData.product_id);
+      if (savedSpec) {
+        setSpecification(savedSpec);
+      }
+    }
+  }, [isInCart, product, getProductSpecification, cartProducts]);
+
+  // Manejar cambio de especificación
+  const handleSpecificationChange = (value: string) => {
+    setSpecification(value);
+    if (product && isInCart) {
+      updateProductSpecification(product.productData.product_id, value);
+    }
+  };
 
   // Usar el estado completo de wishlist para que sea reactivo
   const wishlistProducts = useWishlist();
@@ -180,15 +206,6 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         </button>
                       </div>
                     </div>
-                    <div className="product-color">
-                      <p className="title body-text-3">Color</p>
-                      <div className="tf-select-color">
-                        <select className="select-color">
-                          <option>Graphite Black</option>
-                          <option>Graphite Blue</option>
-                        </select>
-                      </div>
-                    </div>
                     <div className="product-box-btn">
                       <a
                         href="#shoppingCart"
@@ -221,6 +238,79 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         Buy now
                       </Link> */}
                     </div>
+                    {/* Campo de especificación - Solo visible cuando el producto está en el carrito */}
+                    {isInCart && (
+                      <div className="product-specification" style={{ marginTop: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <label htmlFor="product-specification" className="body-md-2 fw-semibold" style={{ margin: 0 }}>
+                            ¿Tienes alguna especificación?
+                          </label>
+                          <button
+                            type="button"
+                            aria-label="Más información sobre especificaciones"
+                            style={{ position: 'relative', display: 'inline-block', background: 'none', border: 'none', padding: 0, cursor: 'help' }}
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                            onFocus={() => setShowTooltip(true)}
+                            onBlur={() => setShowTooltip(false)}
+                          >
+                            <HelpCircle
+                              size={18}
+                              style={{ color: 'var(--primary)', cursor: 'help' }}
+                            />
+                            {showTooltip && (
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  bottom: '100%',
+                                  left: '50%',
+                                  transform: 'translateX(-50%)',
+                                  backgroundColor: '#333',
+                                  color: '#fff',
+                                  padding: '10px 14px',
+                                  borderRadius: '6px',
+                                  fontSize: '13px',
+                                  width: '250px',
+                                  textAlign: 'center',
+                                  marginBottom: '8px',
+                                  zIndex: 1000,
+                                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                                }}
+                              >
+                                Si necesitas una talla, color, medida o capacidad específica, escríbela aquí para que podamos conseguirla.
+                                <div
+                                  style={{
+                                    position: 'absolute',
+                                    top: '100%',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    borderWidth: '6px',
+                                    borderStyle: 'solid',
+                                    borderColor: '#333 transparent transparent transparent'
+                                  }}
+                                />
+                              </div>
+                            )}
+                          </button>
+                        </div>
+                        <textarea
+                          id="product-specification"
+                          value={specification}
+                          onChange={(e) => handleSpecificationChange(e.target.value)}
+                          placeholder="Ej: Talla M, Color azul, 500ml..."
+                          style={{
+                            width: '100%',
+                            minHeight: '80px',
+                            padding: '12px',
+                            borderRadius: '6px',
+                            border: '1px solid #e5e7eb',
+                            resize: 'vertical',
+                            fontFamily: 'inherit',
+                            fontSize: '14px'
+                          }}
+                        />
+                      </div>
+                    )}
                     <div className="product-detail">
                       <p className="caption">Details</p>
                       <p className="body-text-3">

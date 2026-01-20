@@ -32,9 +32,11 @@ interface CartStore {
   addProductToCart: (product: IImportProductResponse, qty?: number, isModal?: boolean) => void;
   addProductToCartById: (id: number, qty?: number, isModal?: boolean) => Promise<void>;
   updateQuantity: (id: string, qty: number) => void;
+  updateProductSpecification: (id: string, specification: string) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
   isAddedToCartProducts: (id: string) => boolean;
+  getProductSpecification: (id: string) => string | undefined;
 
   // Internal helpers
   _calculateTotalPrice: () => void;
@@ -122,6 +124,26 @@ export const useCartStore = create<CartStore>()(
         });
       },
 
+      updateProductSpecification: (id: string, specification: string) => {
+        set((state) => {
+          const newCartProducts = state.cartProducts.map((item) =>
+            item.productData.product_id === id
+              ? { ...item, productSpecification: specification }
+              : item
+          );
+
+          return {
+            cartProducts: newCartProducts,
+          };
+        });
+      },
+
+      getProductSpecification: (id: string) => {
+        const { cartProducts } = get();
+        const product = cartProducts.find((p) => p.productData.product_id === id);
+        return product?.productSpecification;
+      },
+
       removeFromCart: (id: string) => {
         set((state) => {
           const newCartProducts = state.cartProducts.filter((item) => item.productData.product_id !== id);
@@ -179,6 +201,8 @@ export const useCartLength = () => useCartStore((state) => state.cartProducts.le
 export const useAddProductToCart = () => useCartStore((state) => state.addProductToCart);
 export const useAddProductToCartById = () => useCartStore((state) => state.addProductToCartById);
 export const useUpdateQuantity = () => useCartStore((state) => state.updateQuantity);
+export const useUpdateProductSpecification = () => useCartStore((state) => state.updateProductSpecification);
+export const useGetProductSpecification = () => useCartStore((state) => state.getProductSpecification);
 export const useRemoveFromCart = () => useCartStore((state) => state.removeFromCart);
 export const useClearCart = () => useCartStore((state) => state.clearCart);
 export const useIsAddedToCartProducts = () => useCartStore((state) => state.isAddedToCartProducts);
@@ -188,6 +212,8 @@ export const useCartActions = () => {
   const addProductToCart = useCartStore((state) => state.addProductToCart);
   const addProductToCartById = useCartStore((state) => state.addProductToCartById);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const updateProductSpecification = useCartStore((state) => state.updateProductSpecification);
+  const getProductSpecification = useCartStore((state) => state.getProductSpecification);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const clearCart = useCartStore((state) => state.clearCart);
   const isAddedToCartProducts = useCartStore((state) => state.isAddedToCartProducts);
@@ -196,6 +222,8 @@ export const useCartActions = () => {
     addProductToCart,
     addProductToCartById,
     updateQuantity,
+    updateProductSpecification,
+    getProductSpecification,
     removeFromCart,
     clearCart,
     isAddedToCartProducts,

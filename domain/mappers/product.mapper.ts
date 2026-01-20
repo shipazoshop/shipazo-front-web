@@ -6,6 +6,7 @@ import type { IImportProductResponse } from "../dto/import-product.dto";
  */
 export interface CartProduct extends IImportProductResponse {
   quantity: number; // Cantidad que el usuario desea en el carrito
+  productSpecification?: string; // Especificación del producto (talla, color, medida, etc.)
 }
 
 /**
@@ -22,11 +23,13 @@ export interface WishlistProduct extends IImportProductResponse {
  */
 export function mapImportProductToCartProduct(
   importProduct: IImportProductResponse,
-  quantity: number = 1
+  quantity: number = 1,
+  productSpecification?: string
 ): CartProduct {
   return {
     ...importProduct,
     quantity,
+    productSpecification,
   };
 }
 

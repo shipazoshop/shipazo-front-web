@@ -6,6 +6,7 @@ export interface ProductDetails {
   price: number;
   imageUrl: string;
   additionalInfo?: Record<string, any>;
+  productSpecification?: string; // Especificación del producto (talla, color, medida, etc.)
 }
 
 export interface OrderProduct {
@@ -105,4 +106,29 @@ export interface GetOrdersParams {
   status?: string;
   orderNumber?: string;
   paymentStatus?: string;
+}
+
+export interface UpdateOrderTrackingDto {
+  newTrackingStageId: string;
+}
+
+export interface TrackingStageDetailed {
+  stageId: string;
+  name: string;
+  description: string;
+  position: number;
+  status: 'completed' | 'current' | 'pending';
+  updatedAt: string;
+  updatedByUserId: string;
+  updatedByUserName: string | null;
+  notes: string | null;
+  completedAt: string | null;
+}
+
+export interface UpdateOrderTrackingResponse {
+  orderId: string;
+  correlative: string;
+  currentStageId: string;
+  currentStageName: string;
+  tracking: TrackingStageDetailed[];
 }
