@@ -6,7 +6,7 @@ import Alert from "@mui/material/Alert";
 import { useSnackbar, useHideSnackbar } from "@/application/stores/useSnackbarStore";
 
 export function GlobalSnackbar() {
-  const { open, message, severity } = useSnackbar();
+  const { open, message, severity, duration } = useSnackbar();
   const hideSnackbar = useHideSnackbar();
 
   const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -19,7 +19,7 @@ export function GlobalSnackbar() {
   return (
     <Snackbar
       open={open}
-      autoHideDuration={4000}
+      autoHideDuration={duration}
       onClose={handleClose}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
     >

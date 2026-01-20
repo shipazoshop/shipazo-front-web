@@ -292,12 +292,12 @@ function OrdersTable() {
               onChange={handleStatusChange}
             >
               <MenuItem value="all">Todos</MenuItem>
-              <MenuItem value="orden_recibida">Orden Recibida</MenuItem>
-              <MenuItem value="paquete_en_camino">Paquete en Camino</MenuItem>
-              <MenuItem value="paquete_recibido_empresa">
-                Paquete Recibido
+              <MenuItem value="Orden recibida">Orden Recibida</MenuItem>
+              <MenuItem value="Paquete en camino">Paquete en camino</MenuItem>
+              <MenuItem value="Paquete recibido en empresa">
+                Paquete recibido en empresa
               </MenuItem>
-              <MenuItem value="pedido_en_ruta">Pedido en Ruta</MenuItem>
+              <MenuItem value="Pedido en ruta">Pedido en ruta</MenuItem>
               <MenuItem value="entregado">Entregado</MenuItem>
             </Select>
           </FormControl>

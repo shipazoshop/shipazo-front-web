@@ -109,13 +109,15 @@ export function useApiQuery<TData = unknown>({
       // Solo mostrar si el mensaje de error cambió
       if (lastShownErrorRef.current !== errorMessage) {
         lastShownErrorRef.current = errorMessage;
-        showSnackbar(errorMessage, 'error');
+        // Usar duración de 10 segundos para errores 403 y 400
+        const duration = query.error.statusCode === 403 || query.error.statusCode === 400 ? 10000 : 4000;
+        showSnackbar(errorMessage, 'error', duration);
       }
     } else if (!query.isError) {
       // Resetear cuando no hay error
       lastShownErrorRef.current = null;
     }
-  }, [query.isError, query.error?.message, showErrorSnackbar]);
+  }, [query.isError, query.error?.message, query.error?.statusCode, showErrorSnackbar, showSnackbar]);
 
   // Utilidades
   const invalidate = useCallback(() => {

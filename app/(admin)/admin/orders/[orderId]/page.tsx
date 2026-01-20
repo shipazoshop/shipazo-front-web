@@ -28,7 +28,7 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { ArrowLeft, Save, Truck, MapPin, CreditCard } from "lucide-react";
+import { ArrowLeft, Save, Truck, MapPin, CreditCard, ExternalLink } from "lucide-react";
 import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
 import { formatGTQ } from "@/shared/utils";
 
@@ -44,9 +44,12 @@ const paymentStatusConfig: Record<
 export default function OrderDetailPage() {
   const params = useParams<{ orderId: string }>();
 
-  const { getOrderDetail } = useOrdersRepository();
+  const { getOrderDetail, updateOrderTracking } = useOrdersRepository();
   const { data, isLoading, isError } = getOrderDetail(params.orderId);
   const order = data?.data;
+
+  // Mutación para actualizar tracking
+  const { mutate: updateTracking, isLoading: isUpdating } = updateOrderTracking(params.orderId);
 
   // Ordenar tracking por posición
   const sortedTracking = order ? [...order.tracking].sort((a, b) => a.position - b.position) : [];
@@ -64,13 +67,18 @@ export default function OrderDetailPage() {
   };
 
   const handleSave = () => {
-    // Aquí iría tu llamada a la API para actualizar el estado de tracking
-    console.log("Guardar cambios tracking:", {
-      orderId: params.orderId,
-      trackingStatus,
+    // Encontrar el stageId basado en el nombre seleccionado
+    const selectedStage = sortedTracking.find((stage) => stage.name === trackingStatus);
+
+    if (!selectedStage) {
+      console.error("No se encontró el stage seleccionado");
+      return;
+    }
+
+    // Llamar a la API para actualizar el tracking
+    updateTracking({
+      newTrackingStageId: selectedStage.stageId,
     });
-    // TODO: Implementar mutación para actualizar el tracking
-    // Podrías mostrar un snackbar o toast aquí
   };
 
   if (isLoading) {
@@ -105,8 +113,8 @@ export default function OrderDetailPage() {
   }
 
   // Encontrar el paso actual del tracking
-  const currentTrackingStage = sortedTracking.find((t) => t.name === trackingStatus);
-  const currentStepIndex = currentTrackingStage ? currentTrackingStage.position : 0;
+  const currentTrackingStage = sortedTracking.findIndex((t) => t.name === trackingStatus);
+  const currentStepIndex = currentTrackingStage === -1 ? 0 : currentTrackingStage;
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -169,7 +177,7 @@ export default function OrderDetailPage() {
               color={paymentStatusConfig[order.paymentStatus]?.color || "info"}
               variant="outlined"
             />
-            <Typography variant="body2" fontWeight={600}>
+            <Typography variant="body2" fontWeight={600} sx={{ fontSize: "0.8125rem" }}>
               Total: {formatGTQ(order.totalAmount)}
             </Typography>
           </Box>
@@ -177,7 +185,7 @@ export default function OrderDetailPage() {
       </Box>
 
       <Grid container spacing={2}>
-        <Grid size={{sm: 12, md: 4, lg: 3, xs: 12}} >
+        <Grid size={{ sm: 12, md: 4, lg: 3, xs: 12 }} >
           {/* Dirección de envío */}
           <Paper sx={{ p: 3, mb: 2, borderRadius: 3 }}>
             <Box sx={{ display: "flex", gap: 1.5, alignItems: "center", mb: 2 }}>
@@ -244,26 +252,32 @@ export default function OrderDetailPage() {
                 <Typography variant="body2" color="text.secondary">
                   Subtotal
                 </Typography>
-                <Typography variant="body2">{formatGTQ(order.subtotalAmount)}</Typography>
+                <Typography variant="body2" sx={{ fontSize: "0.8125rem" }}>
+                  {formatGTQ(order.subtotalAmount)}
+                </Typography>
               </Box>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant="body2" color="text.secondary">
                   Envío
                 </Typography>
-                <Typography variant="body2">{formatGTQ(order.shippingCost)}</Typography>
+                <Typography variant="body2" sx={{ fontSize: "0.8125rem" }}>
+                  {formatGTQ(order.shippingCost)}
+                </Typography>
               </Box>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant="body2" color="text.secondary">
                   Impuestos
                 </Typography>
-                <Typography variant="body2">{formatGTQ(order.taxAmount)}</Typography>
+                <Typography variant="body2" sx={{ fontSize: "0.8125rem" }}>
+                  {formatGTQ(order.taxAmount)}
+                </Typography>
               </Box>
               <Divider />
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant="body2" fontWeight={700}>
                   Total
                 </Typography>
-                <Typography variant="body2" fontWeight={700}>
+                <Typography variant="body2" fontWeight={700} sx={{ fontSize: "0.8125rem" }}>
                   {formatGTQ(order.totalAmount)}
                 </Typography>
               </Box>
@@ -271,7 +285,7 @@ export default function OrderDetailPage() {
           </Paper>
         </Grid>
 
-        <Grid size={{sm: 12, md: 8, lg: 9}} >
+        <Grid size={{ sm: 12, md: 8, lg: 9 }} >
           <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
             <Box
               sx={{
@@ -313,6 +327,7 @@ export default function OrderDetailPage() {
                     label="Estado de tracking"
                     value={trackingStatus}
                     onChange={handleTrackingChange}
+                    disabled={isUpdating}
                   >
                     {sortedTracking.map((step) => (
                       <MenuItem key={step.stageId} value={step.name}>
@@ -325,8 +340,9 @@ export default function OrderDetailPage() {
                   variant="contained"
                   startIcon={<Save size={16} />}
                   onClick={handleSave}
+                  disabled={isUpdating || trackingStatus === order.currentTrackingStage}
                 >
-                  Guardar cambios
+                  {isUpdating ? "Guardando..." : "Guardar cambios"}
                 </Button>
               </Box>
             </Box>
@@ -338,14 +354,7 @@ export default function OrderDetailPage() {
                 "& .MuiStepLabel-label": {
                   fontSize: { xs: "0.75rem", sm: "0.875rem" },
                 },
-                // Evitar que se coloree el conector después del paso activo
-                "& .MuiStepConnector-root": {
-                  "&.Mui-active": {
-                    "& .MuiStepConnector-line": {
-                      borderColor: "rgba(0, 0, 0, 0.38)", // Color por defecto (gris)
-                    },
-                  },
-                },
+
               }}
             >
               {sortedTracking.map((step) => (
@@ -371,6 +380,7 @@ export default function OrderDetailPage() {
                     <TableCell align="right">Precio</TableCell>
                     <TableCell align="right">Cantidad</TableCell>
                     <TableCell align="right">Subtotal</TableCell>
+                    <TableCell align="center">Enlace</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -414,7 +424,7 @@ export default function OrderDetailPage() {
                         </Box>
                       </TableCell>
                       <TableCell align="right">
-                        <Typography variant="body2">
+                        <Typography variant="body2" sx={{ fontSize: "0.8125rem" }}>
                           {formatGTQ(item.productDetails.price)}
                         </Typography>
                       </TableCell>
@@ -422,50 +432,71 @@ export default function OrderDetailPage() {
                         <Typography variant="body2">{item.quantity}</Typography>
                       </TableCell>
                       <TableCell align="right">
-                        <Typography variant="body2" fontWeight={600}>
+                        <Typography variant="body2" fontWeight={600} sx={{ fontSize: "0.8125rem" }}>
                           {formatGTQ(item.subtotal)}
                         </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          component="a"
+                          href={item.storeLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          size="small"
+                          variant="outlined"
+                          endIcon={<ExternalLink size={14} />}
+                          sx={{
+                            textTransform: "none",
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          Ver
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
 
                   {/* Resumen */}
                   <TableRow>
-                    <TableCell colSpan={3} align="right">
+                    <TableCell colSpan={4} align="right">
                       <Typography variant="body2" fontWeight={600}>
                         Subtotal
                       </Typography>
                     </TableCell>
                     <TableCell align="right">
-                      <Typography variant="body2" fontWeight={700}>
+                      <Typography variant="body2" fontWeight={700} sx={{ fontSize: "0.8125rem" }}>
                         {formatGTQ(order.subtotalAmount)}
                       </Typography>
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell colSpan={3} align="right">
+                    <TableCell colSpan={4} align="right">
                       <Typography variant="body2">Envío</Typography>
                     </TableCell>
                     <TableCell align="right">
-                      <Typography variant="body2">{formatGTQ(order.shippingCost)}</Typography>
+                      <Typography variant="body2" sx={{ fontSize: "0.8125rem" }}>
+                        {formatGTQ(order.shippingCost)}
+                      </Typography>
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell colSpan={3} align="right">
+                    <TableCell colSpan={4} align="right">
                       <Typography variant="body2">Impuestos</Typography>
                     </TableCell>
                     <TableCell align="right">
-                      <Typography variant="body2">{formatGTQ(order.taxAmount)}</Typography>
+                      <Typography variant="body2" sx={{ fontSize: "0.8125rem" }}>
+                        {formatGTQ(order.taxAmount)}
+                      </Typography>
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell colSpan={3} align="right">
+                    <TableCell colSpan={4} align="right">
                       <Typography variant="body2" fontWeight={700}>
                         Total
                       </Typography>
                     </TableCell>
                     <TableCell align="right">
-                      <Typography variant="body2" fontWeight={700}>
+                      <Typography variant="body2" fontWeight={700} sx={{ fontSize: "0.8125rem" }}>
                         {formatGTQ(order.totalAmount)}
                       </Typography>
                     </TableCell>
