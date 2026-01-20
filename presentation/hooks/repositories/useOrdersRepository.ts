@@ -3,6 +3,8 @@ import {
   CreateOrderResponse,
   GetOrdersParams,
   OrdersListResponse,
+  UpdateOrderTrackingDto,
+  UpdateOrderTrackingResponse,
 } from '@/domain/entities/order.entity';
 import { useApiQuery } from '../api/useApiQuery';
 import { useApiMutation } from '../api/useApiMutation';
@@ -54,6 +56,24 @@ export function useOrdersRepository() {
     });
   };
 
+  /**
+   * Servicio para actualizar el tracking de una orden
+   * PATCH /api/v1/orders/:orderId/tracking
+   */
+  const updateOrderTracking = (orderId: string) => {
+    return useApiMutation<UpdateOrderTrackingResponse, UpdateOrderTrackingDto>({
+      service: 'scrapper',
+      endpoint: `/orders/${orderId}/tracking`,
+      method: 'PATCH',
+      successMessage: 'Estado de tracking actualizado exitosamente',
+      // Invalidar la lista de órdenes y el detalle de la orden después de actualizar
+      invalidateQueries: [
+        ['scrapper', '/orders'],
+        ['scrapper', `/orders/track/${orderId}`],
+      ],
+    });
+  };
+
   return {
     // Queries
     getOrders,
@@ -61,5 +81,6 @@ export function useOrdersRepository() {
 
     // Mutations
     createOrder,
+    updateOrderTracking,
   };
 }

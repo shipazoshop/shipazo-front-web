@@ -142,7 +142,9 @@ export function useApiMutation<TData = unknown, TVariables = unknown>({
       // Mostrar snackbar de error si está habilitado
       if (showErrorSnackbar) {
         const errorMessage = error.message || 'Ha ocurrido un error';
-        showSnackbar(errorMessage, 'error');
+        // Usar duración de 10 segundos para errores 403 y 400
+        const duration = error.statusCode === 403 || error.statusCode === 400 ? 10000 : 4000;
+        showSnackbar(errorMessage, 'error', duration);
       }
 
       onError?.(error);

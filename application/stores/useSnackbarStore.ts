@@ -9,7 +9,8 @@ interface SnackbarState {
   open: boolean;
   message: string;
   severity: SnackbarSeverity;
-  showSnackbar: (message: string, severity: SnackbarSeverity) => void;
+  duration: number;
+  showSnackbar: (message: string, severity: SnackbarSeverity, duration?: number) => void;
   hideSnackbar: () => void;
 }
 
@@ -17,8 +18,9 @@ export const useSnackbarStore = create<SnackbarState>((set) => ({
   open: false,
   message: "",
   severity: "info",
-  showSnackbar: (message: string, severity: SnackbarSeverity) => {
-    set({ open: true, message, severity });
+  duration: 4000, // duración por defecto
+  showSnackbar: (message: string, severity: SnackbarSeverity, duration = 4000) => {
+    set({ open: true, message, severity, duration });
   },
   hideSnackbar: () => {
     set({ open: false });
@@ -31,6 +33,7 @@ export const useSnackbar = () => useSnackbarStore(
     open: state.open,
     message: state.message,
     severity: state.severity,
+    duration: state.duration,
   }))
 );
 
