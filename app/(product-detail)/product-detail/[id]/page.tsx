@@ -1,8 +1,7 @@
 "use client";
-import Footer1 from "@/presentation/components/footers/Footer1";
 import Header4 from "@/presentation/components/headers/Header4";
 import Details1 from "@/presentation/components/product-detail/Details1";
-import React, { useEffect, Suspense } from "react";
+import React, { useEffect, Suspense, useRef } from "react";
 import Link from "next/link";
 import { useProductStore } from "../../../../application/state/product";
 import { useSearchParams } from "next/navigation";
@@ -13,26 +12,37 @@ function ProductDetailContent() {
   const { product, setProduct } = useProductStore();
   const searchParams = useSearchParams();
   const productUrl = searchParams.get('url');
+  const fetchedUrlRef = useRef<string | null>(null);
 
   const { importProductFromUrl } = useProductRepository();
   const { mutateAsync, isLoading } = importProductFromUrl();
 
   useEffect(() => {
     const fetchProduct = async () => {
-      // Si no hay producto en store pero hay URL en params, hacer fetch
-      if (!product && productUrl || product && product.url !== productUrl) {
-        try {
-          const decodedUrl = decodeURIComponent(productUrl);
-          const result = await mutateAsync({ url: decodedUrl });
-          setProduct(result);
-        } catch (error) {
-          console.error("❌ Error al cargar producto:", error);
-        }
+      // Evitar fetch si ya se hizo para esta URL
+      if (!productUrl || fetchedUrlRef.current === productUrl) {
+        return;
+      }
+
+      // Si ya hay un producto con la misma URL, no hacer fetch
+      if (product?.url === productUrl) {
+        fetchedUrlRef.current = productUrl;
+        return;
+      }
+
+      try {
+        fetchedUrlRef.current = productUrl;
+        const decodedUrl = decodeURIComponent(productUrl);
+        const result = await mutateAsync({ url: decodedUrl });
+        setProduct(result);
+      } catch (error) {
+        console.error("❌ Error al cargar producto:", error);
+        fetchedUrlRef.current = null; // Reset para permitir retry
       }
     };
 
     fetchProduct();
-  }, [product, productUrl]);
+  }, [productUrl, mutateAsync, setProduct]);
 
   // Mostrar loading mientras se hace el fetch
   if (isLoading || (!product && productUrl)) {

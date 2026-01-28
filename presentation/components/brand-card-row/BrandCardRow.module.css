@@ -1,14 +1,41 @@
 .row {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(var(--minw, 220px), 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--minw, 220px), 100%), 1fr));
   gap: var(--gap, 16px);
-  overflow-x: auto;
   padding: 8px 4px;
-  scroll-snap-type: x proximity;
+  width: 100%;
 }
 
 .item {
-  scroll-snap-align: start;
-  min-width: var(--minw, 220px);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Tablet - 2 columnas */
+@media (min-width: 576px) and (max-width: 767px) {
+  .row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet grande - 3 columnas */
+@media (min-width: 768px) and (max-width: 991px) {
+  .row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Desktop pequeño - 4 columnas */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Desktop - 5 columnas */
+@media (min-width: 1200px) {
+  .row {
+    grid-template-columns: repeat(5, 1fr);
+  }
 }

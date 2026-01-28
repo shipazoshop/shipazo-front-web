@@ -52,7 +52,7 @@ export function useProductRepository() {
 
   const importProductFromUrl = () => {
     if (!SCRAPER_PRODUCT_URL.scrapper) {
-      throw new Error("Falta NEXT_PUBLIC_API_SCRAPER_URL en .env");
+      throw new Error("Falta NEXT_PUBLIC_PRODUCTS_API_URL en .env");
     }
 
     return useApiMutation<IImportProductResponse, ImportFromUrlDto>({

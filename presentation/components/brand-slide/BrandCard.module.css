@@ -1,12 +1,12 @@
 .card {
   position: relative;
   width: 100%;
-  max-width: 320px;        
+  max-width: 100%;
   border-radius: var(--radius, 16px);
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0,0,0,0.18);
   background: #111;
-  isolation: isolate;      
+  isolation: isolate;
 }
 
 .bg {
@@ -63,4 +63,33 @@
   clip: rect(0, 0, 0, 0) !important;
   white-space: nowrap !important;
   border: 0 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 575px) {
+  .card {
+    border-radius: var(--radius, 12px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+
+  .logoWrap {
+    padding: 12px;
+  }
+
+  .logo {
+    max-width: 70%;
+    max-height: 50%;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+  .logoWrap {
+    padding: 14px;
+  }
+}
+
+@media (min-width: 768px) {
+  .card {
+    max-width: 320px;
+  }
 }

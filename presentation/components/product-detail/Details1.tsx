@@ -1,7 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Slider1 from "./sliders/Slider1";
 import Link from "next/link";
+// TODO: Descomentar cuando el backend soporte productSpecification
 import { HelpCircle } from "lucide-react";
 import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
 import { LoadingScreen } from "../common/LoadingScreen";
@@ -10,16 +11,20 @@ import { useWishlistActions, useWishlist } from "@/application/stores/useWishlis
 
 export default function Details1({ product }: Readonly<{ product: IImportProductResponse }>) {
   const [quantity, setQuantity] = useState(1);
+  // TODO: Descomentar cuando el backend soporte productSpecification
   const [specification, setSpecification] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
 
-  const { addProductToCart, isAddedToCartProducts, updateProductSpecification, getProductSpecification } = useCartActions();
+  const { addProductToCart, isAddedToCartProducts, getProductSpecification, updateProductSpecification } = useCartActions();
   const { toggleWishlist } = useWishlistActions();
+  // TODO: Descomentar cuando el backend soporte productSpecification
   const cartProducts = useCartProducts();
 
   // Verificar si el producto está en el carrito
+  // TODO: Descomentar cuando el backend soporte productSpecification
   const isInCart = product ? isAddedToCartProducts(product.productData.product_id) : false;
 
+  // TODO: Descomentar cuando el backend soporte productSpecification
   // Cargar la especificación guardada cuando el producto está en el carrito
   useEffect(() => {
     if (isInCart && product) {
@@ -238,79 +243,81 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         Buy now
                       </Link> */}
                     </div>
+                    {/* TODO: Descomentar cuando el backend soporte productSpecification */}
                     {/* Campo de especificación - Solo visible cuando el producto está en el carrito */}
-                    {isInCart && (
-                      <div className="product-specification" style={{ marginTop: '20px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                          <label htmlFor="product-specification" className="body-md-2 fw-semibold" style={{ margin: 0 }}>
-                            ¿Tienes alguna especificación?
-                          </label>
-                          <button
-                            type="button"
-                            aria-label="Más información sobre especificaciones"
-                            style={{ position: 'relative', display: 'inline-block', background: 'none', border: 'none', padding: 0, cursor: 'help' }}
-                            onMouseEnter={() => setShowTooltip(true)}
-                            onMouseLeave={() => setShowTooltip(false)}
-                            onFocus={() => setShowTooltip(true)}
-                            onBlur={() => setShowTooltip(false)}
-                          >
-                            <HelpCircle
-                              size={18}
-                              style={{ color: 'var(--primary)', cursor: 'help' }}
-                            />
-                            {showTooltip && (
+
+                    <div className="product-specification" style={{ marginTop: '20px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <label htmlFor="product-specification" className="body-md-2 fw-semibold" style={{ margin: 0 }}>
+                          ¿Tienes alguna especificación?
+                        </label>
+                        <button
+                          type="button"
+                          aria-label="Más información sobre especificaciones"
+                          style={{ position: 'relative', display: 'inline-block', background: 'none', border: 'none', padding: 0, cursor: 'help' }}
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                          onFocus={() => setShowTooltip(true)}
+                          onBlur={() => setShowTooltip(false)}
+                        >
+                          <HelpCircle
+                            size={18}
+                            style={{ color: 'var(--primary)', cursor: 'help' }}
+                          />
+                          {showTooltip && (
+                            <div
+                              style={{
+                                position: 'absolute',
+                                bottom: '100%',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                backgroundColor: '#333',
+                                color: '#fff',
+                                padding: '10px 14px',
+                                borderRadius: '6px',
+                                fontSize: '13px',
+                                width: '250px',
+                                textAlign: 'center',
+                                marginBottom: '8px',
+                                zIndex: 1000,
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                              }}
+                            >
+                              Si necesitas una talla, color, medida o capacidad específica, escríbela aquí para que podamos conseguirla.
                               <div
                                 style={{
                                   position: 'absolute',
-                                  bottom: '100%',
+                                  top: '100%',
                                   left: '50%',
                                   transform: 'translateX(-50%)',
-                                  backgroundColor: '#333',
-                                  color: '#fff',
-                                  padding: '10px 14px',
-                                  borderRadius: '6px',
-                                  fontSize: '13px',
-                                  width: '250px',
-                                  textAlign: 'center',
-                                  marginBottom: '8px',
-                                  zIndex: 1000,
-                                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                                  borderWidth: '6px',
+                                  borderStyle: 'solid',
+                                  borderColor: '#333 transparent transparent transparent'
                                 }}
-                              >
-                                Si necesitas una talla, color, medida o capacidad específica, escríbela aquí para que podamos conseguirla.
-                                <div
-                                  style={{
-                                    position: 'absolute',
-                                    top: '100%',
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                    borderWidth: '6px',
-                                    borderStyle: 'solid',
-                                    borderColor: '#333 transparent transparent transparent'
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </button>
-                        </div>
-                        <textarea
-                          id="product-specification"
-                          value={specification}
-                          onChange={(e) => handleSpecificationChange(e.target.value)}
-                          placeholder="Ej: Talla M, Color azul, 500ml..."
-                          style={{
-                            width: '100%',
-                            minHeight: '80px',
-                            padding: '12px',
-                            borderRadius: '6px',
-                            border: '1px solid #e5e7eb',
-                            resize: 'vertical',
-                            fontFamily: 'inherit',
-                            fontSize: '14px'
-                          }}
-                        />
+                              />
+                            </div>
+                          )}
+                        </button>
                       </div>
-                    )}
+                      <textarea
+                        id="product-specification"
+                        value={specification}
+                        onChange={(e) => handleSpecificationChange(e.target.value)}
+                        placeholder="Ej: Talla M, Color azul, 500ml..."
+                        className="customtextarea"
+                        style={{
+                          width: '100%',
+                          minHeight: '80px',
+                          padding: '12px',
+                          borderRadius: '6px',
+
+                          resize: 'vertical',
+                          fontFamily: 'inherit',
+                          fontSize: '14px',
+                        }}
+                      />
+                    </div>
+
                     <div className="product-detail">
                       <p className="caption">Details</p>
                       <p className="body-text-3">

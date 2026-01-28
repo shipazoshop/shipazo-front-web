@@ -174,3 +174,18 @@
         color: var(--color-white);
     }
 }
+
+// Testimonials Swiper - Equal height slides
+.tf-sw-products {
+    .swiper-wrapper {
+        align-items: stretch;
+    }
+
+    .swiper-slide {
+        height: auto;
+
+        > * {
+            height: 100%;
+        }
+    }
+}

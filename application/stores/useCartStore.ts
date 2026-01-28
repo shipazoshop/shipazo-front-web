@@ -124,6 +124,7 @@ export const useCartStore = create<CartStore>()(
         });
       },
 
+      // TODO: Descomentar cuando el backend soporte este campo
       updateProductSpecification: (id: string, specification: string) => {
         set((state) => {
           const newCartProducts = state.cartProducts.map((item) =>
@@ -201,6 +202,7 @@ export const useCartLength = () => useCartStore((state) => state.cartProducts.le
 export const useAddProductToCart = () => useCartStore((state) => state.addProductToCart);
 export const useAddProductToCartById = () => useCartStore((state) => state.addProductToCartById);
 export const useUpdateQuantity = () => useCartStore((state) => state.updateQuantity);
+// TODO: Descomentar cuando el backend soporte este campo
 export const useUpdateProductSpecification = () => useCartStore((state) => state.updateProductSpecification);
 export const useGetProductSpecification = () => useCartStore((state) => state.getProductSpecification);
 export const useRemoveFromCart = () => useCartStore((state) => state.removeFromCart);
@@ -212,6 +214,7 @@ export const useCartActions = () => {
   const addProductToCart = useCartStore((state) => state.addProductToCart);
   const addProductToCartById = useCartStore((state) => state.addProductToCartById);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
+  // TODO: Descomentar cuando el backend soporte este campo
   const updateProductSpecification = useCartStore((state) => state.updateProductSpecification);
   const getProductSpecification = useCartStore((state) => state.getProductSpecification);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
