@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Slider1 from "./sliders/Slider1";
-import Link from "next/link";
-// TODO: Descomentar cuando el backend soporte productSpecification
 import { HelpCircle } from "lucide-react";
 import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
 import { LoadingScreen } from "../common/LoadingScreen";
@@ -11,20 +9,15 @@ import { useWishlistActions, useWishlist } from "@/application/stores/useWishlis
 
 export default function Details1({ product }: Readonly<{ product: IImportProductResponse }>) {
   const [quantity, setQuantity] = useState(1);
-  // TODO: Descomentar cuando el backend soporte productSpecification
   const [specification, setSpecification] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
 
   const { addProductToCart, isAddedToCartProducts, getProductSpecification, updateProductSpecification } = useCartActions();
   const { toggleWishlist } = useWishlistActions();
-  // TODO: Descomentar cuando el backend soporte productSpecification
   const cartProducts = useCartProducts();
 
-  // Verificar si el producto está en el carrito
-  // TODO: Descomentar cuando el backend soporte productSpecification
   const isInCart = product ? isAddedToCartProducts(product.productData.product_id) : false;
 
-  // TODO: Descomentar cuando el backend soporte productSpecification
   // Cargar la especificación guardada cuando el producto está en el carrito
   useEffect(() => {
     if (isInCart && product) {
@@ -34,6 +27,13 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
       }
     }
   }, [isInCart, product, getProductSpecification, cartProducts]);
+
+  // Persistir especificación al store cuando el producto se agrega al carrito
+  useEffect(() => {
+    if (isInCart && product && specification) {
+      updateProductSpecification(product.productData.product_id, specification);
+    }
+  }, [isInCart]);
 
   // Manejar cambio de especificación
   const handleSpecificationChange = (value: string) => {
@@ -243,8 +243,7 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         Buy now
                       </Link> */}
                     </div>
-                    {/* TODO: Descomentar cuando el backend soporte productSpecification */}
-                    {/* Campo de especificación - Solo visible cuando el producto está en el carrito */}
+                    {/* Campo de especificación del producto */}
 
                     <div className="product-specification" style={{ marginTop: '20px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
