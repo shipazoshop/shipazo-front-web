@@ -3,31 +3,31 @@ export interface ImportFromUrlDto {
 };
 
 export interface IImportProductResponse {
-    success: boolean;
-    url: string;
+    success:     boolean;
+    url:         string;
+    store:       string;
     productData: ProductData;
 }
 
 export interface ProductData {
-    product_id: string;
-    title: string;
-    description: string;
-    price: number;
-    currency: string;
-    brand: string;
-    categoria: string;
-    stock: boolean;
-    weight: null;
-    dimensions: string;
-    images: string[];
-    price_details: PriceDetails;
+    product_id:        string;
+    title:             string;
+    description:       string;
+    price:             number;
+    currency:          string;
+    brand:             string;
+    categoria:         string;
+    stock:             boolean;
+    weight:            null;
+    calculated_weight: null;
+    dimensions:        null;
+    images:            string[];
+    price_details:     PriceDetails;
 }
 
 export interface PriceDetails {
-    original_price: string;
-    discount: string;
     calculatedPriceGtq: number;
-    priceBreakdown: PriceBreakdown;
+    priceBreakdown:     PriceBreakdown;
 }
 
 export interface PriceBreakdown {
