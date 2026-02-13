@@ -96,6 +96,6 @@ export const config = {
     "/admin/:path*",
     "/checkout/:path*",
     "/order-details/:path*",
-    //"/configurations/:path*",
+    "/configurations/:path*",
   ],
 };
