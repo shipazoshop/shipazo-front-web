@@ -7,9 +7,12 @@ import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { mockDashboardStats, mockRecentOrders, type IDashboardStat, type IRecentOrder } from "@/mocks/admin";
+import { ArrowUpRight, ArrowDownRight, ShoppingCart, TrendingUp, Package, CheckCircle, type LucideIcon } from "lucide-react";
 import { alpha } from "@mui/material/styles";
+import { useAnalyticsRepository } from "@/presentation/hooks/repositories/useAnalyticsRepository";
+import type { RecentPendingOrder } from "@/domain/entities/order.entity";
+import CircularProgress from "@mui/material/CircularProgress";
+import Link from "next/link";
 
 const getStatusColor = (status: string):
   | "success"
@@ -28,8 +31,16 @@ const getStatusColor = (status: string):
   }
 };
 
-// Memoizar el componente de tarjeta de estadística con diseño moderno
-const StatCard = memo(function StatCard({ stat }: { stat: IDashboardStat }) {
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  change: string;
+  trend: "up" | "down";
+  icon: LucideIcon;
+  hideChip?: boolean;
+}
+
+const StatCard = memo(function StatCard({ stat }: { stat: StatCardProps }) {
   const Icon = stat.icon;
   const isUp = stat.trend === "up";
 
@@ -83,33 +94,36 @@ const StatCard = memo(function StatCard({ stat }: { stat: IDashboardStat }) {
             >
               <Icon size={24} strokeWidth={2} />
             </Box>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.5,
-                px: 1.5,
-                py: 0.5,
-                borderRadius: 999,
-                bgcolor: isUp ? alpha("#4caf50", 0.1) : alpha("#f44336", 0.1),
-              }}
-            >
-              {isUp ? (
-                <ArrowUpRight size={14} color="#4caf50" />
-              ) : (
-                <ArrowDownRight size={14} color="#f44336" />
-              )}
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: 700,
-                  fontSize: "0.7rem",
-                  color: isUp ? "success.main" : "error.main",
-                }}
-              >
-                {stat.change}
-              </Typography>
-            </Box>
+            {
+              stat.hideChip ? null :
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: 999,
+                    bgcolor: isUp ? alpha("#4caf50", 0.1) : alpha("#f44336", 0.1),
+                  }}
+                >
+                  {isUp ? (
+                    <ArrowUpRight size={14} color="#4caf50" />
+                  ) : (
+                    <ArrowDownRight size={14} color="#f44336" />
+                  )}
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: "0.7rem",
+                      color: isUp ? "success.main" : "error.main",
+                    }}
+                  >
+                    {stat.change}
+                  </Typography>
+                </Box>
+            }
           </Box>
 
           <Typography
@@ -138,121 +152,136 @@ const StatCard = memo(function StatCard({ stat }: { stat: IDashboardStat }) {
   );
 });
 
-// Memoizar el componente de fila de orden reciente
+// Memoizar el componente de fila de orden pendiente
 const RecentOrderRow = memo(function RecentOrderRow({
   order,
-  isLast
 }: {
-  order: IRecentOrder;
-  isLast: boolean;
+  order: RecentPendingOrder;
 }) {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        py: 2,
-        px: 1.5,
-        borderRadius: 2,
-        transition: "all 0.2s ease-in-out",
-        "&:hover": {
-          bgcolor: alpha("#ff3d3d", 0.04),
-        },
-      }}
-    >
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-        <Typography variant="body2" fontWeight={600}>
-          {order.customer}
-        </Typography>
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ fontFamily: "monospace", fontSize: "0.7rem" }}
-        >
-          {order.id}
-        </Typography>
-      </Box>
+  const formattedDate = new Date(order.createdAt).toLocaleDateString("es-GT", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 
+  return (
+    <Link
+      href={`/admin/orders/${order.orderId}`}
+      style={{ textDecoration: "none", color: "inherit", display: "block", width: "100%" }}
+    >
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: 2,
+          justifyContent: "space-between",
+          py: 2,
+          px: 1.5,
+          borderRadius: 2,
+          cursor: "pointer",
+          transition: "all 0.2s ease-in-out",
+          "&:hover": {
+            bgcolor: alpha("#ff3d3d", 0.04),
+          },
         }}
       >
-        <Typography variant="body2" fontWeight={700} sx={{ minWidth: 80, textAlign: "right" }}>
-          {order.amount}
-        </Typography>
-        <Chip
-          size="small"
-          label={order.status}
-          color={getStatusColor(order.status)}
-          sx={{ fontWeight: 600, minWidth: 90 }}
-        />
-      </Box>
-    </Box>
-  );
-});
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+          <Typography variant="body2" fontWeight={600}>
+            {order.customerName}
+          </Typography>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ fontFamily: "monospace", fontSize: "0.7rem" }}
+          >
+            {order.orderId}
+          </Typography>
+        </Box>
 
-// Memoizar el componente de actividad con diseño moderno
-const ActivityItem = memo(function ActivityItem({
-  color,
-  title,
-  time,
-}: {
-  color: string;
-  title: string;
-  time: string;
-}) {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        gap: 1.5,
-        p: 1.5,
-        borderRadius: 2,
-        transition: "all 0.2s ease-in-out",
-        "&:hover": {
-          bgcolor: alpha("#f5f5f5", 0.5),
-        },
-      }}
-    >
-      <Box
-        sx={{
-          width: 10,
-          height: 10,
-          borderRadius: "50%",
-          bgcolor: color,
-          mt: 0.75,
-          boxShadow: `0 0 0 4px ${alpha(color, 0.15)}`,
-        }}
-      />
-      <Box sx={{ flex: 1 }}>
-        <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5 }}>
-          {title}
-        </Typography>
-        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem" }}>
-          {time}
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
+          <Typography variant="caption" color="text.secondary" sx={{ display: { xs: "none", sm: "block" } }}>
+            {formattedDate}
+          </Typography>
+          <Typography variant="body2" fontWeight={700} sx={{ minWidth: 80, textAlign: "right" }}>
+            GTQ {order.totalAmount.toFixed(2)}
+          </Typography>
+          <Chip
+            size="small"
+            label={order.status}
+            color={getStatusColor(order.status)}
+            sx={{ fontWeight: 600, minWidth: 90 }}
+          />
+        </Box>
       </Box>
-    </Box>
+    </Link>
   );
 });
 
 export default function AdminHomePage() {
+  const { getRecentPendingOrders, getOrdersAverage, getOrdersStatusSummary } = useAnalyticsRepository();
+  const { data: recentPendingData, isLoading } = getRecentPendingOrders({ limit: 10 });
+  const { data: averageData } = getOrdersAverage();
+  const { data: summaryData } = getOrdersStatusSummary();
+
+  const pendingOrders = recentPendingData?.data?.orders ?? [];
+  const avgCurrent = averageData?.data?.currentMonth;
+  const avgChange = averageData?.data?.percentageChange;
+  const avgTrend = avgChange !== undefined && avgChange >= 0 ? "up" as const : "down" as const;
+  const change = (avgChange !== undefined && avgChange !== null) ? `${avgChange >= 0 ? "+" : ""}${avgChange?.toFixed(1)}%` : "0%";
+
+  const summary = summaryData?.data;
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       {/* Tarjetas de estadísticas */}
       <Grid container spacing={3}>
-        {mockDashboardStats.map((stat) => (
-          <StatCard key={stat.title} stat={stat} />
-        ))}
+        <StatCard
+          stat={{
+            title: "Total Órdenes",
+            value: summary ? summary.total : "-",
+            change: summary ? summary.month : "-",
+            trend: "up",
+            icon: ShoppingCart,
+          }}
+        />
+        <StatCard
+          stat={{
+            title: "Promedio de Órdenes",
+            value: avgCurrent ? `GTQ ${avgCurrent.average.toFixed(2)}` : "-",
+            change: change,
+            trend: avgTrend,
+            icon: TrendingUp,
+          }}
+        />
+        <StatCard
+          stat={{
+            title: "Órdenes Pendientes",
+            value: pendingOrders.length,
+            change: "-",
+            trend: "down",
+            icon: Package,
+            hideChip: true
+          }}
+        />
+        <StatCard
+          stat={{
+            title: "Completadas",
+            value: summary ? summary.completed : "-",
+            change: summary ? summary.month : "-",
+            trend: "up",
+            icon: CheckCircle,
+          }}
+        />
       </Grid>
 
-      {/* Órdenes recientes y actividad */}
+      {/* Órdenes pendientes recientes */}
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, lg: 6 }}>
+        <Grid size={{ xs: 12 }}>
           <Card
             sx={{
               borderRadius: 3,
@@ -263,57 +292,27 @@ export default function AdminHomePage() {
           >
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6" fontWeight={700} sx={{ mb: 3 }}>
-                Órdenes Recientes
-              </Typography>
-              <Box>
-                {mockRecentOrders.map((order, index) => (
-                  <RecentOrderRow
-                    key={order.id}
-                    order={order}
-                    isLast={index === mockRecentOrders.length - 1}
-                  />
-                ))}
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <Card
-            sx={{
-              borderRadius: 3,
-              border: "1px solid",
-              borderColor: "divider",
-              height: "100%",
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
-                Actividad Reciente
+                Órdenes Pendientes Recientes
               </Typography>
 
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-                <ActivityItem
-                  color="#ff3d3d"
-                  title="Nueva orden recibida"
-                  time="Hace 5 minutos"
-                />
-                <ActivityItem
-                  color="#4caf50"
-                  title="Producto agregado al inventario"
-                  time="Hace 1 hora"
-                />
-                <ActivityItem
-                  color="#004ec3"
-                  title="Nuevo usuario registrado"
-                  time="Hace 3 horas"
-                />
-                <ActivityItem
-                  color="#FCB500"
-                  title="Alerta de inventario bajo"
-                  time="Hace 5 horas"
-                />
-              </Box>
+              {isLoading ? (
+                <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                  <CircularProgress size={32} />
+                </Box>
+              ) : pendingOrders.length === 0 ? (
+                <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", py: 4 }}>
+                  No hay órdenes pendientes
+                </Typography>
+              ) : (
+                <Box>
+                  {pendingOrders.map((order) => (
+                    <RecentOrderRow
+                      key={order.orderId}
+                      order={order}
+                    />
+                  ))}
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Grid>
