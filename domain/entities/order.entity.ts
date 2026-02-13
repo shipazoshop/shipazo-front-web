@@ -1,5 +1,7 @@
 // Entidades para Órdenes
 
+import type { PriceDetails } from "@/domain/dto/import-product.dto";
+
 export interface ProductDetails {
   name: string;
   description: string;
@@ -7,10 +9,12 @@ export interface ProductDetails {
   imageUrl: string;
   additionalInfo?: Record<string, any>;
   productSpecification?: string; // Especificación del producto (talla, color, medida, etc.)
+  priceDetails: PriceDetails;
 }
 
 export interface OrderProduct {
   storeLink: string;
+  store: string;
   productDetails: ProductDetails;
   quantity: number;
 }
@@ -131,4 +135,151 @@ export interface UpdateOrderTrackingResponse {
   currentStageId: string;
   currentStageName: string;
   tracking: TrackingStageDetailed[];
+}
+
+// Interfaz para órdenes pendientes recientes (Analytics)
+export interface RecentPendingOrder {
+  orderId: string;
+  customerName: string;
+  totalAmount: number;
+  status: string;
+  createdAt: string;
+}
+
+export interface RecentPendingOrdersData {
+  count: number;
+  orders: RecentPendingOrder[];
+}
+
+export interface RecentPendingOrdersResponse {
+  success: boolean;
+  message: string;
+  data: RecentPendingOrdersData;
+}
+
+export interface GetRecentPendingOrdersParams {
+  limit?: number;
+}
+
+// Interfaz para promedio de órdenes (Analytics)
+export interface OrderAverageMonth {
+  average: number;
+  count: number;
+  label: string;
+}
+
+export interface OrderAverageData {
+  currentMonth: OrderAverageMonth;
+  previousMonth: OrderAverageMonth;
+  percentageChange: number;
+}
+
+export interface OrderAverageResponse {
+  success: boolean;
+  message: string;
+  data: OrderAverageData;
+}
+
+// Interfaz para resumen de estados de órdenes (Analytics)
+export interface OrderStatusSummaryData {
+  month: string;
+  completed: number;
+  pending: number;
+  total: number;
+  completionRate: number;
+}
+
+export interface OrderStatusSummaryResponse {
+  success: boolean;
+  message: string;
+  data: OrderStatusSummaryData;
+}
+
+// Interfaz para gráfica de ventas mensuales (Analytics)
+export interface MonthlySalesChartMonth {
+  month: string;
+  totalSales: string;
+  totalProfit: string;
+}
+
+export interface MonthlySalesChartData {
+  year: number;
+  months: MonthlySalesChartMonth[];
+}
+
+export interface MonthlySalesChartResponse {
+  success: boolean;
+  message: string;
+  data: MonthlySalesChartData;
+}
+
+export interface GetMonthlySalesChartParams {
+  year: number;
+}
+
+// Interfaz para ventas por tienda (Analytics)
+export interface SalesByStoreItem {
+  [key: string]: any; // TODO: Actualizar con la interfaz correcta cuando se conozca
+}
+
+export interface SalesByStoreData {
+  stores: SalesByStoreItem[];
+}
+
+export interface SalesByStoreResponse {
+  success: boolean;
+  message: string;
+  data: SalesByStoreData;
+}
+
+export interface GetSalesByStoreParams {
+  startDate: string;
+  endDate: string;
+}
+
+// Interfaz para ventas totales por periodo (Analytics)
+export interface SalesTotalPeriod {
+  total: number;
+  label: string;
+}
+
+export interface SalesTotalData {
+  currentPeriod: SalesTotalPeriod;
+  previousPeriod: SalesTotalPeriod;
+  percentageChange: number;
+}
+
+export interface SalesTotalResponse {
+  success: boolean;
+  message: string;
+  data: SalesTotalData;
+}
+
+export interface GetSalesTotalParams {
+  period: 'month' | 'year';
+}
+
+// Interfaz para ganancias netas por periodo (Analytics)
+export interface NetProfitPeriod {
+  netProfit: number;
+  label: string;
+  totalRevenue: number;
+  operationalCosts: number;
+  taxes: number;
+}
+
+export interface NetProfitData {
+  currentPeriod: NetProfitPeriod;
+  previousPeriod: NetProfitPeriod;
+  percentageChange: number;
+}
+
+export interface NetProfitResponse {
+  success: boolean;
+  message: string;
+  data: NetProfitData;
+}
+
+export interface GetNetProfitParams {
+  period: 'month' | 'year';
 }

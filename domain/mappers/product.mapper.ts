@@ -44,6 +44,7 @@ export function mapLegacyProductToImportProduct(
   return {
     success: true,
     url: "",
+    store: "",
     productData: {
       product_id: String(legacyProduct.id),
       title: legacyProduct.title || "",
@@ -54,11 +55,10 @@ export function mapLegacyProductToImportProduct(
       categoria: "",
       stock: true,
       weight: null,
-      dimensions: legacyProduct.dimensions || "",
+      calculated_weight: null,
+      dimensions: null,
       images: legacyProduct.thumbImages || [legacyProduct.imgSrc] || [],
       price_details: {
-        original_price: String(price),
-        discount: "0",
         calculatedPriceGtq: price * 7.8, // Tasa de cambio aproximada
         priceBreakdown: {
           priceUsd: price,
