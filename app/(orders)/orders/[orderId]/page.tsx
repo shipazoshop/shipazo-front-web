@@ -82,7 +82,7 @@ export default function OrderDetailPage() {
   }
   // Encontrar el paso actual del tracking basado en position
   const currentTrackingStage = order.tracking.find((t) => t.name === order.currentTrackingStage);
-  const currentStepIndex = currentTrackingStage ? currentTrackingStage.position : 0;
+  const currentStepIndex = currentTrackingStage ? (currentTrackingStage.position - 1) : 0;
   // Ordenar tracking por posición
   const sortedTracking = [...order.tracking].sort((a, b) => a.position - b.position);
 
