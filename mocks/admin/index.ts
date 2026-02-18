@@ -5,8 +5,8 @@ export { mockProducts } from "./products.mock";
 export { mockOrders } from "./orders.mock";
 
 // Dashboard Stats
-export { mockDashboardStats, mockRecentOrders } from "./stats.mock";
-export type { IDashboardStat, IRecentOrder } from "./stats.mock";
+export { mockDashboardStats } from "./stats.mock";
+export type { IDashboardStat } from "./stats.mock";
 
 // Utils para búsquedas optimizadas
 export {
