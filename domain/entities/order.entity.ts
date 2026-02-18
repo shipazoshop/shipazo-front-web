@@ -219,10 +219,14 @@ export interface GetMonthlySalesChartParams {
 
 // Interfaz para ventas por tienda (Analytics)
 export interface SalesByStoreItem {
-  [key: string]: any; // TODO: Actualizar con la interfaz correcta cuando se conozca
+  storeName: string;
+  totalSales: number;
+  purchaseCount: number;
+  percentage: number;
 }
 
 export interface SalesByStoreData {
+  totalSales: number;
   stores: SalesByStoreItem[];
 }
 
