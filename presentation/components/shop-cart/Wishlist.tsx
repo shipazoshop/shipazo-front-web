@@ -62,13 +62,8 @@ export default function Wishlist() {
                     <td className="wishlist-item_price">
                       <p className="price-wrap fw-medium flex-nowrap">
                         <span className="new-price price-text fw-medium mb-0">
-                          ${product.productData.price.toFixed(3)}
+                          Q{product.productData.price_details?.calculatedPriceGtq?.toFixed(2) ?? product.productData.price.toFixed(2)}
                         </span>
-                        {product.productData.price_details && (
-                          <span className="old-price body-md-2 text-main-2 fw-normal">
-                            ${product.productData.price_details.original_price}
-                          </span>
-                        )}
                       </p>
                     </td>
                     <td className="wishlist-item_stock">
