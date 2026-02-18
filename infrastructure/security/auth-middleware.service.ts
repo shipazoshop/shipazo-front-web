@@ -82,21 +82,21 @@ export class AuthMiddlewareService {
       // El storage tiene estructura: { state: { accessToken, isAuthenticated } }
       const accessToken = storageData?.state?.accessToken;
       if (!accessToken) {
-        console.log('No se encontró accessToken en el storage');
+        //('No se encontró accessToken en el storage');
         return false;
       }
 
       // 3. Decodificar el JWT para obtener el payload
       const payload = this.decodeJWT(accessToken);
       if (!payload) {
-        console.log('No se pudo decodificar el JWT');
+        //('No se pudo decodificar el JWT');
         return false;
       }
 
       // 4. Verificar el role
       const userRole = payload.roleId;
       if (!userRole) {
-        console.log('No se encontró role en el token');
+        //('No se encontró role en el token');
         return false;
       }
 
@@ -104,7 +104,8 @@ export class AuthMiddlewareService {
       const isAdmin = userRole === this.adminRoleId;
 
       if (!isAdmin) {
-        console.log(`Role ${userRole} no coincide con admin ID ${this.adminRoleId}`);
+        //(`Role ${userRole} no coincide con admin ID ${this.adminRoleId}`);
+        return false;
       }
 
       return true;
