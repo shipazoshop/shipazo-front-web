@@ -192,7 +192,7 @@ export default function OrderDetails() {
           <div className="row gap-30 gap-sm-0 mt-4">
             <div className="col-12 d-flex gap-3 justify-content-center">
               <Link
-                href={`/orders/${order.orderId}`}
+                href={`/orders/${order.orderNumber}`}
                 className="tf-btn btn-fill radius-4"
                 style={{ minWidth: "200px" }}
               >
