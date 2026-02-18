@@ -10,18 +10,31 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
-import {
-  topProductsData,
-  categoryDistributionData,
-  metricsData,
-} from "@/shared/constants/analytics";
 import { useAnalyticsRepository } from "@/presentation/hooks/repositories/useAnalyticsRepository";
+import { SalesByStoreItem } from "@/domain/entities/order.entity";
+
+const STORE_COLORS = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#EC4899"];
 
 const parseFormattedNumber = (value: string): number =>
   Number(value.replaceAll(",", ""));
+
+const StoreTooltip = ({ active, item }: any) => {
+  if (!active || !item) return null;
+  const itemWithType = item as SalesByStoreItem
+  return (
+    <div style={{ backgroundColor: "#fff", border: "1px solid #ddd", borderRadius: "8px", padding: "10px 14px" }}>
+      <p style={{ margin: 0, fontWeight: 700, marginBottom: 4, textTransform: "capitalize" }}>{itemWithType?.storeName}</p>
+      <p style={{ margin: 0, color: "#4F46E5" }}>
+        Ventas: <strong>GTQ {itemWithType?.totalSales?.toLocaleString()}</strong>
+      </p>
+      <p style={{ margin: 0, color: "#10B981" }}>
+        Compras: <strong>{itemWithType?.purchaseCount}</strong>
+      </p>
+    </div>
+  );
+};
 
 const SalesTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
@@ -70,12 +83,8 @@ export default function Analytics() {
   const netProfit = netProfitData?.data;
   const netProfitChange = netProfit?.percentageChange;
 
-  useEffect(() => {
-    if (salesByStoreData) {
-      console.log(`📊 Sales by Store (${storePeriod}):`, salesByStoreData);
-    }
-  }, [salesByStoreData, storePeriod]);
-
+  const storeChartData = useMemo(() => (salesByStoreData?.data), [salesByStoreData]);
+  console.log(storeChartData);
   const chartData = useMemo(() => {
     if (!salesChartData?.data?.months) return [];
     return salesChartData.data.months.map((m) => ({
@@ -238,25 +247,24 @@ export default function Analytics() {
                   <option value="year">Año</option>
                 </select>
               </div>
-              {visibleCharts.pieChart ? (
+              {visibleCharts.pieChart && storeChartData?.stores?.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
-                      data={categoryDistributionData as any}
+                      data={storeChartData?.stores?.map(i => ({ name: i.storeName, value: i.percentage }))}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={(entry: any) => `${entry.category}: ${entry.value}%`}
+                      label={(entry) => `${entry.name}: ${entry.value?.toFixed(1)}%`}
                       outerRadius={80}
-                      fill="#8884d8"
                       dataKey="value"
                       animationDuration={800}
                     >
-                      {categoryDistributionData.map((entry) => (
-                        <Cell key={`cell-${entry.category}`} fill={entry.color} />
+                      {storeChartData?.stores.map((entry, index) => (
+                        <Cell key={`cell-${entry.storeName}`} fill={STORE_COLORS[index % STORE_COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip content={(s) => <StoreTooltip active={s.active} item={storeChartData?.stores?.find(i => i.storeName === s?.payload?.[0]?.name)} />} />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
@@ -270,58 +278,6 @@ export default function Analytics() {
           </div>
         </div>
       </div>
-
-      {/* Charts Row 2 */}
-
-
-      {/* Top Products Table */}
-      {visibleCharts.table && (
-        <div className="row g-3">
-          <div className="col-12">
-            <div className="card border-0 shadow-sm">
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h5 className="fw-bold mb-0">Top 10 Best-Selling Products</h5>
-                </div>
-                <div className="table-responsive">
-                  <table className="table table-hover">
-                    <thead className="table-light">
-                      <tr>
-                        <th>Rank</th>
-                        <th>Product Name</th>
-                        <th>Category</th>
-                        <th className="text-end">Units Sold</th>
-                        <th className="text-end">Revenue</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {topProductsData.map((product) => (
-                        <tr key={`product-${product.name}`}>
-                          <td>
-                            <span className="badge bg-primary">{topProductsData.indexOf(product) + 1}</span>
-                          </td>
-                          <td className="fw-semibold">{product.name}</td>
-                          <td>
-                            <span className="badge bg-light text-dark">
-                              {product.category}
-                            </span>
-                          </td>
-                          <td className="text-end">
-                            {product.units.toLocaleString()}
-                          </td>
-                          <td className="text-end fw-semibold text-success">
-                            ${product.revenue.toLocaleString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
