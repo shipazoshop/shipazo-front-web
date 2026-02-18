@@ -7,6 +7,7 @@ export const arrayProducts:Product[]=[
     {
         "success": true,
     "url": "https://www.amazon.com/-/es/Hanes-EcoSmart-Sudadera-sudadera-unidades/dp/B072QRN7HR/?_encoding=UTF8&pd_rd_w=jyOnY&content-id=amzn1.sym.9929d3ab-edb7-4ef5-a232-26d90f828fa5&pf_rd_p=9929d3ab-edb7-4ef5-a232-26d90f828fa5&pf_rd_r=8AY635S6QMVS18A1WQ7P&pd_rd_wg=HBtzW&pd_rd_r=131972f6-e2b5-4482-85d8-3e9f45633d09&ref_=pd_hp_d_btf_crs_zg_bs_7141123011",
+    "store": "Amazon",
     "productData": {
         "product_id": "B072QRN7HR",
         "title": "Hanes Men's EcoSmart Fleece, Pullover Crewneck Sweatshirt, 1 or 2 Pack",
@@ -17,7 +18,8 @@ export const arrayProducts:Product[]=[
         "categoria": "Clothing",
         "stock": true,
         "weight": null,
-        "dimensions": "N/A",
+        "calculated_weight": null,
+        "dimensions": null,
         "images": [
             "https://m.media-amazon.com/images/I/81D+bCgn8hL._AC_SL1500_.jpg",
             "https://m.media-amazon.com/images/I/81gtlYtDElL._AC_SL1500_.jpg",
@@ -28,8 +30,6 @@ export const arrayProducts:Product[]=[
             "https://m.media-amazon.com/images/I/51BTcTs0ulL._AC_SL1500_.jpg"
         ],
         "price_details": {
-            "original_price": "8.84",
-            "discount": "0",
             "calculatedPriceGtq": 147.97,
             "priceBreakdown": {
                 "priceUsd": 8.84,
