@@ -111,18 +111,14 @@ export default function Checkout() {
     const orderData: CreateOrderDto = {
       products: cartProducts.map((item) => ({
         storeLink: item.url,
+        store: item.store,
         productDetails: {
           name: item.productData.title,
           description: item.productData.description || "",
-          price: item.productData.price_details.calculatedPriceGtq,
+          price: item.productData.price,
           imageUrl: item.productData.images?.[0] || "",
-          additionalInfo: {
-            brand: item.productData.brand,
-            weight: item.productData.weight,
-            dimensions: item.productData.dimensions,
-          },
-          // TODO: Descomentar cuando el backend soporte este campo
-          // productSpecification: item.productSpecification || undefined,
+          additionalInfo: {},
+          priceDetails: item.productData.price_details,
         },
         quantity: item.quantity,
       })),
