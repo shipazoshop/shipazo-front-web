@@ -130,11 +130,6 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         <h4 className="text-primary">
                           {product.productData.currency}{product.productData.price_details?.priceBreakdown?.priceUsd}
                         </h4>{" "}
-                        {product.productData?.price_details?.original_price && (
-                          <span className="price-text text-main-2 old-price">
-                            {product.productData.currency}{product.productData.price_details.original_price}
-                          </span>
-                        )}
                       </div>
                       <ul className="product-fearture-list">
                         <li>
@@ -143,11 +138,11 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                         </li>
                         <li>
                           <p className="body-md-2 fw-semibold">Dimensiones</p>
-                          <span className="body-text-3">{product.productData.dimensions ?? ''}</span>
+                          <span className="body-text-3">{product.productData.dimensions ?? 'No disponible'}</span>
                         </li>
                         <li>
                           <p className="body-md-2 fw-semibold">Peso</p>
-                          <span className="body-text-3">{product.productData.weight}</span>
+                          <span className="body-text-3">{product.productData.weight ?? product.productData.calculated_weight ?? 'No disponible'}</span>
                         </li>
                       </ul>
                     </div>
