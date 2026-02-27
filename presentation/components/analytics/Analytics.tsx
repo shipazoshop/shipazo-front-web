@@ -255,7 +255,7 @@ export default function Analytics() {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={(entry) => `${entry.name}: ${entry.value?.toFixed(1)}%`}
+                      label={(entry) => `${entry.name}: ${((entry?.value ?? 0) as number)?.toFixed(1)}%`}
                       outerRadius={80}
                       dataKey="value"
                       animationDuration={800}
