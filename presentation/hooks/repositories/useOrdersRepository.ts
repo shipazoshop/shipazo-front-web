@@ -44,12 +44,15 @@ export function useOrdersRepository() {
   /**
    * Servicio para crear una nueva orden
    * POST /api/v1/orders
+   * @param silent - Si true, desactiva snackbars (el caller maneja errores)
    */
-  const createOrder = () => {
+  const createOrder = (silent = false) => {
     return useApiMutation<CreateOrderResponse, CreateOrderDto>({
       service: 'scrapper',
       endpoint: '/orders',
       method: 'POST',
+      showSuccessSnackbar: !silent,
+      showErrorSnackbar: !silent,
       successMessage: 'Orden creada exitosamente',
       // Invalidar la lista de órdenes después de crear una nueva
       invalidateQueries: [['scrapper', '/orders']],

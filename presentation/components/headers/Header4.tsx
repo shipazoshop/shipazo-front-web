@@ -1,19 +1,38 @@
 "use client";
 
-import React from "react";
-import Nav from "./Nav";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SearchForm from "./SearchForm";
-import LanguageSelect from "../common/LanguageSelect";
-import CurrencySelect from "../common/CurrencySelect";
-import { useCartProducts } from "@/application";
-export default function Header4({ fullWidth = false }) {
+import CartLength from "../common/CartLength";
+import UserMenu from "./UserMenu";
+import WishlistDropdown from "./WishlistDropdown";
+import { Heart, Package } from "lucide-react";
 
-  const cartProducts = useCartProducts();
+export default function Header4({ fullWidth = false, variant = "default" }: { fullWidth?: boolean; variant?: "default" | "orange" }) {
+  const [wishlistOpen, setWishlistOpen] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleWishlistEnter = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    setWishlistOpen(true);
+  };
+
+  const handleWishlistLeave = () => {
+    closeTimerRef.current = setTimeout(() => setWishlistOpen(false), 120);
+  };
+
+  const isOrange = variant === "orange";
+  const iconColor = isOrange ? "#ffffff" : "currentColor";
+  const headerBg = isOrange ? "var(--color-brand-orange)" : undefined;
+  const logoSrc = isOrange ? "/images/logo/shipazo-white.png" : "/images/logo/horizontal-shipazo.webp";
+  // horizontal-shipazo.webp: 1018x259 → height 41px → width 185
+  // shipazo-white.png: 4501x2230 → ratio 2.02 → height 41px → width 83
+  const logoWidth = isOrange ? 83 : 185;
+  const logoHeight = 41;
 
   return (
-    <header className="tf-header">
+    <header className="tf-header" style={headerBg ? { backgroundColor: headerBg } : undefined}>
       <div className="inner-header line-bt">
         <div className={`container${fullWidth ? "-full" : ""}`}>
           <div className="row">
@@ -22,55 +41,81 @@ export default function Header4({ fullWidth = false }) {
                 <Link href={`/`}>
                   <Image
                     alt="Logo"
-                    src="/images/logo/horizontal-shipazo.webp"
-                    width={185}
-                    height={41}
+                    src={logoSrc}
+                    width={logoWidth}
+                    height={logoHeight}
+                    style={{ objectFit: "contain" }}
                   />
                 </Link>
               </div>
             </div>
             <div className=" col-lg-8 d-none d-lg-block">
               <div className="header-center">
-                <SearchForm parentClass="form-search-product m-auto" />
+                <SearchForm parentClass={`form-search-product m-auto${isOrange ? " search-bg-orange" : ""}`} variant={variant} />
               </div>
             </div>
             <div className=" col-lg-2 col-6 d-flex align-items-center justify-content-end">
               <div className="header-right">
                 <ul className="nav-icon justify-content-xl-center">
+                  <li
+                    className="nav-shop-cart"
+                    style={{ position: "relative" }}
+                    onMouseEnter={handleWishlistEnter}
+                    onMouseLeave={handleWishlistLeave}
+                  >
+                    <Link
+                      href="/wishlist"
+                      className="d-flex align-items-center"
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Heart size={26} strokeWidth={1.5} color={iconColor} className="link" />
+                    </Link>
+                    <section
+                      aria-label="Wishlist preview"
+                      onMouseEnter={handleWishlistEnter}
+                      onMouseLeave={handleWishlistLeave}
+                      style={{
+                        position: "fixed",
+                        top: "60px",
+                        left: 0,
+                        right: 0,
+                        zIndex: 999,
+                        boxShadow: "0px 4px 9px 0px rgba(0, 64, 193, 0.2)",
+                        borderRadius: "0 0 5px 5px",
+                        backdropFilter: "blur(20px)",
+                        WebkitBackdropFilter: "blur(20px)",
+                        backgroundColor: "rgba(255,255,255,0.6)",
+                        opacity: wishlistOpen ? 1 : 0,
+                        marginTop: wishlistOpen ? "0px" : "-8px",
+                        pointerEvents: wishlistOpen ? "all" : "none",
+                        transition: "opacity 0.22s ease, margin-top 0.22s ease",
+                      }}
+                    >
+                      <WishlistDropdown />
+                    </section>
+                  </li>
+                  <li className="nav-shop-cart">
+                    <Link
+                      href="/orders"
+                      className="d-flex align-items-center"
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Package size={26} strokeWidth={1.5} color={iconColor} className="link" />
+                    </Link>
+                  </li>
                   <li className="nav-cart">
                     <a
                       href="#shoppingCart"
                       data-bs-toggle="offcanvas"
-                      className="link link-fill nav-icon-item relative"
+                      className="d-flex"
                     >
-                      <span>
-                        <svg
-                          width={26}
-                          height={26}
-                          viewBox="0 0 26 26"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M8.55865 19.1096C6.8483 19.1096 5.46191 20.496 5.46191 22.2064C5.46191 23.9165 6.8483 25.3029 8.55865 25.3029C10.2688 25.3029 11.6552 23.9165 11.6552 22.2064C11.6534 20.4969 10.2681 19.1114 8.55865 19.1096ZM8.55865 24.1644C7.47712 24.1644 6.60037 23.2877 6.60037 22.2064C6.60037 21.1248 7.47712 20.2481 8.55865 20.2481C9.63996 20.2481 10.5167 21.1248 10.5167 22.2064C10.5167 23.2877 9.63996 24.1644 8.55865 24.1644Z"
-                            fill="#333E48"
-                          />
-                          <path
-                            d="M25.436 6.1144H5.33643L4.92663 3.82036C4.67403 2.40819 3.56715 1.30353 2.15453 1.05382L0.668757 0.792113C0.359017 0.736969 0.0635073 0.943536 0.00836329 1.25305C-0.0465584 1.56279 0.159787 1.8583 0.469527 1.91345L1.96086 2.17516C2.90187 2.34193 3.63853 3.07859 3.80529 4.01959L5.82027 15.387C6.05819 16.7472 7.24001 17.7393 8.62083 17.738H20.5746C21.8305 17.7418 22.9396 16.9197 23.3014 15.7172L25.9767 6.84861C26.0263 6.67562 25.995 6.48929 25.8913 6.34209C25.7831 6.19956 25.6147 6.11551 25.436 6.1144ZM22.214 15.3813C21.9992 16.1035 21.3337 16.5975 20.5804 16.5938H8.62661C7.79745 16.596 7.08769 15.9994 6.94739 15.182L5.54144 7.24707H24.6731L22.214 15.3813Z"
-                            fill="#333E48"
-                          />
-                          <path
-                            d="M20.5123 19.1096C18.8019 19.1096 17.4155 20.496 17.4155 22.2064C17.4155 23.9165 18.8019 25.3029 20.5123 25.3029C22.2224 25.3029 23.6088 23.9165 23.6088 22.2064C23.607 20.4969 22.2217 19.1114 20.5123 19.1096ZM20.5123 24.1644C19.4307 24.1644 18.554 23.2877 18.554 22.2064C18.554 21.1248 19.4307 20.2481 20.5123 20.2481C21.5936 20.2481 22.4703 21.1248 22.4703 22.2064C22.4703 23.2877 21.5936 24.1644 20.5123 24.1644Z"
-                            fill="#333E48"
-                          />
-                        </svg>
+                      <i className="icon-cart link fs-26" style={{ color: iconColor }} />
+                      <span className="count-box">
+                        <CartLength />
                       </span>
-                      <span className="count-box style-pst-2 d-none d-xxl-flex">
-                        {cartProducts.length}
-                      </span>
-                      <p className="body-small">Your cart:</p>
                     </a>
                   </li>
+                  <UserMenu iconColor={iconColor} />
                   <li className="d-flex align-items-center d-xl-none btn-mobile">
                     <a
                       href="#mobileMenu"
@@ -82,42 +127,6 @@ export default function Header4({ fullWidth = false }) {
                     </a>
                   </li>
                 </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="header-bottom d-none d-xl-block">
-        <div className={`container${fullWidth ? "-full" : ""}`}>
-          <div className="row">
-            <div className="col-xxl-9 col-8">
-              <div className="header-bt-left active-container">
-                <nav className="main-nav-menu">
-                  <ul className="nav-list">
-                    <Nav />
-                  </ul>
-                </nav>
-              </div>
-            </div>
-            <div className="col-xxl-3 col-4 d-flex align-items-center justify-content-end">
-              <div className="header-bt-right">
-                <div className="tf-cur bar-lang type-2">
-                  <div className="tf-cur-item gap-0">
-                    <i className="icon icon-budget" />
-                    <div className="tf-curs">
-                      <CurrencySelect topStart />
-                    </div>
-                  </div>
-                  <div className="tf-cur-item">
-                    <i className="icon icon-global gap-0" />
-                    <div className="tf-lans">
-                      <LanguageSelect
-                        topStart
-                        parentClassName="image-select center style-default type-lan"
-                      />
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

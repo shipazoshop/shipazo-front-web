@@ -9,7 +9,7 @@ export default function Toolbar() {
   return (
     <div className="tf-toolbar-bottom d-xl-none">
       <div className="toolbar-item">
-        <Link href={`/shop-default`}>
+        <Link href={`/wishlist`}>
           <span className="toolbar-icon">
             <Heart width={20} height={20} />
           </span>

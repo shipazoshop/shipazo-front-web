@@ -1,6 +1,15 @@
 @use "../abstracts/mixin";
 @use "../abstracts/variable";
 
+.search-bg-orange {
+  background-color: var(--color-brand-orange) !important;
+}
+
+.input-orange-variant::placeholder {
+  color: #FFFFFF !important;
+  opacity: 1 !important; 
+}
+
 .tf-topbar {
   padding: 5px 0px;
 }
@@ -100,7 +109,7 @@ header {
 
 .tf-header {
   .logo-site {
-    max-width: 185px;
+    max-width: 140px;
     width: 100%;
   }
 
@@ -1155,7 +1164,7 @@ header {
     left: 0;
     border-radius: 5px;
     box-shadow: 0px 4px 9px 0px rgba(0, 64, 193, 0.2);
-    transform: translateY(10px);
+    transform: translateY(10px); 
     @include mixin.transition3;
     @include mixin.hidden;
     pointer-events: none;
@@ -1283,6 +1292,7 @@ header {
   }
 }
 
+
 .mega-menu {
   width: auto;
 
@@ -1333,7 +1343,7 @@ header {
     padding: 8px 8px 0px;
     border: solid 1px var(--color-gray-medium);
     transition: border 0.4s;
-    margin-bottom: 1px;
+    margin: 10px;
     display: inline-flex;
     position: relative;
 

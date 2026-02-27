@@ -4,15 +4,19 @@ import Details1 from "@/presentation/components/product-detail/Details1";
 import React, { useEffect, Suspense, useRef } from "react";
 import Link from "next/link";
 import { useProductStore } from "../../../../application/state/product";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useProductRepository } from "@/presentation";
 import { LoadingScreen } from "@/presentation/components/common/LoadingScreen";
+import { ApiError } from "@/domain";
+import { useShowSnackbar } from "@/application/stores/useSnackbarStore";
 
 function ProductDetailContent() {
   const { product, setProduct } = useProductStore();
   const searchParams = useSearchParams();
   const productUrl = searchParams.get('url');
   const fetchedUrlRef = useRef<string | null>(null);
+  const router = useRouter();
+  const showSnackbar = useShowSnackbar();
 
   const { importProductFromUrl } = useProductRepository();
   const { mutateAsync, isLoading } = importProductFromUrl();
@@ -35,14 +39,23 @@ function ProductDetailContent() {
         const decodedUrl = decodeURIComponent(productUrl);
         const result = await mutateAsync({ url: decodedUrl });
         setProduct(result);
-      } catch (error) {
-        console.error("❌ Error al cargar producto:", error);
+      } catch (err) {
+        handleError(err);
         fetchedUrlRef.current = null; // Reset para permitir retry
       }
     };
 
     fetchProduct();
   }, [productUrl, mutateAsync, setProduct]);
+
+  const handleError = (error: ApiError) => {
+    if (error.message.includes('404')) {
+      showSnackbar('Ups! No encontramos tu producto, verifica que sea una URL válida', 'error');
+    } else {
+      showSnackbar('Ups! Hubo un error al obtener tu producto, inténtalo más tarde', 'error');
+    }
+    router.push('/home');
+  }
 
   // Mostrar loading mientras se hace el fetch
   if (isLoading || (!product && productUrl)) {

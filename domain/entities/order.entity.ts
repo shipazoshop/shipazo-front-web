@@ -57,6 +57,7 @@ export interface OrderDetail {
   status: string;
   paymentMethod: string;
   paymentStatus: string;
+  paymentId: string;
   currentTrackingStage: string;
   tracking: TrackingStage[];
   items: OrderItem[];

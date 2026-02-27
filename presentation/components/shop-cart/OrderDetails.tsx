@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import Link from "next/link";
 import { useNewOrderStore } from "@/application/stores/useNewOrderStore";
 import { formatGTQ } from "@/shared/utils";
@@ -194,14 +194,14 @@ export default function OrderDetails() {
               <Link
                 href={`/orders/${order.orderNumber}`}
                 className="tf-btn btn-fill radius-4"
-                style={{ minWidth: "200px" }}
+                style={{ minWidth: "200px", color: "white" }}
               >
                 Ver detalles completos
               </Link>
               <Link
                 href="/home"
                 className="tf-btn btn-gray-2 radius-4"
-                style={{ minWidth: "200px" }}
+                style={{ minWidth: "200px", color: "white" }}
               >
                 Continuar comprando
               </Link>

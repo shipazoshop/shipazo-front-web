@@ -33,7 +33,6 @@ export function useIsAdmin() {
         setIsAdmin(true);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error checking admin status:', error);
         setIsAdmin(false);
         setIsLoading(false);
       }
@@ -53,5 +52,5 @@ export function useIsAdmin() {
     };
   }, []);
 
-  return { isAdmin: true, isLoading };
+  return { isAdmin, isLoading };
 }

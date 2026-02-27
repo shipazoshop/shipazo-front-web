@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useIsAuthenticated, useClearAuth } from "@/application/stores/useAuthStore";
 import { CircleUserRound } from "lucide-react";
 
-export default function UserMenu() {
+export default function UserMenu({ iconColor = "currentColor" }: { iconColor?: string }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -68,7 +68,7 @@ export default function UserMenu() {
             opacity: 0.5,
           }}
         >
-          <CircleUserRound width={30} height={30} strokeWidth={0.75} />
+          <CircleUserRound width={30} height={30} strokeWidth={0.75} color={iconColor} />
         </div>
       </li>
     );
@@ -89,7 +89,7 @@ export default function UserMenu() {
         }}
         title="Mi cuenta"
       >
-        <CircleUserRound width={30} height={30} strokeWidth={0.75} />
+        <CircleUserRound width={30} height={30} strokeWidth={0.75} color={iconColor} />
       </button>
 
       {/* Dropdown Menu */}

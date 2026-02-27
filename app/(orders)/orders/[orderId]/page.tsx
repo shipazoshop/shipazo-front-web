@@ -22,6 +22,7 @@ import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ArrowLeft, Truck, MapPin, CreditCard } from "lucide-react";
 import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
+import { usePaymentRepository } from "@/presentation/hooks/repositories/usePaymentRepository";
 import { formatGTQ } from "@/shared/utils";
 
 const paymentStatusConfig: Record<
@@ -37,8 +38,12 @@ export default function OrderDetailPage() {
   const params = useParams<{ orderId: string }>();
 
   const { getOrderDetail } = useOrdersRepository();
+  const { getPaymentDetail } = usePaymentRepository();
   const { data, isLoading, isError } = getOrderDetail(params.orderId);
   const order = data?.data;
+
+  const paymentQuery = getPaymentDetail(order?.paymentId ?? "");
+  const payment = paymentQuery.data?.data;
 
   if (isLoading) {
     return (
@@ -207,9 +212,38 @@ export default function OrderDetailPage() {
               </Typography>
             </Box>
             <Divider sx={{ mb: 2 }} />
-            <Typography variant="body2" fontWeight={500}>
-              {order.paymentMethod}
-            </Typography>
+            {payment ? (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography variant="body2" color="text.secondary">Tarjeta</Typography>
+                  <Typography variant="body2" fontWeight={600} sx={{ textTransform: "capitalize" }}>
+                    {payment.cardBrand} •••• {payment.last4Digits}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography variant="body2" color="text.secondary">Autorización</Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {payment.authorizationCode}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography variant="body2" color="text.secondary">Monto</Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {formatGTQ(payment.amount)}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography variant="body2" color="text.secondary">Cuotas</Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {payment.installments === 1 ? "Pago de contado" : `${payment.installments} cuotas`}
+                  </Typography>
+                </Box>
+              </Box>
+            ) : (
+              <Typography variant="body2" fontWeight={500}>
+                {order.paymentMethod}
+              </Typography>
+            )}
           </Paper>
 
           {/* Resumen de costos */}

@@ -48,7 +48,7 @@ export class AuthClientService {
         return false;
       }
 
-      const userRole = payload.role;
+      const userRole = payload.roleId;
       if (!userRole) {
         console.log('No se encontró role en el token');
         return false;

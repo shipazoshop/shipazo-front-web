@@ -104,7 +104,7 @@ export class AuthMiddlewareService {
       const isAdmin = userRole === this.adminRoleId;
 
       if (!isAdmin) {
-        //(`Role ${userRole} no coincide con admin ID ${this.adminRoleId}`);
+        //(Role no coincide con admin ID);
         return false;
       }
 

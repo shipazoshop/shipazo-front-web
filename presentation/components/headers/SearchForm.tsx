@@ -23,6 +23,10 @@ const categories = [
 
 export default function SearchForm({
   parentClass = "form-search-product style-2",
+  variant = "default",
+}: {
+  parentClass?: string;
+  variant?: "default" | "orange";
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const navRef = useRef(null);
@@ -52,21 +56,32 @@ export default function SearchForm({
     }
   }
 
+  const isOrange = variant === "orange";
+
   return (
     <form
       ref={navRef}
       onSubmit={(e) => e.preventDefault()}
       className={parentClass}
-      style={{ position: 'relative' }}
+      style={{
+        position: 'relative',
+        ...(isOrange && { borderColor: '#ffffff' }),
+      }}
     >
       <fieldset>
-        <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Cotiza tu producto ahora!' />
+        <input
+          className={isOrange ? "input-orange-variant" : undefined}
+          style={{ ...(isOrange && { backgroundColor: 'var(--color-brand-orange)', color: 'white' }) }}
+          type="text"
+          value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder='Cotiza tu producto ahora!' />
       </fieldset>
       <button
         onClick={handleClientScriptLoad}
         className="btn-submit-form"
         disabled={isLoading}
         type="button"
+        style={isOrange ? { backgroundColor: '#ffffff', color: 'var(--color-brand-orange)' } : undefined}
       >
         <i className="icon-search"></i>
       </button >

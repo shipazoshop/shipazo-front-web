@@ -6,6 +6,37 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
+  // ── Content Security Policy ─────────────────────────────────────────────
+  // Security: restricts the sources from which content can be loaded.
+  // 'unsafe-inline' in script-src is required for Next.js App Router hydration scripts.
+  // For stricter enforcement in production, use a nonce-based CSP with middleware.
+  async headers() {
+    const isDev = process.env.NODE_ENV === 'development';
+    const csp = [
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`, // 'unsafe-eval' needed for Next.js HMR in dev
+      "style-src 'self' 'unsafe-inline'",  // 'unsafe-inline' needed for Next.js CSS-in-JS
+      "font-src 'self' data:",             // Allow fonts from self and data URIs
+      "img-src 'self' data: blob: https:", // Allow images from self, data URIs, and https
+      `connect-src 'self' https://shipazo-api-production.up.railway.app${isDev ? ' ws://localhost:* wss://localhost:*' : ''}`, // API + HMR websockets in dev
+      "object-src 'none'",                 // Blocks Flash, Java applets, etc.
+      "base-uri 'self'",                   // Prevents base tag hijacking
+      "frame-ancestors 'none'",            // Clickjacking protection
+    ].join('; ');
+
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'Content-Security-Policy', value: csp },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+    ];
+  },
+
   // Image optimization enabled by default for better performance
   // Next.js will automatically optimize images (WebP, AVIF, lazy loading)
   images: {
