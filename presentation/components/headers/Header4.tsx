@@ -103,29 +103,19 @@ export default function Header4({ fullWidth = false, variant = "default" }: { fu
                       <Package size={26} strokeWidth={1.5} color={iconColor} className="link" />
                     </Link>
                   </li>
-                  <li className="nav-cart">
+                  <li className="nav-cart" style={{ position: "relative" }}>
                     <a
                       href="#shoppingCart"
                       data-bs-toggle="offcanvas"
                       className="d-flex"
                     >
                       <i className="icon-cart link fs-26" style={{ color: iconColor }} />
-                      <span className="count-box">
+                      <span className="count-box" style={{ top: "-8px", right: "-12px" }}>
                         <CartLength />
                       </span>
                     </a>
                   </li>
                   <UserMenu iconColor={iconColor} />
-                  <li className="d-flex align-items-center d-xl-none btn-mobile">
-                    <a
-                      href="#mobileMenu"
-                      className="mobile-button"
-                      data-bs-toggle="offcanvas"
-                      aria-controls="mobileMenu"
-                    >
-                      <span />
-                    </a>
-                  </li>
                 </ul>
               </div>
             </div>

@@ -37,6 +37,7 @@ export function useCustomerInfoRepository() {
           const optimisticData: CustomerInfo = {
             id: `temp-${Date.now()}`,
             ...newCustomerInfo,
+            email: "",
             userId: 'current-user',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),

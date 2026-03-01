@@ -66,7 +66,7 @@ export const LoadingScreen = ({
           left: 0;
           width: 100vw;
           height: 100vh;
-          background: linear-gradient(to bottom, #ffffff 0%, #ffffff 60%, rgba(234, 77, 48, 0.18) 100%);
+          background: linear-gradient(to bottom, #ffffff 0%, #ffffff 65%, #fae8e3 85%, #f5c4b8 100%);
           display: flex;
           align-items: center;
           justify-content: center;

@@ -8,8 +8,8 @@ export default function Footer1({ fullWidth = false }) {
       <div className={`container${fullWidth ? "-full" : ""}`}>
         <div className="ft-body-inner">
           <p className="nocopy caption text-center">
-            <span className="fw-medium">shipazo.</span>© 2025. All right
-            reserved - Designed by ThemesFlat
+            <span className="fw-medium">Shipazo</span>© 2026. All rights
+            reserved
           </p>
         </div>
       </div>

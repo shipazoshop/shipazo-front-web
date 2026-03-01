@@ -4,6 +4,7 @@ import { useMemo, useState, useCallback, memo } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
+import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -28,6 +29,7 @@ import Link from "next/link";
 import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
 import type { Order } from "@/domain/entities/order.entity";
 import { formatGTQ } from "@/shared/utils";
+import { OrderStatus } from "@/domain/types/orderStatus.enum";
 
 const paymentStatusConfig = {
   paid: {
@@ -292,13 +294,13 @@ function OrdersTable() {
               onChange={handleStatusChange}
             >
               <MenuItem value="all">Todos</MenuItem>
-              <MenuItem value="Orden recibida">Orden Recibida</MenuItem>
-              <MenuItem value="Paquete en camino">Paquete en camino</MenuItem>
-              <MenuItem value="Paquete recibido en empresa">
+              <MenuItem value={OrderStatus.ORDEN_REDIBIDA}>Orden Recibida</MenuItem>
+              <MenuItem value={OrderStatus.PAQUETE_EN_CAMINO}>Paquete en camino</MenuItem>
+              <MenuItem value={OrderStatus.PAQUETE_RECIBIDO_EN_EMPRESA}>
                 Paquete recibido en empresa
               </MenuItem>
-              <MenuItem value="Pedido en ruta">Pedido en ruta</MenuItem>
-              <MenuItem value="entregado">Entregado</MenuItem>
+              <MenuItem value={OrderStatus.PAQUETE_EN_CAMINO}>Pedido en ruta</MenuItem>
+              <MenuItem value={OrderStatus.ENTREGADO}>Entregado</MenuItem>
             </Select>
           </FormControl>
 
@@ -394,8 +396,8 @@ function OrdersTable() {
         </Box>
       </Box>
 
-      {/* Tabla */}
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+      {/* Desktop: tabla — oculta en móvil */}
+      <Paper sx={{ width: "100%", overflow: "hidden", display: { xs: "none", sm: "block" } }}>
         <TableContainer sx={{ maxHeight: 600 }}>
           <Table stickyHeader size="small" aria-label="tabla de órdenes">
             <TableHead>
@@ -403,14 +405,10 @@ function OrdersTable() {
                 <TableCell sx={{ fontWeight: 600 }}>Orden</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Estado Envío</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Estado Pago</TableCell>
-                <TableCell sx={{ fontWeight: 600 }} align="right">
-                  Total
-                </TableCell>
+                <TableCell sx={{ fontWeight: 600 }} align="right">Total</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Fecha</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Productos</TableCell>
-                <TableCell sx={{ fontWeight: 600 }} align="right">
-                  Acciones
-                </TableCell>
+                <TableCell sx={{ fontWeight: 600 }} align="right">Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -421,22 +419,12 @@ function OrdersTable() {
                   </TableCell>
                 </TableRow>
               )}
-
               {!isLoading && orders.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 1,
-                        alignItems: "center",
-                      }}
-                    >
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1, alignItems: "center" }}>
                       <Search size={28} style={{ opacity: 0.4 }} />
-                      <Typography variant="subtitle2">
-                        No se encontraron órdenes
-                      </Typography>
+                      <Typography variant="subtitle2">No se encontraron órdenes</Typography>
                       <Typography variant="caption" color="text.secondary">
                         Intenta ajustar los filtros de búsqueda
                       </Typography>
@@ -444,14 +432,12 @@ function OrdersTable() {
                   </TableCell>
                 </TableRow>
               )}
-
               {!isLoading && orders.map((order) => (
                 <OrderRow key={order.id} order={order} />
               ))}
             </TableBody>
           </Table>
         </TableContainer>
-
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
           component="div"
@@ -462,11 +448,136 @@ function OrdersTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Filas por página"
           labelDisplayedRows={({ from, to, count }) =>
-            `Mostrando ${from}-${to} de ${count !== -1 ? count : `más de ${to}`
-            }`
+            `Mostrando ${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`
           }
         />
       </Paper>
+
+      {/* Mobile: cards — ocultas en desktop */}
+      <Box sx={{ display: { xs: "flex", sm: "none" }, flexDirection: "column", gap: 2 }}>
+        {isLoading && (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+            <CircularProgress size={40} />
+          </Box>
+        )}
+        {!isLoading && orders.length === 0 && (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1, alignItems: "center", py: 6 }}>
+            <Search size={28} style={{ opacity: 0.4 }} />
+            <Typography variant="subtitle2">No se encontraron órdenes</Typography>
+            <Typography variant="caption" color="text.secondary">
+              Intenta ajustar los filtros de búsqueda
+            </Typography>
+          </Box>
+        )}
+        {!isLoading && orders.map((order) => (
+          <Paper
+            key={order.id}
+            sx={{ borderRadius: 3, overflow: "hidden", bgcolor: "#f5f5f5", border: "1px solid #e1e1e1" }}
+          >
+            {/* Header: correlative + estado envío */}
+            <Box sx={{ px: 2.5, pt: 2.5, pb: 1.5, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <Box>
+                <Typography variant="caption" sx={{ color: "#73787d", letterSpacing: 0.5 }}>
+                  ORDER ID
+                </Typography>
+                <Typography variant="h6" fontWeight={700} sx={{ color: "#333e48", lineHeight: 1.2, fontFamily: "monospace" }}>
+                  {order.correlative}
+                </Typography>
+              </Box>
+              <Chip
+                label={order.currentTrackingStageName}
+                color={trackingStatusColors[order.currentTrackingStageName.toLowerCase()] || "default"}
+                size="small"
+                sx={{ fontWeight: 600, mt: 0.5 }}
+              />
+            </Box>
+
+            <Divider sx={{ borderColor: "#e1e1e1" }} />
+
+            {/* Fecha y total */}
+            <Box sx={{ px: 2.5, py: 1.5, display: "flex", justifyContent: "space-between" }}>
+              <Box>
+                <Typography variant="caption" sx={{ color: "#73787d", display: "block" }}>DATE</Typography>
+                <Typography variant="body2" sx={{ color: "#333e48", fontWeight: 500 }}>
+                  {new Date(order.createdAt).toLocaleDateString("es-GT", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </Typography>
+              </Box>
+              <Box sx={{ textAlign: "right" }}>
+                <Typography variant="caption" sx={{ color: "#73787d", display: "block" }}>TOTAL</Typography>
+                <Typography variant="body2" sx={{ color: "#333e48", fontWeight: 700 }}>
+                  {formatGTQ(order.totalAmount)}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Productos + estado de pago */}
+            <Box sx={{ px: 2.5, pb: 1.5, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Typography variant="caption" sx={{ color: "#73787d" }}>
+                {order.itemsCount} {order.itemsCount === 1 ? "producto" : "productos"}
+              </Typography>
+              <Chip
+                label={
+                  paymentStatusConfig[order.paymentStatus as keyof typeof paymentStatusConfig]?.label ||
+                  order.paymentStatus
+                }
+                color={
+                  paymentStatusConfig[order.paymentStatus as keyof typeof paymentStatusConfig]?.color || "info"
+                }
+                size="small"
+                variant="outlined"
+              />
+            </Box>
+
+            <Divider sx={{ borderColor: "#e1e1e1" }} />
+
+            {/* Acciones */}
+            <Box sx={{ px: 2.5, py: 1.5, display: "flex", gap: 1 }}>
+              <Button
+                size="small"
+                variant="contained"
+                fullWidth
+                startIcon={<Eye size={16} />}
+                component={Link}
+                href={`/admin/orders/${order.correlative}`}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  bgcolor: "#4a90e2",
+                  "&:hover": { bgcolor: "#3a7bc8" },
+                }}
+              >
+                Ver
+              </Button>
+              <IconButton size="small" sx={{ border: "1px solid #e1e1e1", borderRadius: 2 }}>
+                <MoreVertical size={18} />
+              </IconButton>
+            </Box>
+          </Paper>
+        ))}
+
+        {/* Paginación móvil */}
+        {orders.length > 0 && (
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={totalItems}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage="Por página"
+            labelDisplayedRows={({ from, to, count }) =>
+              `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`
+            }
+            sx={{ bgcolor: "#f5f5f5", borderRadius: 2 }}
+          />
+        )}
+      </Box>
     </Box>
   );
 }

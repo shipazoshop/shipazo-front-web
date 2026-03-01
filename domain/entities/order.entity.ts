@@ -1,6 +1,7 @@
 // Entidades para Órdenes
 
 import type { PriceDetails } from "@/domain/dto/import-product.dto";
+import { OrderStatus } from "../types/orderStatus.enum";
 
 export interface ProductDetails {
   name: string;
@@ -108,7 +109,7 @@ export interface GetOrdersParams {
   limit?: number;
   startDate?: string;
   endDate?: string;
-  status?: string;
+  status?: OrderStatus;
   orderNumber?: string;
   paymentStatus?: string;
 }

@@ -9,6 +9,7 @@ import { useProductRepository } from "@/presentation";
 import { LoadingScreen } from "@/presentation/components/common/LoadingScreen";
 import { ApiError } from "@/domain";
 import { useShowSnackbar } from "@/application/stores/useSnackbarStore";
+import Footer1 from "@/presentation/components/footers/Footer1";
 
 function ProductDetailContent() {
   const { product, setProduct } = useProductStore();
@@ -23,12 +24,10 @@ function ProductDetailContent() {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      // Evitar fetch si ya se hizo para esta URL
       if (!productUrl || fetchedUrlRef.current === productUrl) {
         return;
       }
 
-      // Si ya hay un producto con la misma URL, no hacer fetch
       if (product?.url === productUrl) {
         fetchedUrlRef.current = productUrl;
         return;
@@ -41,7 +40,7 @@ function ProductDetailContent() {
         setProduct(result);
       } catch (err) {
         handleError(err);
-        fetchedUrlRef.current = null; // Reset para permitir retry
+        fetchedUrlRef.current = null;
       }
     };
 
@@ -57,7 +56,6 @@ function ProductDetailContent() {
     router.push('/home');
   }
 
-  // Mostrar loading mientras se hace el fetch
   if (isLoading || (!product && productUrl)) {
     return (
       <>
@@ -83,21 +81,13 @@ function ProductDetailContent() {
               <i className="icon icon-arrow-right" />
             </li>
             <li>
-              <Link href={`/product-grid`} className="body-small link">
-                {" "}
-                Shop{" "}
-              </Link>
-            </li>
-            <li className="d-flex align-items-center">
-              <i className="icon icon-arrow-right" />
-            </li>
-            <li>
               <span className="body-small">Product Detail</span>
             </li>
           </ul>
         </div>
       </div>
       <Details1 product={product} />
+      <Footer1 />
     </>
   );
 }
@@ -114,4 +104,3 @@ export default function ProductDetailPage() {
     </Suspense>
   );
 }
-

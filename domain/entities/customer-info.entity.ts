@@ -2,6 +2,7 @@ export interface CustomerInfo {
   id: string;
   recipientName: string;
   identificationNumber: string;
+  email: string;
   phoneNumber: string;
   userId: string;
   createdAt?: string;

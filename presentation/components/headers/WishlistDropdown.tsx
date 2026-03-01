@@ -3,13 +3,22 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useWishlist } from "@/application/stores/useWishlistStore";
+import { useProductStore } from "@/application/state/product";
+import { IImportProductResponse } from "@/domain/dto/import-product.dto";
 
 export default function WishlistDropdown() {
   const wishlistProducts = useWishlist();
+  const { setProduct } = useProductStore();
+  const router = useRouter();
 
-  // Límite de productos a mostrar en el dropdown
   const MAX_DISPLAY_PRODUCTS = 6;
+
+  const handleProductClick = (product: IImportProductResponse) => {
+    setProduct(product);
+    router.push(`/product-detail/${product.productData.product_id}?url=${encodeURIComponent(product.url)}`);
+  };
 
   if (wishlistProducts.length === 0) {
     return (
@@ -34,7 +43,11 @@ export default function WishlistDropdown() {
             <ul className="row-demo" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
               {displayedProducts.map((product) => (
                 <li key={product.productData.product_id} className="demo-item">
-                  <Link href={`/product-detail/${product.productData.product_id}?url=${product.url}`}>
+                  <button
+                    type="button"
+                    onClick={() => handleProductClick(product)}
+                    style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', width: '100%' }}
+                  >
                     <div className="demo-image relative">
                       <Image
                         src={product.productData.images?.[0] || "/images/product/default.jpg"}
@@ -61,7 +74,7 @@ export default function WishlistDropdown() {
                         {product.productData.currency} ${product.productData.price.toFixed(2)}
                       </span>
                     </div>
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>

@@ -388,6 +388,7 @@ export default function Checkout() {
             price: item.productData.price,
             imageUrl: item.productData.images?.[0] || "",
             additionalInfo: {},
+            productSpecification: item.productSpecification, // <-- Nuevo
             priceDetails: item.productData.price_details,
           },
           quantity: item.quantity,
@@ -424,8 +425,7 @@ export default function Checkout() {
         customerData: {
           firstName,
           lastName,
-          // Security: email extraído del JWT, nunca del localStorage
-          email: "example@gmail.com", // TODO: reemplazar con email real del JWT o customerInfo
+          email: customerInfo.email,
           phone: customerInfo.phoneNumber.replace(/\D/g, ""),
           country: selectedAddress.countryCode,
           city: selectedAddress.city,
@@ -837,28 +837,10 @@ export default function Checkout() {
                     </Link>
                   </div>
                 )}
-                <div className="">
-                  <p className="body-md-2 fw-semibold sub-type">Discount code</p>
-                  <form action="#" className="ip-discount-code style-2">
-                    <input
-                      type="text"
-                      className="def"
-                      placeholder="Your code"
-                      required
-                    />
-                    <button type="submit" className="tf-btn btn-gray-2">
-                      <span>Apply</span>
-                    </button>
-                  </form>
-                </div>
                 <ul className="sec-total-price">
                   <li>
                     <span className="body-text-3">Sub total</span>
                     <span className="body-text-3">{formatGTQ(totalPrice)}</span>
-                  </li>
-                  <li>
-                    <span className="body-text-3">Shipping</span>
-                    <span className="body-text-3">Free shipping</span>
                   </li>
                   <li>
                     <span className="body-md-2 fw-semibold">Total</span>

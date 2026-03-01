@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useCartProducts } from "@/application";
-import { Heart } from "lucide-react";
+import { Heart, Package } from "lucide-react";
 export default function Toolbar() {
   const cartProducts = useCartProducts();
   return (
@@ -64,6 +64,14 @@ export default function Toolbar() {
           <span className="toolbar-label">Search</span>
         </a>
       </div> */}
+      <div className="toolbar-item">
+        <Link href="/orders">
+          <span className="toolbar-icon">
+            <Package width={20} height={20} strokeWidth={1.5} />
+          </span>
+          <span className="toolbar-label">Pedidos</span>
+        </Link>
+      </div>
       <div className="toolbar-item">
         <a href="#shoppingCart" data-bs-toggle="offcanvas">
           <span className="toolbar-icon">

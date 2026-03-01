@@ -2,8 +2,11 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useWishlist, useWishlistActions } from "@/application/stores/useWishlistStore";
 import { useAddProductToCart, useCartProducts } from "@/application/stores/useCartStore";
+import { useProductStore } from "@/application/state/product";
+import { IImportProductResponse } from "@/domain/dto/import-product.dto";
 import { Search, X, ShoppingCart, Trash2 } from "lucide-react";
 
 export default function Wishlist() {
@@ -11,6 +14,13 @@ export default function Wishlist() {
   const { removeFromWishlist } = useWishlistActions();
   const addProductToCart = useAddProductToCart();
   const cartProducts = useCartProducts();
+  const { setProduct } = useProductStore();
+  const router = useRouter();
+
+  const handleProductClick = (product: IImportProductResponse) => {
+    setProduct(product);
+    router.push(`/product-detail/${product.productData.product_id}?url=${encodeURIComponent(product.url)}`);
+  };
 
   const isInCart = (id: string) => cartProducts.some((p) => p.productData.product_id === id);
 
@@ -141,9 +151,11 @@ export default function Wishlist() {
                 return (
                   <div key={product.url + product.productData.product_id} className="wl-item">
                     {/* Imagen */}
-                    <Link
-                      href={`/product-detail/${product.productData.product_id}?url=${product.url}`}
+                    <button
+                      type="button"
+                      onClick={() => handleProductClick(product)}
                       className="wl-item__img-wrap"
+                      style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
                     >
                       <Image
                         src={product.productData.images?.[0] || "/images/product/default.jpg"}
@@ -153,16 +165,18 @@ export default function Wishlist() {
                         className="wl-item__img"
                         style={{ objectFit: "cover" }}
                       />
-                    </Link>
+                    </button>
 
                     {/* Info */}
                     <div className="wl-item__info">
-                      <Link
-                        href={`/product-detail/${product.productData.product_id}?url=${product.url}`}
+                      <button
+                        type="button"
+                        onClick={() => handleProductClick(product)}
                         className="wl-item__title"
+                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
                       >
                         {product.productData.title}
-                      </Link>
+                      </button>
                       {product.store && (
                         <span className="wl-item__store">{product.store}</span>
                       )}

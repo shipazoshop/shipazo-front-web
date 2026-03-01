@@ -2,15 +2,25 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCartProducts, useCartTotalPrice, useCartActions } from "@/application/stores/useCartStore";
+import { useProductStore } from "@/application/state/product";
+import { IImportProductResponse } from "@/domain/dto/import-product.dto";
 
 export default function Cart() {
   const cartProducts = useCartProducts();
   const totalPrice = useCartTotalPrice();
   const { removeFromCart } = useCartActions();
+  const { setProduct } = useProductStore();
+  const router = useRouter();
 
   const removeItem = (id: string) => {
     removeFromCart(id);
+  };
+
+  const handleProductClick = (product: IImportProductResponse) => {
+    setProduct(product);
+    router.push(`/product-detail/${product.productData.product_id}?url=${encodeURIComponent(product.url)}`);
   };
 
   return (
@@ -62,9 +72,11 @@ export default function Cart() {
               <li key={i} className="file-delete">
                 <div className="card-product style-row row-small-2 align-items-center">
                   <div className="card-product-wrapper">
-                    <Link
-                      href={`/product-detail/${product.productData.product_id}?url=${product.url}`}
+                    <button
+                      type="button"
+                      onClick={() => handleProductClick(product)}
                       className="product-img"
+                      style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'block' }}
                     >
                       <Image
                         className="img-product lazyload"
@@ -82,16 +94,18 @@ export default function Cart() {
                         width={500}
                         height={500}
                       />
-                    </Link>
+                    </button>
                   </div>
                   <div className="card-product-info">
                     <div className="box-title">
-                      <Link
-                        href={`/product-detail/${product.productData.product_id}?url=${product.url}`}
+                      <button
+                        type="button"
+                        onClick={() => handleProductClick(product)}
                         className="name-product body-md-2 fw-semibold text-secondary link"
+                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
                       >
                         {product.productData.title}
-                      </Link>
+                      </button>
                       <p className="price-wrap fw-medium">
                         <span className="new-price price-text fw-medium">
                           ${product.productData.price.toFixed(3)}
@@ -135,11 +149,6 @@ export default function Cart() {
             >
               <div className="progress-bar" style={{ width: "80%" }} />
             </div>
-            <p className="body-text-3">
-              <i className="icon-delivery-2 fs-24" />
-              Free shipping on all orders over{" "}
-              <span className="fw-bold">$250</span>
-            </p>
           </div>
         </div>
       </div>

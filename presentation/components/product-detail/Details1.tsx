@@ -6,6 +6,7 @@ import { IImportProductResponse } from "../../../domain/dto/import-product.dto";
 import { LoadingScreen } from "../common/LoadingScreen";
 import { useCartActions, useCartProducts } from "@/application/stores/useCartStore";
 import { useWishlistActions, useWishlist } from "@/application/stores/useWishlistStore";
+import ProductDescription from "./ProductDescription";
 
 export default function Details1({ product }: Readonly<{ product: IImportProductResponse }>) {
   const [quantity, setQuantity] = useState(1);
@@ -148,14 +149,7 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                     </div>
                     <div className="infor-bottom">
                       <h6 className="fw-semibold">Sobre este artículo</h6>
-                      <ul className="product-about-list">
-                        <li>
-                          <p className="body-text-3">
-                            {product.productData.description ?? ''}
-                          </p>
-                        </li>
-
-                      </ul>
+                      <ProductDescription text={product.productData.description ?? ''} />
                     </div>
                   </div>
                   <div className="tf-product-info-choose-option sticky-top">
@@ -310,17 +304,6 @@ export default function Details1({ product }: Readonly<{ product: IImportProduct
                           fontSize: '14px',
                         }}
                       />
-                    </div>
-
-                    <div className="product-detail">
-                      <p className="caption">Details</p>
-                      <p className="body-text-3">
-                        <span>
-                          Return policy: Eligible for Return, Refund or
-                          Replacement within 30 days of receipt
-                        </span>
-                        <span>Support: Free Amazon tech support included</span>
-                      </p>
                     </div>
                   </div>
                 </div>
