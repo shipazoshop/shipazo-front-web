@@ -2,9 +2,7 @@
 
 import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { adminTheme } from "@/presentation/theme/adminTheme";
+import MuiProvider from "@/application/providers/MuiProvider";
 import { AdminShellSkeleton } from "@/presentation/components/admin/AdminShellSkeleton";
 
 const AdminShell = dynamic(() => import("./AdminShell"), {
@@ -12,11 +10,10 @@ const AdminShell = dynamic(() => import("./AdminShell"), {
   ssr: true,
 });
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <ThemeProvider theme={adminTheme}>
-      <CssBaseline />
+    <MuiProvider>
       <AdminShell>{children}</AdminShell>
-    </ThemeProvider>
+    </MuiProvider>
   );
 }

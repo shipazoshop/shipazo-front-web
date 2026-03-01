@@ -2,76 +2,83 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
+// Promise compartida a nivel de módulo: Bootstrap se importa una sola vez
+// sin importar cuántas veces se monte ClientLayout o cambie la ruta.
+let bootstrapPromise: Promise<any> | null = null;
+
+function getBootstrap() {
+  if (!bootstrapPromise) {
+    bootstrapPromise = import("bootstrap/dist/js/bootstrap.esm.js");
+  }
+  return bootstrapPromise;
+}
+
+function closeModalsAndOffcanvas(bs: any) {
+  for (const el of document.querySelectorAll(".modal.show")) {
+    bs.Modal.getInstance(el)?.hide();
+  }
+  for (const el of document.querySelectorAll(".offcanvas.show")) {
+    bs.Offcanvas.getInstance(el)?.hide();
+  }
+}
+
 export default function ClientLayout() {
   const pathname = usePathname();
-  const bootstrapRef = useRef<any>(null);
   const wowRef = useRef<any>(null);
 
-  // Skip e-commerce specific effects on admin, configurations and orders routes
-  const isAdminRoute = pathname.startsWith("/admin");
-  const isConfigurationsRoute = pathname.startsWith("/configurations");
-  const isOrdersRoute = pathname.startsWith("/orders");
-  const skipEcommerceEffects = isAdminRoute || isConfigurationsRoute || isOrdersRoute;
+  const skipEcommerceEffects =
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/configurations") ||
+    pathname.startsWith("/orders");
 
-  // Bootstrap - Load only once on mount (skip on admin, configurations and orders routes)
+  // Bootstrap: una Promise compartida garantiza una sola descarga.
+  // En cada navegación solo espera la Promise ya resuelta (instantáneo).
   useEffect(() => {
     if (skipEcommerceEffects) return;
-
-    if (globalThis.window !== undefined && !bootstrapRef.current) {
-      void import("bootstrap/dist/js/bootstrap.esm.js").then((bootstrap) => {
-        bootstrapRef.current = bootstrap;
-      });
-    }
-  }, [skipEcommerceEffects]);
-
-  // Close modals on navigation - Reuse cached Bootstrap instance
-  useEffect(() => {
-    if (skipEcommerceEffects) return;
-
-    if (bootstrapRef.current) {
-      closeModalsAndOffcanvas(bootstrapRef.current);
-    } else {
-      // If bootstrap not loaded yet, wait for it
-      void import("bootstrap/dist/js/bootstrap.esm.js").then((bootstrap) => {
-        bootstrapRef.current = bootstrap;
-        closeModalsAndOffcanvas(bootstrap);
-      });
-    }
+    void getBootstrap().then(closeModalsAndOffcanvas);
   }, [pathname, skipEcommerceEffects]);
 
-  // Header scroll behavior - Optimized with requestAnimationFrame
+  // Scroll unificado: header + botón goTop + progress ring en un solo listener
   useEffect(() => {
-    // Skip on admin, configurations and orders routes - they use MUI layout
     if (skipEcommerceEffects) return;
+
+    const header = document.querySelector<HTMLElement>("header");
+    const goTop = document.getElementById("goTop");
+    const borderProgress = document.querySelector<HTMLElement>(".border-progress");
 
     let lastScrollTop = 0;
     const delta = 5;
     let ticking = false;
-    const header = document.querySelector<HTMLElement>("header");
 
     const checkScroll = () => {
-      if (!header) return;
-
       const scrollTop = window.scrollY;
-      const navbarHeight = header.offsetHeight;
 
-      if (Math.abs(lastScrollTop - scrollTop) <= delta) {
-        ticking = false;
-        return;
+      // Header hide/show
+      if (header) {
+        const navbarHeight = header.offsetHeight;
+        if (Math.abs(lastScrollTop - scrollTop) > delta) {
+          if (scrollTop > navbarHeight) {
+            header.style.top = scrollTop > lastScrollTop ? `-${navbarHeight}px` : "0";
+            header.classList.toggle("header-bg", scrollTop <= lastScrollTop);
+          } else {
+            header.style.top = "";
+            header.classList.remove("header-bg");
+          }
+        }
       }
 
-      if (scrollTop > navbarHeight) {
-        if (scrollTop > lastScrollTop) {
-          // Scrolling down
-          header.style.top = `-${navbarHeight}px`;
-        } else {
-          // Scrolling up
-          header.style.top = "0";
-          header.classList.add("header-bg");
+      // Botón ir arriba
+      if (goTop) goTop.classList.toggle("show", scrollTop > 100);
+
+      // Progress ring
+      if (borderProgress) {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 0) {
+          borderProgress.style.setProperty(
+            "--progress-angle",
+            `${(scrollTop / docHeight) * 360}deg`
+          );
         }
-      } else {
-        header.style.top = "";
-        header.classList.remove("header-bg");
       }
 
       lastScrollTop = scrollTop;
@@ -86,43 +93,23 @@ export default function ClientLayout() {
     };
 
     globalThis.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      globalThis.removeEventListener("scroll", handleScroll);
-    };
+    return () => globalThis.removeEventListener("scroll", handleScroll);
   }, [pathname, skipEcommerceEffects]);
 
-  // WOW animations - Load only once on mount
+  // WOW animations
   useEffect(() => {
-    // Skip on admin, configurations and orders routes - they don't use WOW animations
     if (skipEcommerceEffects) return;
 
-    if (globalThis.window !== undefined && !wowRef.current) {
+    if (!wowRef.current) {
       void import("@/shared/utils/wow").then((module) => {
         const WOW = module.default;
         wowRef.current = new WOW({ mobile: false, live: false });
         wowRef.current.init();
       });
-    } else if (wowRef.current) {
-      // Re-sync WOW on navigation (lightweight operation)
+    } else {
       wowRef.current.sync();
     }
   }, [pathname, skipEcommerceEffects]);
 
   return null;
-}
-
-// Helper function to close modals and offcanvas
-function closeModalsAndOffcanvas(bootstrapModule: any) {
-  const modalElements = document.querySelectorAll(".modal.show");
-  for (const modal of modalElements) {
-    const modalInstance = bootstrapModule.Modal.getInstance(modal);
-    modalInstance?.hide();
-  }
-
-  const offcanvasElements = document.querySelectorAll(".offcanvas.show");
-  for (const offcanvas of offcanvasElements) {
-    const offcanvasInstance = bootstrapModule.Offcanvas.getInstance(offcanvas);
-    offcanvasInstance?.hide();
-  }
 }

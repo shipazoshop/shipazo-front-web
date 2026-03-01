@@ -2,19 +2,16 @@
 
 import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { adminTheme } from "@/presentation/theme/adminTheme";
+import MuiProvider from "@/application/providers/MuiProvider";
 
 const OrdersShell = dynamic(() => import("./OrdersShell"), {
   ssr: true,
 });
 
-export default function OrdersLayout({ children }: { children: ReactNode }) {
+export default function OrdersLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <ThemeProvider theme={adminTheme}>
-      <CssBaseline />
+    <MuiProvider>
       <OrdersShell>{children}</OrdersShell>
-    </ThemeProvider>
+    </MuiProvider>
   );
 }
