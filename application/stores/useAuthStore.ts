@@ -59,6 +59,13 @@ export const useAuthStore = create<AuthStore>()(
           accessToken: token,
           isAuthenticated: true,
         });
+
+        // Emitir cookie de sesión ligera para el middleware (sin CryptoJS)
+        fetch("/api/auth/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accessToken: token }),
+        }).catch(() => {});
       },
 
       clearAuth: () => {
@@ -67,7 +74,10 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: false,
         });
 
-        // Eliminar la cookie de autenticación
+        // Eliminar cookie de sesión del middleware
+        fetch("/api/auth/session", { method: "DELETE" }).catch(() => {});
+
+        // Eliminar la cookie de autenticación del cliente
         if (typeof document !== 'undefined') {
           document.cookie = 'auth-storage=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         }
@@ -85,15 +95,15 @@ export const useAuthStore = create<AuthStore>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        // Este callback se ejecuta cuando termina la hidratación
         state?.setHydrated();
 
-        // Sincronizar localStorage con cookies después de hidratar
-        if (globalThis.window !== undefined) {
-          const encryptedStorage = localStorage.getItem('auth-storage');
-          if (encryptedStorage && state?.isAuthenticated) {
-            document.cookie = `auth-storage=${encryptedStorage}; path=/; max-age=2592000; SameSite=Lax`;
-          }
+        // Si el usuario ya tenía sesión, renovar la cookie de middleware
+        if (globalThis.window !== undefined && state?.isAuthenticated && state?.accessToken) {
+          fetch("/api/auth/session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ accessToken: state.accessToken }),
+          }).catch(() => {});
         }
       },
     }
