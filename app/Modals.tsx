@@ -13,9 +13,6 @@ const Quickview = dynamic(() => import("@/presentation/components/modals/Quickvi
 const Compare = dynamic(() => import("@/presentation/components/modals/Compare"), {
   ssr: false,
 });
-const Login = dynamic(() => import("@/presentation/components/modals/Login"), {
-  ssr: false,
-});
 const Register = dynamic(() => import("@/presentation/components/modals/Register"), {
   ssr: false,
 });
@@ -47,7 +44,6 @@ export default function Modals() {
 
   return (
     <Suspense fallback={null}>
-      <Login />
       <Register />
       <Cart />
       <Quickview />

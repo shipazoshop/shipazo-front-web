@@ -17,7 +17,7 @@ export default function Toolbar() {
         </Link>
       </div>
       <div className="toolbar-item">
-        <a href="#log" data-bs-toggle="modal">
+        <Link href="/login">
           <span className="toolbar-icon">
             <svg
               width={20}
@@ -41,7 +41,7 @@ export default function Toolbar() {
             </svg>
           </span>
           <span className="toolbar-label">Account</span>
-        </a>
+        </Link>
       </div>
       {/* <div className="toolbar-item">
         <a href="#search" data-bs-toggle="offcanvas">
