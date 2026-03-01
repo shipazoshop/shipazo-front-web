@@ -12,13 +12,15 @@ const nextConfig: NextConfig = {
   // For stricter enforcement in production, use a nonce-based CSP with middleware.
   async headers() {
     const isDev = process.env.NODE_ENV === 'development';
+    const apiOrigin = new URL(process.env.NEXT_PUBLIC_PRODUCTS_API_URL).origin
+
     const csp = [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`, // 'unsafe-eval' needed for Next.js HMR in dev
       "style-src 'self' 'unsafe-inline'",  // 'unsafe-inline' needed for Next.js CSS-in-JS
       "font-src 'self' data:",             // Allow fonts from self and data URIs
       "img-src 'self' data: blob: https:", // Allow images from self, data URIs, and https
-      `connect-src 'self' https://shipazo-api-production.up.railway.app${isDev ? ' ws://localhost:* wss://localhost:*' : ''}`, // API + HMR websockets in dev
+      `connect-src 'self' ${apiOrigin}${isDev ? ' ws://localhost:* wss://localhost:*' : ''}`, // API + HMR websockets in dev
       "object-src 'none'",                 // Blocks Flash, Java applets, etc.
       "base-uri 'self'",                   // Prevents base tag hijacking
       "frame-ancestors 'none'",            // Clickjacking protection

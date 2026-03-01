@@ -64,7 +64,8 @@ function AuthCallbackContent() {
         const encryptedStorage = localStorage.getItem('auth-storage');
         if (encryptedStorage) {
           // Copiar el storage encriptado a las cookies
-          document.cookie = `auth-storage=${encryptedStorage}; path=/; max-age=2592000; SameSite=Lax`;
+          const isHttps = globalThis.location?.protocol === 'https:';
+          document.cookie = `auth-storage=${encryptedStorage}; path=/; max-age=2592000; SameSite=Lax${isHttps ? '; Secure' : ''}`;
         }
 
         // Limpiar la URL
