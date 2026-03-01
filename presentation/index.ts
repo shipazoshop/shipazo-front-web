@@ -45,7 +45,6 @@ export * from './components/homes/home-5/Products6';
 export * from './components/homes/home-5/Products7';
 export * from './components/modals/Cart';
 export * from './components/modals/Compare';
-export * from './components/modals/Login';
 export * from './components/modals/MobileMenu';
 export * from './components/modals/Quickview';
 export * from './components/modals/Register';
