@@ -6,8 +6,12 @@ import Box from "@mui/material/Box";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -20,7 +24,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
-import { ArrowLeft, Truck, MapPin, CreditCard } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Truck, MapPin, CreditCard, X } from "lucide-react";
 import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
 import { usePaymentRepository } from "@/presentation/hooks/repositories/usePaymentRepository";
 import { formatGTQ } from "@/shared/utils";
@@ -36,6 +41,7 @@ const paymentStatusConfig: Record<
 
 export default function OrderDetailPage() {
   const params = useParams<{ orderId: string }>();
+  const [specModal, setSpecModal] = useState<string | null>(null);
 
   const { getOrderDetail } = useOrdersRepository();
   const { getPaymentDetail } = usePaymentRepository();
@@ -336,16 +342,20 @@ export default function OrderDetailPage() {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Producto</TableCell>
+                    <TableCell sx={{ maxWidth: 220 }}>Producto</TableCell>
+                    <TableCell>Especificaciones</TableCell>
                     <TableCell align="right">Precio</TableCell>
                     <TableCell align="right">Cantidad</TableCell>
                     <TableCell align="right">Subtotal</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {order.items.map((item) => (
+                  {order.items.map((item) => {
+                    const spec = item.productDetails.productSpecification ?? "";
+                    const specTooLong = spec.length > 100;
+                    return (
                     <TableRow key={item.itemId} hover>
-                      <TableCell>
+                      <TableCell sx={{ maxWidth: 220 }}>
                         <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
                           {item.productDetails.imageUrl && (
                             <Box
@@ -353,34 +363,67 @@ export default function OrderDetailPage() {
                               src={item.productDetails.imageUrl}
                               alt={item.productDetails.name}
                               sx={{
-                                width: 48,
-                                height: 48,
+                                width: 40,
+                                height: 40,
                                 borderRadius: 1,
                                 objectFit: "cover",
                                 bgcolor: "grey.100",
+                                flexShrink: 0,
                               }}
                             />
                           )}
-                          <Box>
-                            <Typography variant="body2" fontWeight={600}>
-                              {item.productDetails.name}
-                            </Typography>
-                            {item.productDetails.description && (
-                              <Typography
-                                variant="caption"
-                                color="text.secondary"
-                                sx={{
-                                  display: "-webkit-box",
-                                  WebkitLineClamp: 2,
-                                  WebkitBoxOrient: "vertical",
-                                  overflow: "hidden",
-                                }}
-                              >
-                                {item.productDetails.description}
-                              </Typography>
-                            )}
-                          </Box>
+                          <Typography
+                            variant="body2"
+                            fontWeight={600}
+                            component="a"
+                            href={item.storeLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                              color: "#4a90e2",
+                              textDecoration: "none",
+                              "&:hover": { textDecoration: "underline" },
+                              display: "-webkit-box",
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                              maxWidth: 160,
+                            }}
+                            title={item.productDetails.name.length > 100 ? item.productDetails.name : undefined}
+                          >
+                            {item.productDetails.name.length > 100
+                              ? item.productDetails.name.slice(0, 100) + "..."
+                              : item.productDetails.name}
+                          </Typography>
                         </Box>
+                      </TableCell>
+                      <TableCell>
+                        {spec ? (
+                          specTooLong ? (
+                            <Button
+                              size="small"
+                              onClick={() => setSpecModal(spec)}
+                              sx={{
+                                bgcolor: "#e53935",
+                                color: "#fff",
+                                textTransform: "none",
+                                fontSize: "0.75rem",
+                                px: 1.5,
+                                py: 0.5,
+                                borderRadius: 1,
+                                "&:hover": { bgcolor: "#c62828" },
+                              }}
+                            >
+                              Ver especificación
+                            </Button>
+                          ) : (
+                            <Typography variant="body2" color="text.secondary">
+                              {spec}
+                            </Typography>
+                          )
+                        ) : (
+                          <Typography variant="body2" color="text.disabled">—</Typography>
+                        )}
                       </TableCell>
                       <TableCell align="right">
                         <Typography variant="body2">
@@ -396,7 +439,8 @@ export default function OrderDetailPage() {
                         </Typography>
                       </TableCell>
                     </TableRow>
-                  ))}
+                    );
+                  })}
 
                   {/* Resumen */}
                   <TableRow>
@@ -466,6 +510,26 @@ export default function OrderDetailPage() {
           Volver a mis órdenes
         </Button>
       </Box>
+
+      {/* Modal de especificaciones */}
+      <Dialog
+        open={!!specModal}
+        onClose={() => setSpecModal(null)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pr: 1 }}>
+          Especificaciones del producto
+          <IconButton size="small" onClick={() => setSpecModal(null)}>
+            <X size={18} />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+            {specModal}
+          </Typography>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }
