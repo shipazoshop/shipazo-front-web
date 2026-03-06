@@ -93,7 +93,17 @@ function validateCardForm(form: CardFormState): string | null {
 }
 
 // ── Error Modal ──────────────────────────────────────────────────────────────
-function ErrorModal({ message, onClose }: { message: string; onClose: () => void }) {
+function ErrorModal({
+  message,
+  onClose,
+  actionLabel,
+  onAction,
+}: {
+  message: string;
+  onClose: () => void;
+  actionLabel?: string;
+  onAction?: () => void;
+}) {
   return (
     <div
       style={{
@@ -115,9 +125,20 @@ function ErrorModal({ message, onClose }: { message: string; onClose: () => void
         </div>
         <h5 className="fw-bold mb-2">No se pudo realizar el pago</h5>
         <p className="body-text-3 text-main-2 mb-4">{message}</p>
-        <button type="button" className="tf-btn w-100" onClick={onClose}>
-          <span className="text-white">Intentar nuevamente</span>
-        </button>
+        {actionLabel && onAction ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <button type="button" className="tf-btn w-100" onClick={onAction}>
+              <span className="text-white">{actionLabel}</span>
+            </button>
+            <button type="button" className="tf-btn btn-gray-2 w-100" onClick={onClose}>
+              <span>Cancelar</span>
+            </button>
+          </div>
+        ) : (
+          <button type="button" className="tf-btn w-100" onClick={onClose}>
+            <span className="text-white">Intentar nuevamente</span>
+          </button>
+        )}
       </div>
     </div>
   );
@@ -290,10 +311,12 @@ export default function Checkout() {
 
   // Estado del flujo de pago
   const [processingStep, setProcessingStep] = useState<"order" | "payment" | null>(null);
-  const [errorModal, setErrorModal] = useState<{ show: boolean; message: string }>({
-    show: false,
-    message: "",
-  });
+  const [errorModal, setErrorModal] = useState<{
+    show: boolean;
+    message: string;
+    actionLabel?: string;
+    onAction?: () => void;
+  }>({ show: false, message: "" });
 
   // Estado para método de pago
   const [selectedPaymentType, setSelectedPaymentType] = useState<"single" | "quota">("single");
@@ -354,8 +377,18 @@ export default function Checkout() {
 
   // Creación de orden + procesamiento de pago (flujo de dos pasos)
   const handleCreateOrder = async () => {
-    if (!customerInfo) {
-      alert("Por favor, complete su información de contacto primero.");
+    if (
+      !customerInfo ||
+      !customerInfo.recipientName?.trim() ||
+      !customerInfo.identificationNumber?.trim() ||
+      !customerInfo.phoneNumber?.trim()
+    ) {
+      setErrorModal({
+        show: true,
+        message: "Debes completar tu información personal (nombre, NIT/DPI y teléfono) antes de realizar una compra.",
+        actionLabel: "Completar información",
+        onAction: () => router.push("/configurations/personal-info"),
+      });
       return;
     }
     if (!selectedAddressId || !selectedAddress) {
@@ -457,6 +490,8 @@ export default function Checkout() {
         <ErrorModal
           message={errorModal.message}
           onClose={() => setErrorModal({ show: false, message: "" })}
+          actionLabel={errorModal.actionLabel}
+          onAction={errorModal.onAction}
         />
       )}
       <section className="tf-sp-2">
@@ -508,12 +543,20 @@ export default function Checkout() {
                   <div
                     className="customer-info-card"
                     style={{
-                      border: "1px solid #e5e7eb",
+                      border: `1px solid ${!customerInfo.recipientName?.trim() || !customerInfo.identificationNumber?.trim() || !customerInfo.phoneNumber?.trim() ? "#fca5a5" : "#e5e7eb"}`,
                       borderRadius: "8px",
                       padding: "20px",
-                      backgroundColor: "#f9fafb",
+                      backgroundColor: !customerInfo.recipientName?.trim() || !customerInfo.identificationNumber?.trim() || !customerInfo.phoneNumber?.trim() ? "#fff7f7" : "#f9fafb",
                     }}
                   >
+                    {(!customerInfo.recipientName?.trim() || !customerInfo.identificationNumber?.trim() || !customerInfo.phoneNumber?.trim()) && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px", padding: "10px 12px", backgroundColor: "#fee2e2", borderRadius: "6px" }}>
+                        <AlertCircle size={16} style={{ color: "#dc2626", flexShrink: 0 }} />
+                        <p className="body-text-3 mb-0" style={{ color: "#dc2626" }}>
+                          Información incompleta. <Link href="/configurations/personal-info" className="fw-semibold" style={{ color: "#dc2626", textDecoration: "underline" }}>Completar ahora</Link>
+                        </p>
+                      </div>
+                    )}
                     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <User size={20} style={{ color: "var(--primary)" }} />

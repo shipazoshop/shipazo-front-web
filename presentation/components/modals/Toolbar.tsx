@@ -1,11 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useCartProducts } from "@/application";
+import { useCartLength } from "@/application/stores/useCartStore";
 import { Heart, Package } from "lucide-react";
+import { useIsAuthenticated, useClearAuth } from "@/application/stores/useAuthStore";
+
 export default function Toolbar() {
-  const cartProducts = useCartProducts();
+  const cartLength = useCartLength();
+  const isAuthenticated = useIsAuthenticated();
+  const clearAuth = useClearAuth();
+  const [accountOpen, setAccountOpen] = useState(false);
+  const accountRef = useRef<HTMLDivElement>(null);
+
+  const handleLogout = () => {
+    clearAuth();
+    setAccountOpen(false);
+    globalThis.location.href = "/home";
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (accountRef.current && !accountRef.current.contains(event.target as Node)) {
+        setAccountOpen(false);
+      }
+    };
+    if (accountOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [accountOpen]);
+
   return (
     <div className="tf-toolbar-bottom d-xl-none">
       <div className="toolbar-item">
@@ -16,8 +43,21 @@ export default function Toolbar() {
           <span className="toolbar-label">Wishlist</span>
         </Link>
       </div>
-      <div className="toolbar-item">
-        <Link href="/login">
+      <div className="toolbar-item" ref={accountRef} style={{ position: "relative" }}>
+        <button
+          onClick={() => setAccountOpen((prev) => !prev)}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            fontFamily: "inherit",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
           <span className="toolbar-icon">
             <svg
               width={20}
@@ -41,29 +81,220 @@ export default function Toolbar() {
             </svg>
           </span>
           <span className="toolbar-label">Account</span>
-        </Link>
-      </div>
-      {/* <div className="toolbar-item">
-        <a href="#search" data-bs-toggle="offcanvas">
-          <span className="toolbar-icon">
-            <svg
-              width={20}
-              height={20}
-              viewBox="0 0 18 19"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+        </button>
+
+        {accountOpen && (
+          <>
+            {/* Overlay translúcido detrás del menú */}
+            <div
+              style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 999,
+              }}
+              onClick={() => setAccountOpen(false)}
+            />
+            <div
+              style={{
+                position: "absolute",
+                bottom: "calc(100% + 12px)",
+                left: "50%",
+                transform: "translateX(-50%)",
+                backgroundColor: "#ffffff",
+                border: "1px solid #e1e1e1",
+                borderRadius: "12px",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+                minWidth: "210px",
+                zIndex: 1000,
+                overflow: "hidden",
+              }}
             >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M17.795 17.8101L13.5309 13.5225C14.9671 12.072 15.7894 10.1219 15.8267 8.07859C15.864 6.03526 15.1132 4.05635 13.7309 2.55423C12.3486 1.05211 10.4414 0.142631 8.40671 0.0154012C6.37204 -0.111829 4.36687 0.552966 2.80908 1.87124C1.25129 3.18952 0.261042 5.05958 0.0447082 7.09172C-0.171625 9.12385 0.402641 11.1613 1.64783 12.7795C2.89302 14.3976 4.71308 15.4716 6.72871 15.7777C8.74435 16.0838 10.8001 15.5983 12.4674 14.4225L16.8162 18.7977C16.8809 18.8622 16.9576 18.9132 17.042 18.9479C17.1264 18.9826 17.2167 19.0003 17.3079 19C17.3991 18.9997 17.4893 18.9814 17.5735 18.9461C17.6576 18.9109 17.734 18.8593 17.7982 18.7945C17.8625 18.7296 17.9134 18.6527 17.948 18.5682C17.9826 18.4836 18.0003 18.393 18 18.3016C17.9997 18.2102 17.9814 18.1197 17.9463 18.0354C17.9111 17.951 17.8597 17.8745 17.795 17.8101ZM1.49742 7.97499C1.50151 6.69476 1.88395 5.44444 2.59643 4.38196C3.30892 3.31948 4.31949 2.49252 5.50052 2.00544C6.68156 1.51836 7.98009 1.39299 9.23213 1.64527C10.4842 1.89754 11.6336 2.51614 12.5351 3.42285C13.4367 4.32957 14.0501 5.48378 14.2977 6.73971C14.5454 7.99565 14.4162 9.29694 13.9265 10.4793C13.4369 11.6617 12.6087 12.6722 11.5466 13.383C10.4844 14.0939 9.23598 14.4733 7.95891 14.4733C7.10897 14.4721 6.26759 14.303 5.48285 13.9757C4.6981 13.6485 3.98535 13.1694 3.38531 12.566C2.78528 11.9625 2.30971 11.2465 1.98578 10.4588C1.66185 9.67104 1.49591 8.82703 1.49742 7.97499Z"
-                fill="#333E48"
-              />
-            </svg>
-          </span>
-          <span className="toolbar-label">Search</span>
-        </a>
-      </div> */}
+              {/* Cabecera del menú */}
+              <div
+                style={{
+                  padding: "14px 16px 12px",
+                  borderBottom: "1px solid #f0f0f0",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    backgroundColor: "#f5f5f5",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <svg width={18} height={18} viewBox="0 0 22 23" fill="none">
+                    <path
+                      d="M10.9998 11.5283C5.20222 11.5283 0.485352 16.2452 0.485352 22.0428C0.485352 22.2952 0.69017 22.5 0.942518 22.5C1.19487 22.5 1.39968 22.2952 1.39968 22.0428C1.39968 16.749 5.70606 12.4426 10.9999 12.4426C16.2937 12.4426 20.6001 16.749 20.6001 22.0428C20.6001 22.2952 20.8049 22.5 21.0572 22.5C21.3096 22.5 21.5144 22.2952 21.5144 22.0428C21.5144 16.2443 16.7975 11.5283 10.9998 11.5283Z"
+                      fill="#333E48"
+                      stroke="#333E48"
+                      strokeWidth="0.3"
+                    />
+                    <path
+                      d="M10.9999 0.5C8.22767 0.5 5.97119 2.75557 5.97119 5.52866C5.97119 8.30174 8.22771 10.5573 10.9999 10.5573C13.772 10.5573 16.0285 8.30174 16.0285 5.52866C16.0285 2.75557 13.772 0.5 10.9999 0.5ZM10.9999 9.64303C8.73146 9.64303 6.88548 7.79705 6.88548 5.52866C6.88548 3.26027 8.73146 1.41429 10.9999 1.41429C13.2682 1.41429 15.1142 3.26027 15.1142 5.52866C15.1142 7.79705 13.2682 9.64303 10.9999 9.64303Z"
+                      fill="#333E48"
+                      stroke="#333E48"
+                      strokeWidth="0.3"
+                    />
+                  </svg>
+                </div>
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "#333E48",
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {isAuthenticated ? "Mi cuenta" : "Bienvenido"}
+                </span>
+              </div>
+
+              {/* Opciones del menú */}
+              <ul style={{ listStyle: "none", margin: 0, padding: "6px 0" }}>
+                {isAuthenticated && (
+                  <li>
+                    <Link
+                      href="/configurations/address"
+                      onClick={() => setAccountOpen(false)}
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "11px 16px",
+                        color: "#333E48",
+                        textDecoration: "none",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        transition: "background-color 0.15s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#f5f5f5";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                    >
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#333E48" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                      </svg>
+                      Configuraciones
+                    </Link>
+                  </li>
+                )}
+
+                {/* Separador solo cuando hay dos opciones */}
+                {isAuthenticated && (
+                  <li style={{ height: "1px", backgroundColor: "#f0f0f0", margin: "4px 16px" }} />
+                )}
+
+                <li>
+                  {isAuthenticated ? (
+                    <button
+                      onClick={handleLogout}
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: "10px",
+                        width: "100%",
+                        padding: "11px 16px",
+                        color: "#ff3d3d",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        border: "none",
+                        background: "none",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        transition: "background-color 0.15s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#fff5f5";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                    >
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#ff3d3d" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                      </svg>
+                      Cerrar sesión
+                    </button>
+                  ) : (
+                    <Link
+                      href="/login"
+                      onClick={() => setAccountOpen(false)}
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "11px 16px",
+                        color: "#333E48",
+                        textDecoration: "none",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        transition: "background-color 0.15s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#f5f5f5";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                    >
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#333E48" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                      </svg>
+                      Iniciar sesión
+                    </Link>
+                  )}
+                </li>
+              </ul>
+
+              {/* Triángulo indicador apuntando hacia abajo */}
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "-6px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: "12px",
+                  height: "6px",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    width: "10px",
+                    height: "10px",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e1e1e1",
+                    transform: "rotate(45deg)",
+                    transformOrigin: "center",
+                    margin: "-4px auto 0",
+                    boxShadow: "2px 2px 4px rgba(0,0,0,0.06)",
+                  }}
+                />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
       <div className="toolbar-item">
         <Link href="/orders">
           <span className="toolbar-icon">
@@ -96,7 +327,7 @@ export default function Toolbar() {
                 fill="#333E48"
               />
             </svg>
-            <span className="toolbar-count">{cartProducts.length}</span>
+            <span className="toolbar-count">{cartLength}</span>
           </span>
           <span className="toolbar-label">Cart</span>
         </a>

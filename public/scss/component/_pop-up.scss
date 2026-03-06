@@ -614,13 +614,16 @@
     width: 100%;
     position: relative;
 
-    a {
+    a,
+    button {
       width: 100%;
       padding-right: 10px;
       padding-left: 10px;
       gap: 5px;
       @include mixin.flex(center, center);
       flex-direction: column;
+      font-family: inherit;
+      font-size: inherit;
 
       .toolbar-icon {
         width: 20px;
