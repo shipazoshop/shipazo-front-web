@@ -1,29 +1,46 @@
 "use client";
 
-import Header1 from "@/presentation/components/headers/Header1";
-import EmptySearchBanner from "@/presentation/components/homes/home-5/EmptySearchBanner";
-import { AdminFloatingButton } from "@/presentation/components/common/AdminFloatingButton";
 import React from "react";
-import Footer1 from "@/presentation/components/footers/Footer1";
+import HomeBackground from "@/presentation/components/homes/home-v8/HomeBackground";
+import HeaderV8 from "@/presentation/components/headers/HeaderV8";
+import HomeHero from "@/presentation/components/homes/home-v8/HomeHero";
+import HowItWorksV8 from "@/presentation/components/homes/home-v8/HowItWorksV8";
+import BrandsMarqueeV8 from "@/presentation/components/homes/home-v8/BrandsMarqueeV8";
+import TrustBandV8 from "@/presentation/components/homes/home-v8/TrustBandV8";
+import TestimonialsV8 from "@/presentation/components/homes/home-v8/TestimonialsV8";
+import BenefitsV8 from "@/presentation/components/homes/home-v8/BenefitsV8";
+import FooterV8 from "@/presentation/components/footers/FooterV8";
+import { AdminFloatingButton } from "@/presentation/components/common/AdminFloatingButton";
 
 export default function HomePage() {
   return (
     <>
-      {/* <Topbar1 parentClass="tf-topbar" /> */}
-      <Header1 />
-      <div className="tf-sp-7">
-        <div className="container">
-          <div className="container-wrap">
-            <div className="container-main">
-              <EmptySearchBanner />
-            </div>
-          </div>
-        </div>
-      </div>
-      <Footer1 />
+      {/* Fixed background: mesh gradient + grain + parallax */}
+      <HomeBackground />
 
-      {/* Botón flotante para admins */}
+      {/* Page content stacks above z-index: 2 */}
+      <div className="hv8-page">
+        <HeaderV8 />
+        <HomeHero />
+        <HowItWorksV8 />
+        <BrandsMarqueeV8 />
+        <TrustBandV8 />
+        <TestimonialsV8 />
+        <BenefitsV8 />
+        <FooterV8 />
+      </div>
+
       <AdminFloatingButton />
+
+      <style>{`
+        .hv8-page {
+          position: relative;
+          z-index: 2;
+          min-height: 100vh;
+          color: white;
+          font-family: 'Inter', system-ui, sans-serif;
+        }
+      `}</style>
     </>
   );
 }
