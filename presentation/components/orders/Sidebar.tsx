@@ -9,7 +9,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { ArrowLeft } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -32,114 +31,112 @@ export const Sidebar = memo(function Sidebar({ menuItems }: SidebarProps) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        background: "linear-gradient(180deg, #ffffff 0%, #fafafa 100%)",
+        background: "white",
       }}
     >
-      {/* Logo Area */}
-      <Toolbar
+      {/* Header — gradiente naranja */}
+      <Box
         sx={{
-          borderBottom: 1,
-          borderColor: "divider",
-          py: 2.5,
-          background: "linear-gradient(135deg, #4a90e2 0%, #5ba3f5 100%)",
+          m: 2,
+          mb: 1,
+          borderRadius: "18px",
+          p: "22px 22px 20px",
+          background: "linear-gradient(135deg, #DC6F34 0%, #F4A261 100%)",
+          boxShadow: "0 12px 28px -10px rgba(220,111,52,0.45)",
           position: "relative",
           overflow: "hidden",
           "&::before": {
             content: '""',
             position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background:
-              "radial-gradient(circle at top right, rgba(255, 255, 255, 0.2) 0%, transparent 60%)",
+            right: "-30px",
+            top: "-30px",
+            width: "140px",
+            height: "140px",
+            background: "radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%)",
+            pointerEvents: "none",
           },
         }}
       >
-        <Box sx={{ position: "relative", zIndex: 1, width: "100%" }}>
-          <Typography
-            variant="h5"
-            fontWeight={800}
-            sx={{
-              color: "white",
-              letterSpacing: "-0.5px",
-              textShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            Shipazo
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{
-              color: "rgba(255, 255, 255, 0.9)",
-              fontWeight: 600,
-              fontSize: "0.7rem",
-              letterSpacing: "1px",
-              textTransform: "uppercase",
-            }}
-          >
-            Mis Órdenes
-          </Typography>
-        </Box>
-      </Toolbar>
+        <Typography
+          sx={{
+            fontFamily: "var(--font-archivo-black), 'Archivo Black', sans-serif",
+            fontWeight: 900,
+            fontSize: "22px",
+            letterSpacing: "-0.01em",
+            lineHeight: 1,
+            color: "white",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          Shipazo
+        </Typography>
+        <Typography
+          sx={{
+            mt: "6px",
+            fontSize: "10.5px",
+            fontWeight: 800,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.85)",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          Mis órdenes
+        </Typography>
+      </Box>
 
-      {/* Menu Items */}
-      <List sx={{ px: 1.5, py: 2, flexGrow: 1 }}>
+      {/* Nav items */}
+      <List sx={{ px: 2, py: 1, flexGrow: 1 }}>
         {menuItems.map((item) => (
           <ListItem key={item.href} disablePadding sx={{ mb: 0.5 }}>
             <ListItemButton
               component={Link}
               href={item.href}
               sx={{
-                borderRadius: 2,
+                borderRadius: "12px",
                 py: 1.5,
-                transition: "all 0.2s ease-in-out",
-                position: "relative",
-                overflow: "hidden",
+                px: 1.75,
+                transition: "all 0.2s ease",
+                gap: 1.5,
                 ...(item.active
                   ? {
-                      bgcolor: "#4a90e2",
+                      bgcolor: "#1A0D24",
                       color: "white",
-                      boxShadow: "0px 4px 12px rgba(74, 144, 226, 0.25)",
-                      "&:hover": {
-                        bgcolor: "#3a7bc8",
-                        transform: "translateX(4px)",
-                        boxShadow: "0px 6px 16px rgba(74, 144, 226, 0.35)",
-                      },
-                      "&::before": {
-                        content: '""',
-                        position: "absolute",
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: "4px",
-                        bgcolor: "white",
-                        borderRadius: "0 4px 4px 0",
-                      },
+                      boxShadow: "0 8px 18px -8px rgba(26,13,36,0.4)",
+                      "&:hover": { bgcolor: "#2a1340" },
                     }
                   : {
-                      color: "text.primary",
-                      "&:hover": {
-                        bgcolor: "action.hover",
-                        transform: "translateX(4px)",
-                      },
+                      color: "#4A3D57",
+                      "&:hover": { bgcolor: "#FAF7F2", color: "#1A0D24" },
                     }),
               }}
             >
               <ListItemIcon
                 sx={{
-                  minWidth: 40,
-                  color: item.active ? "white" : "#4a90e2",
+                  minWidth: 36,
+                  width: 32,
+                  height: 32,
+                  borderRadius: "9px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  bgcolor: item.active ? "#DC6F34" : "#FAF7F2",
+                  color: item.active ? "white" : "#8A7D96",
+                  transition: "all 0.2s",
                 }}
               >
-                <item.icon size={22} strokeWidth={2.5} />
+                <item.icon size={16} strokeWidth={2} />
               </ListItemIcon>
               <ListItemText
                 primary={item.label}
                 slotProps={{
                   primary: {
                     fontWeight: item.active ? 700 : 600,
-                    fontSize: "0.95rem",
+                    fontSize: "0.9rem",
+                    color: "inherit",
                   },
                 }}
               />
@@ -152,9 +149,11 @@ export const Sidebar = memo(function Sidebar({ menuItems }: SidebarProps) {
       <Box
         sx={{
           p: 2,
-          borderTop: 1,
-          borderColor: "divider",
-          bgcolor: "grey.50",
+          pt: 2,
+          borderTop: "1px solid #ECE5DC",
+          display: "flex",
+          flexDirection: "column",
+          gap: 1.5,
         }}
       >
         <Button
@@ -162,18 +161,22 @@ export const Sidebar = memo(function Sidebar({ menuItems }: SidebarProps) {
           href="/home"
           variant="outlined"
           fullWidth
-          startIcon={<ArrowLeft size={16} />}
+          startIcon={<ArrowLeft size={14} />}
           sx={{
-            mb: 2,
-            borderColor: "#4a90e2",
-            color: "#4a90e2",
-            fontWeight: 600,
+            borderColor: "#ECE5DC",
+            color: "#1A0D24",
+            fontWeight: 700,
+            fontSize: "13px",
             textTransform: "none",
-            py: 1,
+            py: 1.25,
+            borderRadius: "12px",
             "&:hover": {
-              borderColor: "#3a7bc8",
-              bgcolor: "rgba(74, 144, 226, 0.04)",
+              borderColor: "#DC6F34",
+              color: "#DC6F34",
+              bgcolor: "#FDF4ED",
+              transform: "translateY(-1px)",
             },
+            transition: "all 0.2s",
           }}
         >
           Volver a la Tienda
@@ -181,11 +184,12 @@ export const Sidebar = memo(function Sidebar({ menuItems }: SidebarProps) {
 
         <Typography
           variant="caption"
-          color="text.secondary"
           sx={{
             display: "block",
             textAlign: "center",
-            fontWeight: 500,
+            fontWeight: 600,
+            color: "#8A7D96",
+            fontSize: "11px",
           }}
         >
           Shipazo v1.0

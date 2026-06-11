@@ -9,7 +9,7 @@ export default function HomeHero() {
         {/* Eyebrow */}
         <div className="hv8-eyebrow">
           <span className="hv8-eyebrow-dot" />
-          Tu tienda online global · Envíos a Perú
+          Tu tienda online global · Envíos a Guatemala
         </div>
 
         {/* Headline */}

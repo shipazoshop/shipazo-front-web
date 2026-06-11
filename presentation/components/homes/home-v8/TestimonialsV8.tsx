@@ -14,7 +14,7 @@ interface TestimonialItem {
 const TESTIMONIALS: TestimonialItem[] = [
   {
     name: "Karla Mendoza",
-    city: "Lima · Miraflores",
+    city: "Ciudad de Guatemala · Zona 10",
     rating: 5,
     body: "Compré mis zapatillas Nike directo de Estados Unidos y llegaron en 7 días. El precio total fue exactamente lo que me cotizaron, sin sorpresas en aduana.",
     product: "Nike · Sneakers",
@@ -23,7 +23,7 @@ const TESTIMONIALS: TestimonialItem[] = [
   },
   {
     name: "Joaquín Vargas",
-    city: "Arequipa",
+    city: "Quetzaltenango",
     rating: 5,
     body: "Llevo 4 pedidos y todos perfectos. Lo que más me gusta es el tracking en tiempo real, te avisan por WhatsApp en cada paso. Ya no compro de otra forma.",
     product: "Amazon · Electrónica",
@@ -32,7 +32,7 @@ const TESTIMONIALS: TestimonialItem[] = [
   },
   {
     name: "Mariana Quispe",
-    city: "Cusco",
+    city: "Antigua Guatemala",
     rating: 5,
     body: "Pedí maquillaje de Sephora que aquí cuesta el doble. Llegó en una semana, original y bien empacado. El soporte por WhatsApp es buenísimo, me respondieron en 5 minutos.",
     product: "Sephora · Beauty",
@@ -41,16 +41,16 @@ const TESTIMONIALS: TestimonialItem[] = [
   },
   {
     name: "Andrés Chávez",
-    city: "Trujillo",
+    city: "Escuintla",
     rating: 5,
-    body: "Compré un drone que costaba 40% menos en eBay. El cotizador me dio el precio total al toque, pagué en soles y listo. Nada de tarjetas internacionales.",
+    body: "Compré un drone que costaba 40% menos en eBay. El cotizador me dio el precio total al toque, pagué en quetzales y listo. Nada de tarjetas internacionales.",
     product: "eBay · Tech",
     avatar: "A",
     color: "linear-gradient(135deg, #562b7f, #dc6f34)",
   },
   {
     name: "Camila Rojas",
-    city: "Lima · Surco",
+    city: "Ciudad de Guatemala · Zona 15",
     rating: 5,
     body: "La interfaz es súper simple. Pegas el link, te dice cuánto cuesta todo y compras. Me ayudaron incluso a confirmar la talla antes de procesar el pedido.",
     product: "Shein · Moda",
@@ -59,7 +59,7 @@ const TESTIMONIALS: TestimonialItem[] = [
   },
   {
     name: "Diego Salas",
-    city: "Piura",
+    city: "Cobán",
     rating: 5,
     body: "Hace tiempo quería un teclado mecánico que solo se vendía en Best Buy. Shipazo lo trajo en 9 días con seguro incluido. La calidad del servicio supera mis expectativas.",
     product: "Best Buy · Gaming",
@@ -104,7 +104,7 @@ export default function TestimonialsV8() {
               <span className="tv8-acc">compras felices.</span>
             </h2>
             <p className="tv8-sub">
-              Más de 12,400 personas en Perú confían en Shipazo para traer lo que buscan, sin complicaciones.
+              Más de 12,400 personas en Guatemala confían en Shipazo para traer lo que buscan, sin complicaciones.
             </p>
           </div>
           <div className="tv8-head-right">

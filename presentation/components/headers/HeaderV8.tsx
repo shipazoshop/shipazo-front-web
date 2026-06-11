@@ -191,8 +191,7 @@ export default function HeaderV8() {
 
         @media (max-width: 768px) {
           .hv8-nav {
-            padding: 0 20px;
-            height: 64px;
+            display: none;
           }
 
           .hv8-logo-word {

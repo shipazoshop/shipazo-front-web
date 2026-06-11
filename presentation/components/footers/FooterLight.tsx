@@ -44,19 +44,19 @@ const SOCIALS = [
   },
 ];
 
-export default function FooterV8() {
+export default function FooterLight() {
   const [email, setEmail] = useState("");
 
   return (
     <>
-      <footer className="fv8-footer">
+      <footer className="fl-footer">
         {/* BIG background wordmark */}
-        <div className="fv8-wordmark" aria-hidden="true">SHIPAZO</div>
+        <div className="fl-wordmark" aria-hidden="true">SHIPAZO</div>
 
-        <div className="fv8-grid">
+        <div className="fl-grid">
           {/* Brand column */}
           <div>
-            <div className="fv8-brand">
+            <div className="fl-brand">
               <Image
                 src="/images/logo/favicon-shipazo.webp"
                 alt="Shipazo"
@@ -64,14 +64,14 @@ export default function FooterV8() {
                 height={32}
                 style={{ borderRadius: 7 }}
               />
-              <span className="fv8-brand-name">SHIPAZO</span>
+              <span className="fl-brand-name">SHIPAZO</span>
             </div>
-            <p className="fv8-blurb">
+            <p className="fl-blurb">
               Tu tienda global con envío automático a casa. Compra fácil, paga local, recibe tranquilo.
             </p>
-            <div className="fv8-socials">
+            <div className="fl-socials">
               {SOCIALS.map((s) => (
-                <a key={s.label} className="fv8-social" aria-label={s.label} href="#">
+                <a key={s.label} className="fl-social" aria-label={s.label} href="#">
                   {s.icon}
                 </a>
               ))}
@@ -81,46 +81,49 @@ export default function FooterV8() {
           {/* Nav columns */}
           {NAV_COLS.map((col) => (
             <div key={col.title}>
-              <h5 className="fv8-col-title">{col.title}</h5>
+              <h5 className="fl-col-title">{col.title}</h5>
               {col.links.map((link) => (
-                <a key={link} className="fv8-link" href="#">{link}</a>
+                <a key={link} className="fl-link" href="#">{link}</a>
               ))}
             </div>
           ))}
 
           {/* Newsletter */}
-          <div className="fv8-newsletter">
-            <h5 className="fv8-col-title" style={{ color: "white" }}>Boletín</h5>
-            <p className="fv8-newsletter-sub">Ofertas exclusivas en tu correo.</p>
+          <div className="fl-newsletter">
+            <h5 className="fl-newsletter-title">Boletín</h5>
+            <p className="fl-newsletter-sub">Ofertas exclusivas en tu correo.</p>
             <input
-              className="fv8-input"
+              className="fl-input"
               type="email"
               placeholder="tu@email.com"
+              aria-label="Correo electrónico"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <button className="fv8-subscribe" type="button">Suscribirme</button>
+            <button className="fl-subscribe" type="button">Suscribirme</button>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="fv8-bot">
+        <div className="fl-bot">
           <span>© 2026 Shipazo · Guatemala</span>
           <span>Hecho con cariño en 🇬🇹</span>
         </div>
       </footer>
 
       <style>{`
-        .fv8-footer {
+        .fl-footer {
           margin-top: 60px;
           padding: 80px 40px 40px;
-          border-top: 1px solid rgba(255,255,255,0.12);
+          border-top: 1px solid #ECE5DC;
           position: relative;
           overflow: hidden;
+          background: #FAF7F2;
+          font-family: 'Inter', system-ui, sans-serif;
         }
 
-        /* Giant background wordmark */
-        .fv8-wordmark {
+        /* Giant background wordmark — subtle on light */
+        .fl-wordmark {
           position: absolute;
           bottom: -40px;
           left: 50%;
@@ -134,13 +137,13 @@ export default function FooterV8() {
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
-          opacity: 0.15;
+          opacity: 0.07;
           pointer-events: none;
           white-space: nowrap;
           user-select: none;
         }
 
-        .fv8-grid {
+        .fl-grid {
           max-width: 1280px;
           margin: 0 auto;
           display: grid;
@@ -150,137 +153,156 @@ export default function FooterV8() {
           z-index: 1;
         }
 
-        .fv8-brand {
+        .fl-brand {
           display: inline-flex;
           align-items: center;
           gap: 10px;
           margin-bottom: 14px;
         }
 
-        .fv8-brand-name {
+        .fl-brand-name {
           font-family: var(--font-archivo-black), 'Archivo Black', system-ui, sans-serif;
           font-weight: 900;
-          color: white;
+          color: #1A0D24;
           font-size: 18px;
           letter-spacing: -0.01em;
         }
 
-        .fv8-blurb {
-          color: rgba(255,255,255,0.6);
+        .fl-blurb {
+          color: #4A3D57;
           font-size: 13px;
           line-height: 1.6;
           margin: 0 0 20px;
           max-width: 260px;
         }
 
-        .fv8-socials { display: flex; gap: 10px; }
+        .fl-socials { display: flex; gap: 10px; }
 
-        .fv8-social {
+        .fl-social {
           width: 38px; height: 38px;
           border-radius: 10px;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.12);
+          background: #fff;
+          border: 1px solid #ECE5DC;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          color: white;
+          color: #4A3D57;
           cursor: pointer;
-          transition: background 0.2s, border-color 0.2s;
+          transition: background 0.2s, border-color 0.2s, color 0.2s;
           text-decoration: none;
         }
-        .fv8-social:hover { background: #dc6f34; border-color: #dc6f34; }
+        .fl-social:hover { background: #dc6f34; border-color: #dc6f34; color: #fff; }
 
-        .fv8-col-title {
+        .fl-col-title {
           font-size: 12px;
           font-weight: 800;
           letter-spacing: 0.12em;
           text-transform: uppercase;
-          color: #f4a261;
+          color: #DC6F34;
           margin: 0 0 16px;
         }
 
-        .fv8-link {
+        .fl-link {
           display: block;
-          color: rgba(255,255,255,0.7);
+          color: #4A3D57;
           text-decoration: none;
           font-size: 14px;
           padding: 6px 0;
           transition: color 0.15s;
         }
-        .fv8-link:hover { color: white; }
+        .fl-link:hover { color: #1A0D24; }
 
-        .fv8-newsletter {
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.12);
+        .fl-newsletter {
+          background: #fff;
+          border: 1px solid #ECE5DC;
           border-radius: 16px;
           padding: 18px;
           min-width: 200px;
+          box-shadow: 0 10px 30px -18px rgba(20,7,31,0.18);
         }
 
-        .fv8-newsletter-sub {
+        .fl-newsletter-title {
+          margin: 0;
+          font-size: 13px;
+          font-weight: 800;
+          letter-spacing: 0;
+          text-transform: none;
+          color: #1A0D24;
+        }
+
+        .fl-newsletter-sub {
           font-size: 12px;
-          color: rgba(255,255,255,0.6);
+          color: #8A7D96;
           margin: 6px 0 0;
+          line-height: 1.45;
         }
 
-        .fv8-input {
+        .fl-input {
           width: 100%;
-          background: rgba(0,0,0,0.3);
-          border: 1px solid rgba(255,255,255,0.12);
-          color: white;
+          background: #FAF7F2;
+          border: 1.5px solid #ECE5DC;
+          color: #1A0D24;
           padding: 10px 12px;
           border-radius: 10px;
           font-family: inherit;
           font-size: 13px;
           outline: none;
           margin-top: 10px;
-          transition: border-color 0.2s;
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .fv8-input:focus { border-color: rgba(220,111,52,0.5); }
-        .fv8-input::placeholder { color: rgba(255,255,255,0.4); }
+        .fl-input:focus { border-color: #DC6F34; box-shadow: 0 0 0 3px rgba(220,111,52,0.12); }
+        .fl-input::placeholder { color: #8A7D96; }
 
-        .fv8-subscribe {
+        .fl-subscribe {
           width: 100%;
           margin-top: 8px;
           background: linear-gradient(135deg, #dc6f34, #f4a261);
           border: none;
           color: white;
-          padding: 10px;
+          padding: 11px;
           border-radius: 10px;
           font-weight: 700;
           font-size: 13px;
           cursor: pointer;
           font-family: inherit;
-          transition: opacity 0.2s;
+          box-shadow: 0 8px 18px -8px rgba(220,111,52,0.5);
+          transition: transform 0.2s, box-shadow 0.2s;
         }
-        .fv8-subscribe:hover { opacity: 0.9; }
+        .fl-subscribe:hover { transform: translateY(-1px); box-shadow: 0 12px 22px -8px rgba(220,111,52,0.55); }
 
-        .fv8-bot {
+        .fl-bot {
           position: relative;
           z-index: 1;
           max-width: 1280px;
           margin: 80px auto 0;
           padding-top: 24px;
-          border-top: 1px solid rgba(255,255,255,0.12);
+          border-top: 1px solid #ECE5DC;
           display: flex;
           justify-content: space-between;
+          align-items: center;
           font-size: 12px;
-          color: rgba(255,255,255,0.5);
+          color: #8A7D96;
         }
 
         @media (max-width: 1100px) {
-          .fv8-grid {
+          .fl-grid {
             grid-template-columns: 1fr 1fr 1fr;
             gap: 32px;
           }
-          .fv8-newsletter { min-width: unset; }
+          .fl-newsletter { min-width: unset; }
+        }
+
+        @media (max-width: 900px) {
+          .fl-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+          .fl-newsletter { grid-column: 1 / -1; }
+          .fl-wordmark { font-size: 150px; bottom: -20px; }
+          .fl-bot { flex-direction: column; gap: 10px; text-align: center; }
         }
 
         @media (max-width: 640px) {
-          .fv8-footer { padding: 60px 20px 32px; }
-          .fv8-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
-          .fv8-bot { flex-direction: column; gap: 8px; }
-          .fv8-wordmark { font-size: 80px; }
+          .fl-footer { padding: 60px 20px 32px; }
+          .fl-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+          .fl-wordmark { font-size: 80px; }
         }
       `}</style>
     </>

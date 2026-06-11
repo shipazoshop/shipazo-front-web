@@ -30,7 +30,7 @@ const STEPS = [
     num: "03",
     cls: "s3",
     title: "COMPRA",
-    desc: "Confirma tu orden y paga seguro en soles. Nosotros gestionamos la compra.",
+    desc: "Confirma tu orden y paga seguro en quetzales. Nosotros gestionamos la compra.",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <rect x="2" y="5" width="20" height="14" rx="2" />
