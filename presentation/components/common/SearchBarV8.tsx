@@ -53,7 +53,7 @@ export default function SearchBarV8({ className }: Readonly<{ className?: string
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Pega aquí el link de Amazon, Shein, AliExpress…"
+          placeholder="Pega aquí el link de Amazon, Nike, Sephora..."
           disabled={isLoading}
         />
         <button

@@ -54,14 +54,14 @@ export default function Wishlist() {
       const matchStore = selectedStores.length === 0 || selectedStores.includes(p.store ?? "");
       return matchSearch && matchStore;
     }),
-  [wishlistProducts, search, selectedStores]);
+    [wishlistProducts, search, selectedStores]);
 
   const isInCart = (id: string) => cartProducts.some((p) => p.productData.product_id === id);
 
   const totalGtq = useMemo(() =>
     wishlistProducts.reduce((acc, p) =>
       acc + (p.productData.price_details?.calculatedPriceGtq ?? p.productData.price), 0),
-  [wishlistProducts]);
+    [wishlistProducts]);
 
   const handleGoToProduct = (product: IImportProductResponse) => {
     setProduct(product);
@@ -90,7 +90,7 @@ export default function Wishlist() {
           <p className="wlv8-empty-sub">¡Pega el link de un producto y empieza a guardar tus favoritos!</p>
           <Link href="/home" className="wlv8-btn-primary">
             Explorar productos
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
           </Link>
         </div>
       </main>
@@ -122,7 +122,7 @@ export default function Wishlist() {
           </div>
           <div className="wlv8-head-right">
             <button className="wlv8-btn-primary" onClick={handleAddAll}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" /></svg>
               Agregar todo al carrito
             </button>
           </div>
@@ -144,7 +144,7 @@ export default function Wishlist() {
           <div className="wlv8-stat">
             <div className="wlv8-stat-ico wlv8-stat-ico--purple">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                <line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
             </div>
             <div>
@@ -158,7 +158,7 @@ export default function Wishlist() {
         <div className="wlv8-filters">
           {/* Search */}
           <div className="wlv8-search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-3-3" /></svg>
             <input
               type="text"
               placeholder="Buscar por nombre de artículo…"
@@ -231,8 +231,8 @@ export default function Wishlist() {
                         <span className={`wlv8-brand-pill${isAmazon ? " wlv8-brand-pill--orange" : ""}`}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                             {isAmazon
-                              ? <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                              : <circle cx="12" cy="12" r="10"/>}
+                              ? <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                              : <circle cx="12" cy="12" r="10" />}
                           </svg>
                           {product.store}
                         </span>
@@ -254,7 +254,7 @@ export default function Wishlist() {
                       </span>
                       <span className="wlv8-price-usd">≈ US$ {fmtUsd(usd)}</span>
                       <span className="wlv8-delivery">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"/><path d="m16 8 4 0 3 3-2 5h-5l-3-3"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13" /><path d="m16 8 4 0 3 3-2 5h-5l-3-3" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
                         Llega en <strong>7-9 días</strong>
                       </span>
                     </div>
@@ -266,7 +266,7 @@ export default function Wishlist() {
                       className={`wlv8-btn-add${inCart ? " wlv8-btn-add--done" : ""}`}
                       onClick={() => !inCart && addProductToCart(product, 1, false)}
                     >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" /></svg>
                       {inCart ? "En tu carrito" : "Agregar al carrito"}
                     </button>
                     <div className="wlv8-btn-row">
@@ -275,7 +275,7 @@ export default function Wishlist() {
                         onClick={() => handleGoToProduct(product)}
                         title="Ver detalles"
                       >
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" /><circle cx="12" cy="12" r="3" /></svg>
                         Ver
                       </button>
                       <button
@@ -283,7 +283,7 @@ export default function Wishlist() {
                         onClick={() => removeFromWishlist(pd.product_id)}
                         title="Quitar de wishlist"
                       >
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6M14 11v6" /></svg>
                       </button>
                     </div>
                   </div>
@@ -296,10 +296,10 @@ export default function Wishlist() {
         {/* Browse more CTA */}
         <div className="wlv8-browse-more">
           <h3>¿Buscando algo más?</h3>
-          <p>Pega cualquier link de Amazon, Shein, AliExpress o eBay y lo agregamos a tu wishlist.</p>
+          <p>Pega cualquier link de Amazon, Nike, Sephora o Target y lo agregamos a tu wishlist.</p>
           <Link href="/home" className="wlv8-browse-cta">
             Explorar productos
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
           </Link>
         </div>
 

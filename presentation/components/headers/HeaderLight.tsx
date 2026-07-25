@@ -66,7 +66,7 @@ export default function HeaderLight() {
             ref={inputRef}
             name="q"
             type="text"
-            placeholder="Cotiza tu producto ahora — pega un link de Amazon, Shein, AliExpress…"
+            placeholder="Cotiza tu producto ahora — pega un link de Amazon, Nike, Sephora..."
             aria-label="Buscar producto"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

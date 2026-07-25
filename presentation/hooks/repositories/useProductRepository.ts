@@ -58,7 +58,7 @@ export function useProductRepository() {
     return useApiMutation<IImportProductResponse, ImportFromUrlDto>({
       service: "scrapper",
       endpoint: SCRAPER_PRODUCT_URL.scrapper + URL_DICTIONARY.PRODUCTS,
-      method: "POST",
+      method: "POST"
     });
   };
 

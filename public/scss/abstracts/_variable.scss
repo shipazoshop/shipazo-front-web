@@ -33,6 +33,18 @@ $fontIcon: "icomoon";
     --color-brand-yellow-medium: #FFDC00;
     --color-brand-yellow-pale: #FFDF8B;
 
+    // Purple (home-v8 mesh gradient + secondary accent)
+    // RGB triplets provided for use inside rgba() with transparency
+    --color-brand-purple-darkest: #14071f; // page/base background
+    --color-brand-purple-darkest-rgb: 20, 7, 31;
+    --color-brand-purple-deep: #2a1340;    // trust band gradient
+    --color-brand-purple-deep-rgb: 42, 19, 64;
+    --color-brand-purple-dark: #562b7f;
+    --color-brand-purple-dark-rgb: 86, 43, 127;
+    --color-brand-purple: #6a3a99;
+    --color-brand-purple-rgb: 106, 58, 153;
+    --color-brand-purple-light: #c9a3f0;   // icon/text accent on dark bg
+
     // ============================================
     // Text Colors
     // ============================================

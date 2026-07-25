@@ -155,9 +155,9 @@ export default function BenefitsV8() {
           border: 1px solid rgba(220,111,52,0.3);
         }
         .benv8-ico.purple {
-          background: rgba(106,58,153,0.25);
-          color: #c9a3f0;
-          border: 1px solid rgba(106,58,153,0.4);
+          background: rgba(var(--color-brand-purple-rgb),0.25);
+          color: var(--color-brand-purple-light);
+          border: 1px solid rgba(var(--color-brand-purple-rgb),0.4);
         }
 
         .benv8-card-title {

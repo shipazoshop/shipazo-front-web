@@ -41,7 +41,7 @@ const BRANDS: BrandItem[] = [
   },
   {
     name: "Victoria's Secret",
-    tint: "rgba(86,43,127,0.5)",
+    tint: "rgba(var(--color-brand-purple-dark-rgb),0.5)",
     img1: "/images/brands/vs/1.webp",
     img2: "/images/brands/vs/2.webp",
     label: "Victoria's Secret",

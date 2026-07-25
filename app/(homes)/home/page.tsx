@@ -22,8 +22,8 @@ export default function HomePage() {
       <div className="hv8-page">
         <HeaderV8 />
         <HomeHero />
-        <HowItWorksV8 />
         <BrandsMarqueeV8 />
+        <HowItWorksV8 />
         <TrustBandV8 />
         <TestimonialsV8 />
         <BenefitsV8 />

@@ -39,7 +39,7 @@ export default function HomeBackground() {
         /* Override global body white background for this page only */
         html.hv8-html,
         html.hv8-html body.hv8-body {
-          background-color: #14071f !important;
+          background-color: var(--color-brand-purple-darkest) !important;
         }
 
         /* Also neutralize #wrapper if it carries a background */
@@ -58,11 +58,11 @@ export default function HomeBackground() {
         .hv8-bg-mesh {
           position: absolute;
           inset: -10%;
-          background-color: #14071f;
+          background-color: var(--color-brand-purple-darkest);
           background-image:
-            radial-gradient(at 18% 8%, rgba(106,58,153,0.95) 0%, transparent 45%),
+            radial-gradient(at 18% 8%, rgba(var(--color-brand-purple-rgb),0.95) 0%, transparent 45%),
             radial-gradient(at 85% 25%, rgba(220,111,52,0.65) 0%, transparent 50%),
-            radial-gradient(at 95% 90%, rgba(86,43,127,0.85) 0%, transparent 45%),
+            radial-gradient(at 95% 90%, rgba(var(--color-brand-purple-dark-rgb),0.85) 0%, transparent 45%),
             radial-gradient(at 30% 95%, rgba(220,111,52,0.35) 0%, transparent 45%);
           will-change: transform;
         }

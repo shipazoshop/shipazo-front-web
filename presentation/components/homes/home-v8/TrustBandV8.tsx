@@ -59,7 +59,7 @@ export default function TrustBandV8() {
         .hv8-trust {
           max-width: 1280px;
           margin: 40px auto 0;
-          background: linear-gradient(135deg, rgba(20,7,31,0.7), rgba(42,19,64,0.6));
+          background: linear-gradient(135deg, rgba(var(--color-brand-purple-darkest-rgb),0.7), rgba(var(--color-brand-purple-deep-rgb),0.6));
           border: 1px solid rgba(255,255,255,0.12);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);

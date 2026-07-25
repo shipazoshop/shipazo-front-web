@@ -158,9 +158,9 @@ export default function HowItWorksV8() {
           border-radius: 24px 0 0 24px;
         }
         .hv8-step.s1::before { background: #dc6f34; }
-        .hv8-step.s2::before { background: #6a3a99; }
+        .hv8-step.s2::before { background: var(--color-brand-purple); }
         .hv8-step.s3::before { background: linear-gradient(135deg, #dc6f34, #f4a261); }
-        .hv8-step.s4::before { background: linear-gradient(135deg, #562b7f, #dc6f34); }
+        .hv8-step.s4::before { background: linear-gradient(135deg, var(--color-brand-purple-dark), #dc6f34); }
 
         .hv8-step-num {
           position: absolute;
@@ -184,9 +184,9 @@ export default function HowItWorksV8() {
           margin-bottom: 4px;
         }
         .hv8-step-ico.s1 { background: rgba(220,111,52,0.18); border-color: rgba(220,111,52,0.35); color: #f4a261; }
-        .hv8-step-ico.s2 { background: rgba(106,58,153,0.25); border-color: rgba(106,58,153,0.45); color: #c9a3f0; }
+        .hv8-step-ico.s2 { background: rgba(var(--color-brand-purple-rgb),0.25); border-color: rgba(var(--color-brand-purple-rgb),0.45); color: var(--color-brand-purple-light); }
         .hv8-step-ico.s3 { background: rgba(220,111,52,0.18); border-color: rgba(220,111,52,0.35); color: #f4a261; }
-        .hv8-step-ico.s4 { background: rgba(106,58,153,0.25); border-color: rgba(106,58,153,0.45); color: #c9a3f0; }
+        .hv8-step-ico.s4 { background: rgba(var(--color-brand-purple-rgb),0.25); border-color: rgba(var(--color-brand-purple-rgb),0.45); color: var(--color-brand-purple-light); }
 
         .hv8-step-title {
           font-family: var(--font-archivo-black), 'Archivo Black', system-ui, sans-serif;

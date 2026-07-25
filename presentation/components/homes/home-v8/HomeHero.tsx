@@ -1,11 +1,16 @@
 "use client";
 import React from "react";
 import SearchBarV8 from "../../common/SearchBarV8";
+import HeroBrandsCarousel from "./HeroBrandsCarousel";
 
 export default function HomeHero() {
   return (
     <>
-      <section className="hv8-hero">
+      <div className="hv8-hero-wrap">
+        {/* Fondo: carrusel diagonal de marcas + capa oscura (detrás del contenido) */}
+        <HeroBrandsCarousel />
+
+        <section className="hv8-hero">
         {/* Eyebrow */}
         <div className="hv8-eyebrow">
           <span className="hv8-eyebrow-dot" />
@@ -32,18 +37,30 @@ export default function HomeHero() {
         <div className="hv8-hero-meta">
           <div className="hv8-avatars" aria-hidden="true">
             <span style={{ background: "linear-gradient(135deg, #dc6f34, #f4a261)" }}>K</span>
-            <span style={{ background: "linear-gradient(135deg, #6a3a99, #562b7f)" }}>J</span>
+            <span style={{ background: "linear-gradient(135deg, var(--color-brand-purple), var(--color-brand-purple-dark))" }}>J</span>
             <span style={{ background: "linear-gradient(135deg, #f4a261, #dc6f34)" }}>M</span>
-            <span style={{ background: "linear-gradient(135deg, #562b7f, #dc6f34)" }}>A</span>
+            <span style={{ background: "linear-gradient(135deg, var(--color-brand-purple-dark), #dc6f34)" }}>A</span>
           </div>
           <span>
             <strong style={{ color: "white" }}>+12,400</strong> personas ya compran con nosotros
           </span>
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
 
       <style>{`
+        .hv8-hero-wrap {
+          position: relative;
+          overflow: hidden;
+          isolation: isolate;
+          /* Espacio extra debajo del contenido para que el carrusel de fondo
+             y su desvanecido terminen por debajo del texto (no en la última línea) */
+          padding-bottom: 160px;
+        }
+
         .hv8-hero {
+          position: relative;
+          z-index: 2;
           padding: 80px 40px 60px;
           max-width: 1280px;
           margin: 0 auto;
@@ -127,7 +144,7 @@ export default function HomeHero() {
           width: 28px;
           height: 28px;
           border-radius: 50%;
-          border: 2px solid #14071f;
+          border: 2px solid var(--color-brand-purple-darkest);
           margin-left: -8px;
           display: inline-flex;
           align-items: center;
@@ -141,6 +158,9 @@ export default function HomeHero() {
         .hv8-avatars span:first-child { margin-left: 0; }
 
         @media (max-width: 768px) {
+          .hv8-hero-wrap {
+            padding-bottom: 120px;
+          }
           .hv8-hero {
             padding: 60px 20px 40px;
           }
@@ -150,6 +170,9 @@ export default function HomeHero() {
         }
 
         @media (max-width: 480px) {
+          .hv8-hero-wrap {
+            padding-bottom: 90px;
+          }
           .hv8-hero {
             padding: 48px 16px 32px;
           }
