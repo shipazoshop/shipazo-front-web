@@ -7,7 +7,7 @@ export class AxiosHttpClient implements HttpClient {
   constructor(baseURL: string, private authToken?: string) {
     this.client = axios.create({
       baseURL,
-      timeout: 30000,
+      timeout: 60000,
       headers: {
         'Content-Type': 'application/json',
       },
