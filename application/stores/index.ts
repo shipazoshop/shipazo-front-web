@@ -3,3 +3,4 @@ export * from "./useCartStore";
 export * from "./useWishlistStore";
 export * from "./useCompareStore";
 export * from "./useQuickViewStore";
+export * from "./usePendingRouteStore";

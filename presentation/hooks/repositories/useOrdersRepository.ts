@@ -1,8 +1,11 @@
 import {
+  CertifyInvoiceResponse,
   CreateOrderDto,
   CreateOrderResponse,
   GetOrdersParams,
   OrdersListResponse,
+  UpdateDeliveryGuideDto,
+  UpdateDeliveryGuideResponse,
   UpdateOrderTrackingDto,
   UpdateOrderTrackingResponse,
 } from '@/domain/entities/order.entity';
@@ -77,6 +80,40 @@ export function useOrdersRepository() {
     });
   };
 
+  /**
+   * Servicio para actualizar la guía de transporte de una orden
+   * PUT /api/v1/orders/:orderId/delivery-guide
+   * El error (400/403/404/inesperado) se muestra vía el snackbar de useApiMutation.
+   */
+  const updateDeliveryGuide = (orderId: string) => {
+    return useApiMutation<UpdateDeliveryGuideResponse, UpdateDeliveryGuideDto>({
+      service: 'scrapper',
+      endpoint: `/orders/${orderId}/delivery-guide`,
+      method: 'PUT',
+      successMessage: 'Guía de transporte actualizada exitosamente',
+      // Invalidar la lista y el detalle para reflejar la guía guardada
+      invalidateQueries: [
+        ['scrapper', '/orders'],
+        ['scrapper', `/orders/track/${orderId}`],
+      ],
+    });
+  };
+
+  /**
+   * Servicio para certificar la factura (FEL) de una orden
+   * POST /api/v1/orders/:orderId/invoice
+   * Silent: los errores se manejan como no bloqueantes en /order-details.
+   */
+  const certifyInvoice = (orderId: string) => {
+    return useApiMutation<CertifyInvoiceResponse, void>({
+      service: 'scrapper',
+      endpoint: `/orders/${orderId}/invoice`,
+      method: 'POST',
+      showSuccessSnackbar: false,
+      showErrorSnackbar: false,
+    });
+  };
+
   return {
     // Queries
     getOrders,
@@ -85,5 +122,7 @@ export function useOrdersRepository() {
     // Mutations
     createOrder,
     updateOrderTracking,
+    updateDeliveryGuide,
+    certifyInvoice,
   };
 }

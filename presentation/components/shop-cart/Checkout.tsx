@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { MapPinHouse, Edit, User, Phone, CreditCard, CalendarDays, AlertCircle } from "lucide-react";
+import { MapPinHouse, Edit, User, Phone, CreditCard, CalendarDays, AlertCircle, FileText, HelpCircle, Search, CheckCircle2 } from "lucide-react";
 import { useCartProducts, useCartTotalPrice } from "@/application/stores/useCartStore";
 import { useAddressRepository } from "@/presentation/hooks/repositories/useAddressRepository";
-import { useCustomerInfoRepository } from "@/presentation/hooks/repositories/useCustomerInfoRepository";
+import { useCustomerInfoRepository, buildNitValidationEndpoint } from "@/presentation/hooks/repositories/useCustomerInfoRepository";
 import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
 import { usePaymentRepository } from "@/presentation/hooks/repositories/usePaymentRepository";
 import { useAuthStore } from "@/application/stores/useAuthStore";
@@ -30,19 +30,53 @@ const EMPTY_CARD_FORM: CardFormState = {
   cvv: "",
 };
 
-// ── Utilidades de seguridad ──────────────────────────────────────────────────
+// ── NIT de facturación ───────────────────────────────────────────────────────
+// Opciones del select de NIT en la sección de pago.
+type NitSelection = "cf" | "registered" | "other";
+// Estado de la validación del NIT "Otro" contra el servicio (aún en desarrollo).
+type NitStatus = "idle" | "validating" | "valid" | "error" | "required";
 
-/** Security: extrae email del payload del JWT sin verificación de firma
- *  (la verificación real ocurre en el servidor). */
-function decodeJwtEmail(token: string | null): string {
-  if (!token) return "";
-  try {
-    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    const payload = JSON.parse(atob(base64));
-    return (payload.email ?? payload.sub ?? "") as string;
-  } catch {
-    return "";
-  }
+// Monto mínimo para poder facturar como "Consumidor final".
+// Compras por debajo de este umbral permiten CF; iguales o mayores exigen NIT.
+const MIN_PAYMENT_CF = Number(process.env.NEXT_PUBLIC_MINIUM_PAYMENT_CF ?? 0);
+
+// Valor que se envía al backend cuando la factura es a "Consumidor final".
+const CF_NIT_VALUE = "CF";
+
+/** Ícono de ayuda con tooltip en hover (sin dependencias de MUI). */
+function InfoTooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span
+      style={{ position: "relative", display: "inline-flex", cursor: "help" }}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <HelpCircle size={16} style={{ color: "#b45309", flexShrink: 0 }} />
+      {show && (
+        <span
+          role="tooltip"
+          style={{
+            position: "absolute",
+            bottom: "calc(100% + 8px)",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "240px",
+            backgroundColor: "#111827",
+            color: "#fff",
+            padding: "8px 10px",
+            borderRadius: "6px",
+            fontSize: "12px",
+            lineHeight: 1.4,
+            zIndex: 50,
+            boxShadow: "0 6px 18px rgba(0,0,0,0.25)",
+          }}
+        >
+          {text}
+        </span>
+      )}
+    </span>
+  );
 }
 
 /** Algoritmo de Luhn para validar el número de tarjeta. */
@@ -279,7 +313,7 @@ export default function Checkout() {
   const totalPrice = useCartTotalPrice();
 
   // Obtener datos del cliente y direcciones
-  const { getCustomerInfo } = useCustomerInfoRepository();
+  const { getCustomerInfo, validateNit, updateCustomerInfo } = useCustomerInfoRepository();
   const { getAddresses } = useAddressRepository();
   const { createOrder } = useOrdersRepository();
   const { setOrder } = useNewOrderStore();
@@ -297,6 +331,9 @@ export default function Checkout() {
 
   const customerInfo = customerInfoQuery.data;
   const addresses = addressesQuery.data || [];
+
+  // Mutación para guardar el NIT como predeterminado (silent: en segundo plano).
+  const updateCustomerInfoMutation = updateCustomerInfo(customerInfo?.id ?? "", true);
 
   // Configuración de pago
   const paymentConfig = paymentConfigQuery.data?.data?.[0];
@@ -324,6 +361,90 @@ export default function Checkout() {
 
   // Security: datos sensibles de tarjeta en estado local — nunca persistidos
   const [cardForm, setCardForm] = useState<CardFormState>(EMPTY_CARD_FORM);
+
+  // ── Estado del NIT de facturación ──────────────────────────────────────────
+  const nitValidation = validateNit();
+  const [nitSelection, setNitSelection] = useState<NitSelection>("cf");
+  const [otherNit, setOtherNit] = useState("");
+  const [otherNitStatus, setOtherNitStatus] = useState<NitStatus>("idle");
+  const [otherNitMessage, setOtherNitMessage] = useState("");
+  const [otherNitRazonSocial, setOtherNitRazonSocial] = useState("");
+  // "Seleccionar como predeterminado" para el NIT "Otro".
+  const [setAsDefaultNit, setSetAsDefaultNit] = useState(false);
+  // Hover del botón "Crear orden" (el fondo inline anula el :hover del CSS).
+  const [orderBtnHover, setOrderBtnHover] = useState(false);
+  const nitDefaultedRef = React.useRef(false);
+
+  // CF permitido solo para compras por debajo del umbral.
+  const cfAllowed = MIN_PAYMENT_CF > 0 && totalPrice < MIN_PAYMENT_CF;
+  const registeredNit = customerInfo?.nit?.trim() ?? "";
+  const hasRegisteredNit = registeredNit !== "";
+  // Debe agregar NIT antes del pago: compra ≥ umbral y sin NIT registrado.
+  const mustAddNit = !cfAllowed && !hasRegisteredNit;
+  const cfBlockedReason = `Según la ley, las compras iguales o mayores a ${formatGTQ(MIN_PAYMENT_CF)} deben facturarse con NIT y no como Consumidor Final.`;
+
+  const isOtherNitFormatValid = /^[0-9]{8,9}$/.test(otherNit);
+
+  // Selección por defecto del NIT + corrección de estado inválido.
+  useEffect(() => {
+    if (customerInfoQuery.isLoading) return;
+
+    // Corrección: CF no puede quedar seleccionado si dejó de estar permitido.
+    // Necesario porque el carrito rehidrata con totalPrice=0 (CF parece válido)
+    // y luego sube por encima del umbral tras la hidratación.
+    if (!cfAllowed && nitSelection === "cf") {
+      setNitSelection(hasRegisteredNit ? "registered" : "other");
+      return;
+    }
+
+    // Default inicial (una sola vez).
+    if (nitDefaultedRef.current) return;
+    nitDefaultedRef.current = true;
+    if (cfAllowed) {
+      setNitSelection("cf");
+    } else if (hasRegisteredNit) {
+      setNitSelection("registered");
+    } else {
+      setNitSelection("other");
+    }
+  }, [customerInfoQuery.isLoading, cfAllowed, hasRegisteredNit, nitSelection]);
+
+  // Ejecuta la validación del NIT "Otro" contra el backend.
+  // La API responde 200 tanto para válido como inválido: `success` decide.
+  const handleValidateOtherNit = async () => {
+    setOtherNitStatus("validating");
+    setOtherNitMessage("");
+    setOtherNitRazonSocial("");
+    try {
+      const result = await nitValidation.fetchManual({
+        endpoint: buildNitValidationEndpoint(otherNit),
+      });
+      if (result?.success) {
+        setOtherNitRazonSocial(result.razonSocial ?? "");
+        setOtherNitStatus("valid");
+      } else {
+        setOtherNitMessage(result?.message ?? "NIT no válido");
+        setOtherNitStatus("error");
+      }
+    } catch {
+      setOtherNitMessage(
+        "Hubo un error al validar el nit, inténtelo más tarde o comuníquese con soporte."
+      );
+      setOtherNitStatus("error");
+    }
+  };
+
+  const otherNitHasError = otherNitStatus === "error" || otherNitStatus === "required";
+  const getOtherNitHelperText = () => {
+    if (otherNitStatus === "valid") {
+      return otherNitRazonSocial ? `NIT válido: ${otherNitRazonSocial}` : "NIT válido";
+    }
+    if (otherNitStatus === "error") {
+      return otherNitMessage || "El NIT no es válido. Verifícalo e intenta de nuevo";
+    }
+    if (otherNitStatus === "required") return "Debes validar el NIT antes de pagar";
+    return "8 o 9 dígitos, sin guion. Valídalo para poder pagar";
+  };
 
   const selectedAddress = addresses.find((addr) => addr.id === selectedAddressId);
 
@@ -400,6 +521,23 @@ export default function Checkout() {
       return;
     }
 
+    // Validación del NIT de facturación (solo frontend, el NIT no se envía al backend).
+    if (nitSelection === "cf" && !cfAllowed) {
+      setErrorModal({ show: true, message: cfBlockedReason });
+      return;
+    }
+    if (nitSelection === "other") {
+      if (!isOtherNitFormatValid || otherNitStatus !== "valid") {
+        // Lleno pero sin validar (o validación fallida): bloquear pago.
+        if (otherNitStatus !== "error") setOtherNitStatus("required");
+        setErrorModal({
+          show: true,
+          message: "Debes ingresar y validar un NIT antes de continuar con el pago.",
+        });
+        return;
+      }
+    }
+
     // Security: validar tarjeta antes de cualquier llamada a la API
     const cardError = validateCardForm(cardForm);
     if (cardError) {
@@ -410,6 +548,14 @@ export default function Checkout() {
     setProcessingStep("order");
 
     try {
+      // NIT a facturar: "CF" para consumidor final, o el NIT seleccionado/validado.
+      const nitForOrder =
+        nitSelection === "cf"
+          ? CF_NIT_VALUE
+          : nitSelection === "registered"
+            ? registeredNit
+            : otherNit;
+
       // ── Paso 1: Crear la orden ─────────────────────────────────────────
       const orderData: CreateOrderDto = {
         products: cartProducts.map((item) => ({
@@ -428,6 +574,7 @@ export default function Checkout() {
         })),
         shippingAddressId: selectedAddressId,
         paymentMethod: selectedPaymentType === "quota" ? "cuotas" : "contado",
+        nit: nitForOrder,
       };
 
       const orderResponse = await createOrderMutation.mutateAsync(orderData);
@@ -469,6 +616,17 @@ export default function Checkout() {
       });
 
       // ── Éxito ──────────────────────────────────────────────────────────
+      // Guardar el NIT "Otro" como predeterminado del cliente, en segundo plano.
+      // Fire-and-forget: no bloquea ni afecta la compra si falla (el usuario ya pagó).
+      if (nitSelection === "other" && setAsDefaultNit && customerInfo) {
+        updateCustomerInfoMutation.mutate({
+          recipientName: customerInfo.recipientName,
+          identificationNumber: customerInfo.identificationNumber,
+          phoneNumber: customerInfo.phoneNumber,
+          nit: nitForOrder,
+        });
+      }
+
       setOrder(orderResponse.data);
       router.push("/order-details");
     } catch (error: unknown) {
@@ -557,6 +715,15 @@ export default function Checkout() {
                         </p>
                       </div>
                     )}
+                    {mustAddNit && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px", padding: "10px 12px", backgroundColor: "#fffbeb", border: "1px solid #fcd34d", borderRadius: "6px" }}>
+                        <AlertCircle size={16} style={{ color: "#b45309", flexShrink: 0 }} />
+                        <p className="body-text-3 mb-0" style={{ color: "#92400e", flex: 1 }}>
+                          Esta compra requiere NIT. Agrega uno en tu <Link href="/configurations/personal-info" className="fw-semibold" style={{ color: "#92400e", textDecoration: "underline" }}>información personal</Link> antes de pagar.
+                        </p>
+                        <InfoTooltip text={cfBlockedReason} />
+                      </div>
+                    )}
                     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <User size={20} style={{ color: "var(--primary)" }} />
@@ -579,12 +746,23 @@ export default function Checkout() {
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <CreditCard size={20} style={{ color: "var(--primary)" }} />
                         <div>
-                          <p className="body-text-3 text-main-2 mb-0">NIT/DPI</p>
+                          <p className="body-text-3 text-main-2 mb-0">DPI</p>
                           <p className="body-md-2 fw-semibold mb-0">
                             {customerInfo.identificationNumber}
                           </p>
                         </div>
                       </div>
+                      {hasRegisteredNit && (
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <FileText size={20} style={{ color: "var(--primary)" }} />
+                          <div>
+                            <p className="body-text-3 text-main-2 mb-0">NIT</p>
+                            <p className="body-md-2 fw-semibold mb-0">
+                              {registeredNit}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <p className="caption text-main-2 font-2 mt-3 mb-0">
                       La información de la orden será enviada a tu correo electrónico
@@ -751,6 +929,117 @@ export default function Checkout() {
                     paymentConfig={paymentConfig}
                   />
 
+                  {/* SELECTOR DE NIT DE FACTURACIÓN */}
+                  <div style={{ marginBottom: "28px" }}>
+                    <p className="body-md-2 fw-semibold mb-1">Datos de facturación (NIT)</p>
+                    <p className="body-text-3 text-main-2 mb-3">
+                      Indica con qué NIT deseas tu factura.
+                    </p>
+                    <div className="tf-select">
+                      <select
+                        value={nitSelection}
+                        onChange={(e) => {
+                          setNitSelection(e.target.value as NitSelection);
+                          // Al cambiar de opción se reinicia la validación de "Otro".
+                          setOtherNitStatus("idle");
+                          setSetAsDefaultNit(false);
+                        }}
+                        style={{ width: "100%", padding: "12px", borderRadius: "6px", border: "1px solid #e5e7eb" }}
+                      >
+                        <option value="cf" disabled={!cfAllowed}>
+                          Consumidor final{!cfAllowed ? " (no disponible)" : ""}
+                        </option>
+                        {hasRegisteredNit && (
+                          <option value="registered">NIT registrado: {registeredNit}</option>
+                        )}
+                        <option value="other">Otro - Especificar NIT</option>
+                      </select>
+                    </div>
+
+                    {/* Motivo por el que CF no está disponible */}
+                    {!cfAllowed && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px" }}>
+                        <p className="body-text-3 text-main-2 mb-0">
+                          Consumidor final no disponible para esta compra.
+                        </p>
+                        <InfoTooltip text={cfBlockedReason} />
+                      </div>
+                    )}
+
+                    {/* Input de NIT para la opción "Otro" */}
+                    {nitSelection === "other" && (
+                      <div style={{ marginTop: "16px" }}>
+                        <label htmlFor="other-nit" className="body-md-2 fw-semibold mb-2" style={{ display: "block" }}>
+                          Ingresa el NIT
+                        </label>
+                        <div style={{ display: "flex", gap: "12px", alignItems: "stretch" }}>
+                          <input
+                            id="other-nit"
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="12345678"
+                            maxLength={9}
+                            value={otherNit}
+                            onChange={(e) => {
+                              // Solo números, máximo 9 dígitos.
+                              const digits = e.target.value.replace(/\D/g, "").slice(0, 9);
+                              setOtherNit(digits);
+                              if (otherNitStatus !== "idle") setOtherNitStatus("idle");
+                            }}
+                            style={{
+                              flex: 1,
+                              padding: "12px",
+                              borderRadius: "6px",
+                              border: `1px solid ${otherNitHasError ? "#fca5a5" : otherNitStatus === "valid" ? "#86efac" : "#e5e7eb"}`,
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleValidateOtherNit}
+                            disabled={!isOtherNitFormatValid || otherNitStatus === "validating"}
+                            className="tf-btn btn-gray-2"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              gap: "6px",
+                              whiteSpace: "nowrap",
+                              padding: "0 22px",
+                              opacity: !isOtherNitFormatValid || otherNitStatus === "validating" ? 0.6 : 1,
+                            }}
+                          >
+                            {otherNitStatus === "valid" ? <CheckCircle2 size={18} /> : <Search size={18} />}
+                            <span>{otherNitStatus === "validating" ? "Validando..." : otherNitStatus === "valid" ? "NIT válido" : "Validar NIT"}</span>
+                          </button>
+                        </div>
+                        <p
+                          className="body-text-3 mb-0"
+                          style={{
+                            marginTop: "6px",
+                            color: otherNitHasError ? "#dc2626" : otherNitStatus === "valid" ? "#16a34a" : "var(--text-main-2, #6b7280)",
+                          }}
+                        >
+                          {getOtherNitHelperText()}
+                        </p>
+
+                        {/* Guardar este NIT como predeterminado del cliente */}
+                        <label
+                          htmlFor="set-default-nit"
+                          style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "12px", cursor: "pointer" }}
+                        >
+                          <input
+                            id="set-default-nit"
+                            type="checkbox"
+                            checked={setAsDefaultNit}
+                            onChange={(e) => setSetAsDefaultNit(e.target.checked)}
+                            style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                          />
+                          <span className="body-text-3 mb-0">Seleccionar como predeterminado</span>
+                        </label>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Formulario de datos de tarjeta (controlado y seguro) */}
                   <div className="payment-body">
                     <fieldset>
@@ -819,7 +1108,18 @@ export default function Checkout() {
                       onClick={handleCreateOrder}
                       className="tf-btn w-100"
                       disabled={processingStep !== null}
-                      style={{ opacity: processingStep !== null ? 0.6 : 1, marginTop: 20 }}
+                      onMouseEnter={() => setOrderBtnHover(true)}
+                      onMouseLeave={() => setOrderBtnHover(false)}
+                      style={{
+                        marginTop: 20,
+                        height: 52,
+                        backgroundColor:
+                          processingStep === null && orderBtnHover
+                            ? "var(--color-brand-purple)"
+                            : "var(--primary)",
+                        transition: "background-color 0.2s ease",
+                        opacity: processingStep !== null ? 0.6 : 1,
+                      }}
                     >
                       <span className="text-white">
                         {processingStep === "order"

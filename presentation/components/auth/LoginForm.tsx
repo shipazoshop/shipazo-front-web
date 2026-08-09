@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useAuthRepository } from "@/presentation/hooks/repositories/useAuthRepository";
+import { savePendingRoute } from "@/application/stores/usePendingRouteStore";
 
 const GOOGLE_SVG = (
   <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
@@ -99,7 +100,7 @@ const LoginForm = () => {
   useEffect(() => {
     const redirect = searchParams.get("redirect");
     if (redirect) {
-      sessionStorage.setItem("redirectAfterLogin", redirect);
+      savePendingRoute(redirect);
     }
   }, [searchParams]);
 

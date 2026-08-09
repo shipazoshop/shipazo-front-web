@@ -5,12 +5,18 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
 import Typography from "@mui/material/Typography";
 import { Save, ArrowLeft } from "lucide-react";
 import { addressSchema, AddressFormData } from "@/presentation/validation/address.schema";
 import { Address } from "@/domain/entities/address.entity";
+import { SUPPORTED_COUNTRIES, DEFAULT_COUNTRY_CODE } from "@/shared/constants/countries";
+
+// Mientras solo operemos en un país, el selector queda bloqueado en ese valor.
+// Al añadir un segundo país en SUPPORTED_COUNTRIES, el campo se habilita solo.
+const isCountrySelectionLocked = SUPPORTED_COUNTRIES.length <= 1;
 
 interface AddressFormProps {
   initialData?: Address;
@@ -40,7 +46,7 @@ export function AddressForm({
       additionalSpecifications: initialData?.additionalSpecifications ?? "",
       city: initialData?.city ?? "",
       stateProvince: initialData?.stateProvince ?? "",
-      countryCode: initialData?.countryCode ?? "GT",
+      countryCode: initialData?.countryCode ?? DEFAULT_COUNTRY_CODE,
       alias: initialData?.alias ?? "",
       isDefault: initialData?.isDefault ?? false,
     },
@@ -94,15 +100,31 @@ export function AddressForm({
             render={({ field }) => (
               <TextField
                 {...field}
-                value={field.value ?? ""}
-                label="País (código ISO)"
-                placeholder="GT"
+                value={field.value ?? DEFAULT_COUNTRY_CODE}
+                select
+                label="País"
                 variant="outlined"
                 fullWidth
                 error={!!errors.countryCode}
-                helperText={errors.countryCode?.message || "Código de 2 letras (Ej: SV, GT, HN)"}
+                helperText={
+                  errors.countryCode?.message ||
+                  (isCountrySelectionLocked
+                    ? "Por ahora solo realizamos entregas en Guatemala"
+                    : "Selecciona el país de entrega")
+                }
                 required
-              />
+                slotProps={{
+                  select: {
+                    readOnly: isCountrySelectionLocked
+                  }
+                }}
+              >
+                {SUPPORTED_COUNTRIES.map((country) => (
+                  <MenuItem key={country.code} value={country.code}>
+                    {country.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             )}
           />
         </Grid>

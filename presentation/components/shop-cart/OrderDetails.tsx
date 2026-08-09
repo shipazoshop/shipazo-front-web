@@ -1,11 +1,76 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { AlertCircle } from "lucide-react";
 import { useNewOrderStore } from "@/application/stores/useNewOrderStore";
+import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
 import { formatGTQ } from "@/shared/utils";
+
+/**
+ * Descarga automática del PDF de la factura.
+ * Hace fetch del PDF como blob y fuerza la descarga. Si el fetch se bloquea
+ * (p. ej. CORS del servidor FEL), abre el PDF en una pestaña nueva como fallback.
+ */
+async function downloadInvoicePdf(url: string, filename: string): Promise<void> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("No se pudo obtener el PDF");
+
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(objectUrl);
+  } catch {
+    // Fallback: abrir en pestaña nueva si el navegador/servidor impide el fetch.
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+}
 
 export default function OrderDetails() {
   const order = useNewOrderStore((state) => state.order);
+
+  // Certificación de factura (FEL): se dispara una sola vez al entrar a la
+  // confirmación. Es no bloqueante: si falla, la orden ya está creada y pagada,
+  // solo se avisa al cliente para que contacte a soporte.
+  const { certifyInvoice } = useOrdersRepository();
+  const certifyMutation = certifyInvoice(order?.orderId ?? "");
+  const [invoiceError, setInvoiceError] = useState(false);
+  const [invoicePdfUrl, setInvoicePdfUrl] = useState<string | null>(null);
+  const certifiedRef = useRef(false);
+
+  useEffect(() => {
+    if (certifiedRef.current || !order?.orderId) return;
+    certifiedRef.current = true;
+
+    certifyMutation
+      .mutateAsync()
+      .then((res) => {
+        const certified =
+          res?.success &&
+          res?.data?.status === "certified" &&
+          !res?.data?.errorMessage;
+
+        if (!certified) {
+          setInvoiceError(true);
+          return;
+        }
+
+        // Happy path: guardar el PDF y auto-descargar la factura.
+        const { pdfUrl, serie, numero } = res.data;
+        if (pdfUrl) {
+          setInvoicePdfUrl(pdfUrl);
+          downloadInvoicePdf(pdfUrl, `factura-${serie}-${numero}.pdf`);
+        }
+      })
+      .catch(() => setInvoiceError(true));
+    // Solo depende del orderId; el guard evita dobles llamadas (StrictMode).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.orderId]);
 
   // Si no hay orden, mostrar un mensaje
   if (!order) {
@@ -77,6 +142,56 @@ export default function OrderDetails() {
             </span>
             <p>Gracias. Tu orden ha sido recibida.</p>
           </div>
+
+          {invoiceError && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: "14px 16px",
+                backgroundColor: "#fff7f7",
+                border: "1px solid #fca5a5",
+                borderRadius: "8px",
+                marginBottom: "20px",
+              }}
+            >
+              <AlertCircle size={22} style={{ color: "#dc2626", flexShrink: 0 }} />
+              <p className="body-text-3 mb-0" style={{ color: "#b91c1c" }}>
+                Tu orden se creó y el pago fue exitoso, pero hubo un error al certificar
+                la factura. Por favor comunícate con soporte.
+              </p>
+            </div>
+          )}
+
+          {invoicePdfUrl && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: "14px 16px",
+                backgroundColor: "#f0fdf4",
+                border: "1px solid #86efac",
+                borderRadius: "8px",
+                marginBottom: "20px",
+              }}
+            >
+              <p className="body-text-3 mb-0" style={{ color: "#15803d", flex: 1 }}>
+                Tu factura fue certificada y se descargó automáticamente. Si la descarga
+                no inició,{" "}
+                <a
+                  href={invoicePdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#15803d", fontWeight: 600, textDecoration: "underline" }}
+                >
+                  descárgala aquí
+                </a>
+                .
+              </p>
+            </div>
+          )}
           <ul className="order-overview-list">
             <li>
               Número de orden: <strong>{order.orderNumber}</strong>

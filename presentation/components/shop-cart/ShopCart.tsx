@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCartProducts, useCartTotalPrice, useCartActions } from "@/application/stores/useCartStore";
 import { useIsAuthenticated, useIsHydrated } from "@/application/stores/useAuthStore";
+import { savePendingRoute } from "@/application/stores/usePendingRouteStore";
 import { formatGTQ } from "@/shared/utils";
 
 export default function ShopCart() {
@@ -26,7 +27,7 @@ export default function ShopCart() {
     if (!isAuthenticated) {
       e.preventDefault();
       // Guardar la URL actual para volver después del login
-      sessionStorage.setItem('redirectAfterLogin', '/shop-cart');
+      savePendingRoute('/shop-cart');
       router.push('/login');
     }
     // Si está autenticado, el Link normal funcionará
@@ -39,7 +40,7 @@ export default function ShopCart() {
     if (!isAuthenticated) {
       e.preventDefault();
       // Guardar la URL actual para volver después del login
-      sessionStorage.setItem('redirectAfterLogin', '/shop-cart');
+      savePendingRoute('/shop-cart');
       router.push('/login');
     }
     // Si está autenticado, el Link normal funcionará

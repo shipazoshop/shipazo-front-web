@@ -24,6 +24,7 @@ export interface CreateOrderDto {
   products: OrderProduct[];
   shippingAddressId: string;
   paymentMethod: string;
+  nit: string; // "CF" para consumidor final, o el NIT especificado
 }
 
 export interface OrderItem {
@@ -67,12 +68,38 @@ export interface OrderDetail {
   taxAmount: number;
   totalAmount: number;
   shippingAddress: ShippingAddress;
+  deliveryGuide?: string; // "Transporte: numero-de-guia" (si ya fue asignada)
 }
 
 export interface CreateOrderResponse {
   success: boolean;
   message: string;
   data: OrderDetail;
+}
+
+// Certificación de factura (FEL): POST /orders/{orderId}/invoice
+export interface CertifyInvoiceData {
+  invoiceId: string;
+  orderId: string;
+  status: string;
+  environment: string;
+  uuid: string;
+  serie: string;
+  numero: string;
+  pdfUrl: string;
+  subtotalAmount: number;
+  taxAmount: number;
+  totalAmount: number;
+  receptorNit: string;
+  receptorNombre: string;
+  certifiedAt: string;
+  errorMessage: string | null;
+}
+
+export interface CertifyInvoiceResponse {
+  success: boolean;
+  message: string;
+  data: CertifyInvoiceData;
 }
 
 export interface Order {
@@ -137,6 +164,18 @@ export interface UpdateOrderTrackingResponse {
   currentStageId: string;
   currentStageName: string;
   tracking: TrackingStageDetailed[];
+}
+
+// Guía de transporte: PUT /orders/{orderId}/delivery-guide
+// Formato del valor: "Transporte: numero-de-guia" (ej. "Cargo Expreso: 12345").
+export interface UpdateDeliveryGuideDto {
+  deliveryGuide: string;
+}
+
+export interface UpdateDeliveryGuideResponse {
+  orderId: string;
+  correlative: string;
+  deliveryGuide: string;
 }
 
 // Interfaz para órdenes pendientes recientes (Analytics)

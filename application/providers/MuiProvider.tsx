@@ -1,38 +1,31 @@
 "use client";
 
-import { type ReactNode, useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { adminTheme } from "@/presentation/theme/adminTheme";
 
 type Props = Readonly<{ children: ReactNode }>;
 
 /**
- * Carga ThemeProvider + CssBaseline de MUI de forma diferida.
- * Los children se renderizan inmediatamente — MUI hidrata en segundo plano.
- * Esto evita que el bundle de MUI bloquee el render inicial de las rutas
- * que lo necesitan (/admin, /configurations, /orders).
+ * Provee el tema de MUI de forma SÍNCRONA (SSR + primer render de cliente).
+ *
+ * El wrapper `.mui-scope` marca todo el subárbol MUI (admin/configurations/orders)
+ * para que los estilos globales del storefront (SCSS legacy: reset y _form.scss)
+ * no se filtren a los componentes MUI. `display: contents` evita que el div
+ * genere una caja propia y altere el layout de los shells.
+ *
+ * El orden de inyección de Emotion lo garantiza AppRouterCacheProvider (root layout),
+ * de modo que las clases de MUI ganan por especificidad a las reglas legacy a nivel
+ * de elemento desde el primer paint (sin flash ni FOUC).
  */
 export default function MuiProvider({ children }: Props) {
-  const [Provider, setProvider] = useState<React.ComponentType<Props> | null>(null);
-
-  useEffect(() => {
-    Promise.all([
-      import("@mui/material/styles"),
-      import("@mui/material/CssBaseline"),
-      import("@/presentation/theme/adminTheme"),
-    ]).then(([{ ThemeProvider }, { default: CssBaseline }, { adminTheme }]) => {
-      const Wrapped = ({ children }: Props) => (
-        <ThemeProvider theme={adminTheme}>
-          <CssBaseline />
-          {children}
-        </ThemeProvider>
-      );
-      Wrapped.displayName = "MuiThemeWrapper";
-      setProvider(() => Wrapped);
-    });
-  }, []);
-
-  // Renderiza children directamente mientras MUI carga.
-  // Los skeletons de cada sección ya manejan el estado visual de carga.
-  if (!Provider) return <>{children}</>;
-
-  return <Provider>{children}</Provider>;
+  return (
+    <ThemeProvider theme={adminTheme}>
+      <CssBaseline />
+      <div className="mui-scope" style={{ display: "contents" }}>
+        {children}
+      </div>
+    </ThemeProvider>
+  );
 }

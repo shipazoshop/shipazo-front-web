@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/application/stores/useAuthStore";
+import { consumePendingRoute } from "@/application/stores/usePendingRouteStore";
+import { useAuthRepository } from "@/presentation/hooks/repositories/useAuthRepository";
 import Image from "next/image";
 
 // Estilos de animaciones inyectados en <head> via una etiqueta global,
@@ -44,7 +46,14 @@ function AuthCallbackContent() {
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
-  const { setAccessToken } = useAuthStore();
+  const { setTokens } = useAuthStore();
+  const { exchangeCode } = useAuthRepository();
+  const { mutateAsync: exchange } = exchangeCode();
+
+  // El `code` es canjeable una sola vez: esta guarda evita que el efecto lo
+  // intercambie dos veces (React StrictMode ejecuta los efectos por duplicado
+  // en desarrollo, lo que quemaría el código y provocaría un 401).
+  const exchangedRef = useRef(false);
 
   useEffect(() => {
     // rAF garantiza que el browser ya pintó el fondo naranja antes del fade-in
@@ -53,44 +62,57 @@ function AuthCallbackContent() {
   }, []);
 
   useEffect(() => {
-    const accessToken = searchParams.get("accessToken");
+    if (exchangedRef.current) return;
+    exchangedRef.current = true;
 
-    if (accessToken) {
-      setAccessToken(accessToken);
+    const code = searchParams.get("code");
 
-      // Sincronizar localStorage con cookies después de un breve delay
-      // para asegurar que Zustand persist haya terminado de guardar
-      setTimeout(() => {
-        const encryptedStorage = localStorage.getItem('auth-storage');
-        if (encryptedStorage) {
-          // Copiar el storage encriptado a las cookies
-          const isHttps = globalThis.location?.protocol === 'https:';
-          document.cookie = `auth-storage=${encryptedStorage}; path=/; max-age=2592000; SameSite=Lax${isHttps ? '; Secure' : ''}`;
-        }
-
-        // Limpiar la URL
-        globalThis.history.replaceState({}, '', '/callback');
-
-        // Verificar si hay una URL de redirección guardada
-        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
-
-        if (redirectUrl) {
-          // Limpiar el sessionStorage y redirigir a la URL guardada
-          sessionStorage.removeItem('redirectAfterLogin');
-          router.push(redirectUrl);
-        } else {
-          // Redirección por defecto
-          router.push("/home");
-        }
-      }, 1800);
-    } else {
-      // Si no hay token, mostrar error
-      setError("No se recibió el token de autenticación");
-      setTimeout(() => {
-        router.push("/login");
-      }, 3000);
+    if (!code) {
+      setError("No se recibió el código de autenticación");
+      setTimeout(() => router.push("/login"), 3000);
+      return;
     }
-  }, [searchParams, router, setAccessToken]);
+
+    // Canjear el código de un solo uso por los tokens de sesión.
+    exchange({ code })
+      .then((res) => {
+        const tokens = res?.data?.tokens;
+        if (!tokens?.accessToken || !tokens?.refreshToken) {
+          setError("Respuesta de autenticación inválida");
+          setTimeout(() => router.push("/login"), 3000);
+          return;
+        }
+
+        // Persiste el par de tokens y emite la cookie de sesión del middleware.
+        setTokens(tokens.accessToken, tokens.refreshToken);
+
+        // Sincronizar localStorage con cookies después de un breve delay
+        // para asegurar que Zustand persist haya terminado de guardar
+        setTimeout(() => {
+          const encryptedStorage = localStorage.getItem('auth-storage');
+          if (encryptedStorage) {
+            // Copiar el storage encriptado a las cookies
+            const isHttps = globalThis.location?.protocol === 'https:';
+            document.cookie = `auth-storage=${encryptedStorage}; path=/; max-age=2592000; SameSite=Lax${isHttps ? '; Secure' : ''}`;
+          }
+
+          // Limpiar la URL
+          globalThis.history.replaceState({}, '', '/callback');
+
+          // Leer y limpiar la ruta pendiente (si la sesión expiró en medio de un
+          // proceso). Si no hay, redirección por defecto al home.
+          const pendingRoute = consumePendingRoute();
+          router.push(pendingRoute ?? "/home");
+        }, 1800);
+      })
+      .catch(() => {
+        // Un 401 (código inválido/expirado) ya lo maneja el interceptor global
+        // de axios redirigiendo a /login. Para cualquier otro error, mostramos
+        // el mensaje y redirigimos igualmente.
+        setError("No se pudo completar la autenticación");
+        setTimeout(() => router.push("/login"), 3000);
+      });
+  }, [searchParams, router, setTokens, exchange]);
 
   return (
     <>

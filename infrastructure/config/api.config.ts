@@ -16,5 +16,10 @@ export type ApiService = keyof ApiConfig;
 export const URL_DICTIONARY = {
   PRODUCTS: '/scraper',
   CACHED_PRODUCTS: '/cached-products',
-  AUTH: '/auth/google/login'
+  AUTH: '/auth/google/login',
+  // Intercambia el código de un solo uso (?code=<uuid>) del callback por los tokens.
+  // El prefijo /api/v1 ya viene en NEXT_PUBLIC_PRODUCTS_API_URL.
+  AUTH_EXCHANGE: '/auth/exchange',
+  // Renueva el accessToken a partir del refreshToken (rota ambos tokens).
+  AUTH_REFRESH: '/auth/refresh',
 }

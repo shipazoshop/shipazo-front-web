@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -23,6 +23,7 @@ import type { SelectChangeEvent } from "@mui/material/Select";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
+import TextField from "@mui/material/TextField";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -36,6 +37,9 @@ import { ArrowLeft, Save, Truck, MapPin, CreditCard, ExternalLink, X } from "luc
 import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
 import { formatGTQ } from "@/shared/utils";
 
+// Transportes conocidos del select. "Otro" habilita un campo de texto libre.
+const CARRIER_OPTIONS = ["FedEx", "Forza", "Cargo Expreso"];
+
 const paymentStatusConfig: Record<
   string,
   { label: string; color: "success" | "warning" | "error" | "info" }
@@ -48,12 +52,14 @@ const paymentStatusConfig: Record<
 export default function OrderDetailPage() {
   const params = useParams<{ orderId: string }>();
 
-  const { getOrderDetail, updateOrderTracking } = useOrdersRepository();
+  const { getOrderDetail, updateOrderTracking, updateDeliveryGuide } = useOrdersRepository();
   const { data, isLoading, isError } = getOrderDetail(params.orderId);
   const order = data?.data;
 
   // Mutación para actualizar tracking
   const { mutate: updateTracking, isLoading: isUpdating } = updateOrderTracking(params.orderId);
+  // Mutación para actualizar la guía de transporte
+  const { mutate: updateGuide, isLoading: isSavingGuide } = updateDeliveryGuide(params.orderId);
 
   // Ordenar tracking por posición
   const sortedTracking = order ? [...order.tracking].sort((a, b) => a.position - b.position) : [];
@@ -62,28 +68,64 @@ export default function OrderDetailPage() {
   const [trackingStatus, setTrackingStatus] = useState<string>("");
   const [specModal, setSpecModal] = useState<string | null>(null);
 
+  // Estado de la guía de transporte (select + nombre custom + número)
+  const [carrier, setCarrier] = useState<string>("");
+  const [customCarrier, setCustomCarrier] = useState<string>("");
+  const [guideNumber, setGuideNumber] = useState<string>("");
+
   // Sincronizar el estado local cuando se carga la orden
   if (order && !trackingStatus) {
     setTrackingStatus(order.currentTrackingStage);
   }
 
+  // Pre-rellenar la guía existente una sola vez por orden. El formato guardado es
+  // "Transporte: numero"; si el transporte no es de los conocidos, es "Otro".
+  useEffect(() => {
+    const dg = order?.deliveryGuide ?? "";
+    const sep = dg.indexOf(": ");
+    if (sep === -1) return;
+
+    const carrierPart = dg.slice(0, sep);
+    const numberPart = dg.slice(sep + 2);
+    if (CARRIER_OPTIONS.includes(carrierPart)) {
+      setCarrier(carrierPart);
+    } else {
+      setCarrier("Otro");
+      setCustomCarrier(carrierPart);
+    }
+    setGuideNumber(numberPart);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.orderId]);
+
   const handleTrackingChange = (event: SelectChangeEvent) => {
     setTrackingStatus(event.target.value);
   };
 
-  const handleSave = () => {
-    // Encontrar el stageId basado en el nombre seleccionado
-    const selectedStage = sortedTracking.find((stage) => stage.name === trackingStatus);
+  // Transporte efectivo: el custom si es "Otro", si no el valor del select.
+  const effectiveCarrier = carrier === "Otro" ? customCarrier.trim() : carrier;
+  const trimmedGuideNumber = guideNumber.trim();
+  const guideComplete = !!effectiveCarrier && !!trimmedGuideNumber;
+  const composedGuide = guideComplete ? `${effectiveCarrier}: ${trimmedGuideNumber}` : "";
 
-    if (!selectedStage) {
-      console.error("No se encontró el stage seleccionado");
-      return;
+  // ¿Cambió cada parte respecto a lo guardado?
+  const stageChanged = !!order && trackingStatus !== order.currentTrackingStage;
+  const guideChanged = guideComplete && composedGuide !== (order?.deliveryGuide ?? "");
+  const canSave = stageChanged || guideChanged;
+  const isSaving = isUpdating || isSavingGuide;
+
+  const handleSave = () => {
+    // Actualizar tracking solo si cambió el estado.
+    if (stageChanged) {
+      const selectedStage = sortedTracking.find((stage) => stage.name === trackingStatus);
+      if (selectedStage) {
+        updateTracking({ newTrackingStageId: selectedStage.stageId });
+      }
     }
 
-    // Llamar a la API para actualizar el tracking
-    updateTracking({
-      newTrackingStageId: selectedStage.stageId,
-    });
+    // Actualizar la guía solo si se ingresó/cambió.
+    if (guideChanged) {
+      updateGuide({ deliveryGuide: composedGuide });
+    }
   };
 
   if (isLoading) {
@@ -332,7 +374,7 @@ export default function OrderDetailPage() {
                     label="Estado de tracking"
                     value={trackingStatus}
                     onChange={handleTrackingChange}
-                    disabled={isUpdating}
+                    disabled={isSaving}
                   >
                     {sortedTracking.map((step) => (
                       <MenuItem key={step.stageId} value={step.name}>
@@ -345,11 +387,63 @@ export default function OrderDetailPage() {
                   variant="contained"
                   startIcon={<Save size={16} />}
                   onClick={handleSave}
-                  disabled={isUpdating || trackingStatus === order.currentTrackingStage}
+                  disabled={isSaving || !canSave}
                 >
-                  {isUpdating ? "Guardando..." : "Guardar cambios"}
+                  {isSaving ? "Guardando..." : "Guardar cambios"}
                 </Button>
               </Box>
+            </Box>
+
+            {/* Guía de transporte */}
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1.5,
+                flexWrap: "wrap",
+                alignItems: "flex-start",
+                mb: 3,
+              }}
+            >
+              <FormControl size="small" sx={{ minWidth: 200 }}>
+                <InputLabel id="carrier-label">Transporte</InputLabel>
+                <Select
+                  labelId="carrier-label"
+                  label="Transporte"
+                  value={carrier}
+                  onChange={(event: SelectChangeEvent) => setCarrier(event.target.value)}
+                  disabled={isSaving}
+                >
+                  {CARRIER_OPTIONS.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                  <MenuItem value="Otro">Otro</MenuItem>
+                </Select>
+              </FormControl>
+
+              {carrier === "Otro" && (
+                <TextField
+                  size="small"
+                  label="Nombre del transporte"
+                  value={customCarrier}
+                  onChange={(event) => setCustomCarrier(event.target.value)}
+                  disabled={isSaving}
+                  inputProps={{ maxLength: 100 }}
+                  sx={{ minWidth: 200 }}
+                />
+              )}
+
+              <TextField
+                size="small"
+                label="Número de guía"
+                value={guideNumber}
+                onChange={(event) => setGuideNumber(event.target.value)}
+                disabled={isSaving}
+                inputProps={{ maxLength: 50 }}
+                helperText={`${guideNumber.length}/50`}
+                sx={{ minWidth: 240 }}
+              />
             </Box>
 
             <Stepper

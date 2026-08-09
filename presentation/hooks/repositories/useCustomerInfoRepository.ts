@@ -1,10 +1,18 @@
-import { CustomerInfo, CreateCustomerInfoDto } from '@/domain/entities/customer-info.entity';
+import { CustomerInfo, CreateCustomerInfoDto, ValidateNitResponse } from '@/domain/entities/customer-info.entity';
 import { useApiQuery } from '../api/useApiQuery';
 import { useApiMutation } from '../api/useApiMutation';
 import { useQueryClient } from '@tanstack/react-query';
 
 // QueryKey que coincide con lo que genera QueryKeyFactory.create(service, endpoint)
 const CUSTOMER_INFO_QUERY_KEY = ['scrapper', '/customers/me'];
+
+// Endpoint de validación de NIT: GET /customers/nit/{nit} (el nit va en la ruta).
+const NIT_VALIDATION_ENDPOINT = '/customers/nit';
+
+// Construye el path de validación para un nit dado. Única fuente del path,
+// se usa con `fetchManual({ endpoint: buildNitValidationEndpoint(nit) })`.
+export const buildNitValidationEndpoint = (nit: string): string =>
+  `${NIT_VALIDATION_ENDPOINT}/${encodeURIComponent(nit)}`;
 
 export function useCustomerInfoRepository() {
   const queryClient = useQueryClient();
@@ -60,11 +68,14 @@ export function useCustomerInfoRepository() {
   };
 
   // Mutation para actualizar información del cliente
-  const updateCustomerInfo = (id: string) => {
+  // @param silent - Si true, desactiva snackbars (para guardados en segundo plano)
+  const updateCustomerInfo = (id: string, silent = false) => {
     return useApiMutation<CustomerInfo, CreateCustomerInfoDto>({
       service: 'scrapper',
       endpoint: '/customers/me',
       method: 'PUT',
+      showSuccessSnackbar: !silent,
+      showErrorSnackbar: !silent,
       invalidateQueries: [CUSTOMER_INFO_QUERY_KEY],
       mutationOptions: {
         onMutate: async (updatedCustomerInfo) => {
@@ -95,9 +106,21 @@ export function useCustomerInfoRepository() {
     });
   };
 
+  // Validación de NIT (GET). Se dispara manualmente con `fetchManual({ params: { nit } })`
+  // desde el botón "Validar NIT", por eso arranca deshabilitada.
+  const validateNit = () => {
+    return useApiQuery<ValidateNitResponse>({
+      service: 'scrapper',
+      endpoint: NIT_VALIDATION_ENDPOINT,
+      enabled: false,
+      showErrorSnackbar: false,
+    });
+  };
+
   return {
     // Queries
     getCustomerInfo,
+    validateNit,
 
     // Mutations
     createCustomerInfo,

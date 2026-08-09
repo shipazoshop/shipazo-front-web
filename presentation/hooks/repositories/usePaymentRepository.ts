@@ -53,7 +53,15 @@ export function usePaymentRepository() {
           );
         }
 
-        return response.json() as Promise<ProcessPaymentResponse>;
+        const result = (await response.json()) as ProcessPaymentResponse;
+
+        // El gateway puede responder 200 con success:false (pago rechazado).
+        // Se trata como error para NO continuar el flujo como si se hubiera pagado.
+        if (!result.success || result.data?.status === 'rejected') {
+          throw new Error(result.message || 'El pago fue rechazado.');
+        }
+
+        return result;
       },
       retry: false, // Security: no reintentar pagos automáticamente
     });

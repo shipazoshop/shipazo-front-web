@@ -1,4 +1,4 @@
-import Footer1 from "@/presentation/components/footers/Footer1";
+import FooterLight from "@/presentation/components/footers/FooterLight";
 import Header4 from "@/presentation/components/headers/Header4";
 import Checkout from "@/presentation/components/shop-cart/Checkout";
 import Link from "next/link";
@@ -32,7 +32,7 @@ export default function page() {
       </div>
 
       <Checkout />
-      <Footer1 />
+      <FooterLight />
       {/* <RecentProducts />
       <Features2 />
       */}

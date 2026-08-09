@@ -27,7 +27,6 @@ export default function PersonalInfoPage() {
   const isError = createMutation.isError || updateMutation.isError;
 
   const handleSubmit = (data: CustomerInfoFormData) => {
-    debugger
     if (customerInfo) {
       // Actualizar información existente
       updateMutation.mutate(

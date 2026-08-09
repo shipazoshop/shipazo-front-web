@@ -69,9 +69,9 @@ export default function OrdersHistoryPage() {
         sx={{
           mt: 2,
           textTransform: "none",
-          borderColor: "#4a90e2",
-          color: "#4a90e2",
-          "&:hover": { borderColor: "#3a7bc8", bgcolor: "rgba(74, 144, 226, 0.04)" },
+          borderColor: "var(--color-brand-purple-dark)",
+          color: "var(--color-brand-purple-dark)",
+          "&:hover": { borderColor: "var(--color-brand-purple-deep)", bgcolor: "rgba(var(--color-brand-purple-dark-rgb), 0.04)" },
         }}
       >
         Ir a la Tienda
@@ -92,7 +92,7 @@ export default function OrdersHistoryPage() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              bgcolor: "#4a90e2",
+              bgcolor: "var(--color-brand-purple-dark)",
               color: "white",
             }}
           >
@@ -172,9 +172,9 @@ export default function OrdersHistoryPage() {
                         startIcon={<Eye size={16} />}
                         sx={{
                           textTransform: "none",
-                          borderColor: "#4a90e2",
-                          color: "#4a90e2",
-                          "&:hover": { borderColor: "#3a7bc8", bgcolor: "rgba(74, 144, 226, 0.04)" },
+                          borderColor: "var(--color-brand-purple-dark)",
+                          color: "var(--color-brand-purple-dark)",
+                          "&:hover": { borderColor: "var(--color-brand-purple-deep)", bgcolor: "rgba(var(--color-brand-purple-dark-rgb), 0.04)" },
                         }}
                       >
                         Ver Detalles
@@ -269,8 +269,8 @@ export default function OrdersHistoryPage() {
                     textTransform: "none",
                     fontWeight: 600,
                     borderRadius: 2,
-                    bgcolor: "#4a90e2",
-                    "&:hover": { bgcolor: "#3a7bc8" },
+                    bgcolor: "var(--color-brand-purple-dark)",
+                    "&:hover": { bgcolor: "var(--color-brand-purple-deep)" },
                   }}
                 >
                   Ver Detalles

@@ -30,9 +30,17 @@ export class ApiErrorHandler implements ErrorHandler {
         throw networkError;
       }
 
-      // Error con respuesta del servidor
+      // Error con respuesta del servidor.
+      // El backend responde con el sobre { success, error: { code, message, statusCode } },
+      // por eso se prioriza data.error.message; se mantienen fallbacks para otros formatos.
       const status = error.response.status;
-      const message = error.response.data?.message || error.message;
+      const responseData = error.response.data;
+      const message =
+        responseData?.error?.message ||
+        responseData?.message ||
+        error.message;
+      // Detalle del error del backend (incluye `code`), disponible en ApiError.data.
+      const errorData = responseData?.error ?? responseData;
 
       switch (status) {
         case 401:
@@ -49,15 +57,16 @@ export class ApiErrorHandler implements ErrorHandler {
 
         case 500:
         case 502:
-        case 503:
-          const serverError = new ApiError(status, message);
+        case 503: {
+          const serverError = new ApiError(status, message, errorData);
           if (this.onServerError) {
             this.onServerError(serverError);
           }
           throw serverError;
+        }
 
         default:
-          throw new ApiError(status, message);
+          throw new ApiError(status, message, errorData);
       }
     }
 

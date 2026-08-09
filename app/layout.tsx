@@ -1,3 +1,4 @@
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import QueryProvider from "@/application/providers/QueryProvider";
 import ClientLayout from "./ClientLayout";
 import Modals from "./Modals";
@@ -39,14 +40,16 @@ const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable} ${archivoBlack.variable}`}>
       <body>
-        <ClientLayout />
-        <div id="wrapper">
-          <QueryProvider>
-            {children}
-            <Modals />
-            <GlobalSnackbar />
-          </QueryProvider>
-        </div>
+        <AppRouterCacheProvider>
+          <ClientLayout />
+          <div id="wrapper">
+            <QueryProvider>
+              {children}
+              <Modals />
+              <GlobalSnackbar />
+            </QueryProvider>
+          </div>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

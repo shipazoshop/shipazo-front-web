@@ -2,18 +2,38 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
-import { encryptionService } from "@/infrastructure";
+// Import directo (no el barrel @/infrastructure) para evitar un ciclo:
+// barrel → security → session.service → useAuthStore → barrel.
+import { encryptionService } from "@/infrastructure/security/encryption.service";
 
 interface AuthStore {
   // State
   accessToken: string | null;
+  refreshToken: string | null;
   isAuthenticated: boolean;
   isHydrated: boolean; // Indica si el store ya se hidrato desde localStorage
 
   // Actions
   setAccessToken: (token: string) => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
   clearAuth: () => void;
   setHydrated: () => void;
+}
+
+/**
+ * Emite/renueva la cookie de sesión ligera que consume el middleware (Edge).
+ * Se dispara al establecer tokens (login o refresh). Silenciosa a propósito: un
+ * fallo aquí no debe romper el flujo del cliente, pero se registra en consola.
+ */
+function syncSessionCookie(accessToken: string): void {
+  if (globalThis.window === undefined) return;
+  fetch("/api/auth/session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ accessToken }),
+  }).catch((error) => {
+    console.warn("No se pudo sincronizar la cookie de sesión:", error);
+  });
 }
 
 // Storage encriptado personalizado
@@ -50,6 +70,7 @@ export const useAuthStore = create<AuthStore>()(
     (set) => ({
       // Initial state
       accessToken: null,
+      refreshToken: null,
       isAuthenticated: false,
       isHydrated: false,
 
@@ -61,16 +82,24 @@ export const useAuthStore = create<AuthStore>()(
         });
 
         // Emitir cookie de sesión ligera para el middleware (sin CryptoJS)
-        fetch("/api/auth/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ accessToken: token }),
-        }).catch(() => {});
+        syncSessionCookie(token);
+      },
+
+      // Establece el par de tokens (login vía exchange y renovación vía refresh).
+      setTokens: (accessToken: string, refreshToken: string) => {
+        set({
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+        });
+
+        syncSessionCookie(accessToken);
       },
 
       clearAuth: () => {
         set({
           accessToken: null,
+          refreshToken: null,
           isAuthenticated: false,
         });
 
@@ -92,6 +121,7 @@ export const useAuthStore = create<AuthStore>()(
       storage: createJSONStorage(() => encryptedStorage),
       partialize: (state) => ({
         accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
@@ -99,19 +129,27 @@ export const useAuthStore = create<AuthStore>()(
 
         // Si el usuario ya tenía sesión, renovar la cookie de middleware
         if (globalThis.window !== undefined && state?.isAuthenticated && state?.accessToken) {
-          fetch("/api/auth/session", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ accessToken: state.accessToken }),
-          }).catch(() => {});
+          syncSessionCookie(state.accessToken);
         }
       },
     }
   )
 );
 
+// Sincronización entre pestañas: cuando otra pestaña actualiza el storage (p.ej.
+// tras un refresh que rota los tokens), rehidratamos este store para no quedarnos
+// con un refreshToken viejo en memoria que ya fue invalidado.
+if (globalThis.window !== undefined) {
+  globalThis.addEventListener("storage", (event) => {
+    if (event.key === "auth-storage") {
+      useAuthStore.persist.rehydrate();
+    }
+  });
+}
+
 // Selectors
 export const useAccessToken = () => useAuthStore((state) => state.accessToken);
+export const useRefreshToken = () => useAuthStore((state) => state.refreshToken);
 export const useIsAuthenticated = () => useAuthStore((state) => state.isAuthenticated);
 export const useIsHydrated = () => useAuthStore((state) => state.isHydrated);
 export const useSetAccessToken = () => useAuthStore((state) => state.setAccessToken);

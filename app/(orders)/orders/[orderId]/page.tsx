@@ -25,7 +25,7 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useState } from "react";
-import { ArrowLeft, Truck, MapPin, CreditCard, X } from "lucide-react";
+import { ArrowLeft, Truck, MapPin, CreditCard, X, SignpostBig } from "lucide-react";
 import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
 import { usePaymentRepository } from "@/presentation/hooks/repositories/usePaymentRepository";
 import { formatGTQ } from "@/shared/utils";
@@ -78,11 +78,11 @@ export default function OrderDetailPage() {
           sx={{
             mt: 2,
             textTransform: "none",
-            borderColor: "#4a90e2",
-            color: "#4a90e2",
+            borderColor: "var(--color-brand-purple-dark)",
+            color: "var(--color-brand-purple-dark)",
             "&:hover": {
-              borderColor: "#3a7bc8",
-              bgcolor: "rgba(74, 144, 226, 0.04)",
+              borderColor: "var(--color-brand-purple-deep)",
+              bgcolor: "rgba(var(--color-brand-purple-dark-rgb), 0.04)",
             },
           }}
         >
@@ -97,6 +97,14 @@ export default function OrderDetailPage() {
   // Ordenar tracking por posición
   const sortedTracking = [...order.tracking].sort((a, b) => a.position - b.position);
 
+  // Guía de entrega: formato guardado "Proveedor: numero". Se separa en sus dos partes.
+  const deliveryGuide = order.deliveryGuide ?? "";
+  const guideSeparator = deliveryGuide.indexOf(": ");
+  const guideProvider =
+    guideSeparator !== -1 ? deliveryGuide.slice(0, guideSeparator) : deliveryGuide;
+  const guideTrackingNumber =
+    guideSeparator !== -1 ? deliveryGuide.slice(guideSeparator + 2) : "";
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       {/* Breadcrumb + header */}
@@ -107,7 +115,7 @@ export default function OrderDetailPage() {
               component="span"
               variant="body2"
               color="text.secondary"
-              sx={{ cursor: "pointer", "&:hover": { color: "#4a90e2" } }}
+              sx={{ cursor: "pointer", "&:hover": { color: "var(--color-brand-purple-dark)" } }}
             >
               Tienda
             </Typography>
@@ -117,7 +125,7 @@ export default function OrderDetailPage() {
               component="span"
               variant="body2"
               color="text.secondary"
-              sx={{ cursor: "pointer", "&:hover": { color: "#4a90e2" } }}
+              sx={{ cursor: "pointer", "&:hover": { color: "var(--color-brand-purple-dark)" } }}
             >
               Mis Órdenes
             </Typography>
@@ -179,7 +187,7 @@ export default function OrderDetailPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  bgcolor: "#4a90e2",
+                  bgcolor: "var(--color-brand-purple-dark)",
                   color: "white",
                 }}
               >
@@ -207,7 +215,7 @@ export default function OrderDetailPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  bgcolor: "#4a90e2",
+                  bgcolor: "var(--color-brand-purple-dark)",
                   color: "white",
                 }}
               >
@@ -303,7 +311,7 @@ export default function OrderDetailPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  bgcolor: "#4a90e2",
+                  bgcolor: "var(--color-brand-purple-dark)",
                   color: "white",
                 }}
               >
@@ -330,6 +338,50 @@ export default function OrderDetailPage() {
               ))}
             </Stepper>
           </Paper>
+
+          {/* Guía de entrega (solo si el admin ya la asignó) */}
+          {deliveryGuide && (
+            <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
+              <Box sx={{ display: "flex", gap: 1.5, alignItems: "center", mb: 3 }}>
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: "var(--color-brand-purple-dark)",
+                    color: "white",
+                  }}
+                >
+                  <SignpostBig size={20} />
+                </Box>
+                <Typography variant="subtitle1" fontWeight={700}>
+                  Guía de entrega
+                </Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, flexWrap: "wrap" }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Proveedor de entrega
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {guideProvider}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, flexWrap: "wrap" }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Número de guía
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {guideTrackingNumber || "—"}
+                  </Typography>
+                </Box>
+              </Box>
+            </Paper>
+          )}
 
           {/* Productos */}
           <Paper sx={{ p: 3, borderRadius: 3 }}>
@@ -380,7 +432,7 @@ export default function OrderDetailPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             sx={{
-                              color: "#4a90e2",
+                              color: "var(--color-brand-purple-dark)",
                               textDecoration: "none",
                               "&:hover": { textDecoration: "underline" },
                               display: "-webkit-box",
@@ -499,11 +551,11 @@ export default function OrderDetailPage() {
           variant="outlined"
           sx={{
             textTransform: "none",
-            borderColor: "#4a90e2",
-            color: "#4a90e2",
+            borderColor: "var(--color-brand-purple-dark)",
+            color: "var(--color-brand-purple-dark)",
             "&:hover": {
-              borderColor: "#3a7bc8",
-              bgcolor: "rgba(74, 144, 226, 0.04)",
+              borderColor: "var(--color-brand-purple-deep)",
+              bgcolor: "rgba(var(--color-brand-purple-dark-rgb), 0.04)",
             },
           }}
         >

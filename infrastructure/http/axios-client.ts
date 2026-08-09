@@ -1,10 +1,20 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { HttpClient, RequestConfig } from './http-client.interface';
+import { refreshAccessToken, forceLogout } from '@/infrastructure/security/session.service';
+
+// Función que devuelve el accessToken vivo (leído del store en cada request).
+export type TokenProvider = () => string | null;
+
+// Endpoints de auth que NUNCA deben disparar un refresh (evita recursión/bucles).
+const AUTH_ENDPOINTS = ['/auth/refresh', '/auth/exchange'];
+
+// Config extendida para marcar una request ya reintentada.
+type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
 export class AxiosHttpClient implements HttpClient {
   private client: AxiosInstance;
 
-  constructor(baseURL: string, private authToken?: string) {
+  constructor(baseURL: string, private tokenProvider?: TokenProvider) {
     this.client = axios.create({
       baseURL,
       timeout: 60000,
@@ -17,34 +27,37 @@ export class AxiosHttpClient implements HttpClient {
   }
 
   private setupInterceptors(): void {
-    // Request interceptor
+    // Request interceptor: adjunta SIEMPRE el token actual del store.
     this.client.interceptors.request.use((config) => {
-      if (this.authToken) {
-        config.headers.Authorization = `Bearer ${this.authToken}`;
+      const token = this.tokenProvider?.();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     });
 
-    // Response interceptor para manejar errores
+    // Response interceptor: ante un 401 intenta refrescar UNA vez y reintenta.
     this.client.interceptors.response.use(
       (response) => response,
-      (error) => {
-        // Si el error es 401 (Unauthorized), redirigir al login
-        if (error.response?.status === 401) {
-          // Limpiar cualquier token almacenado
-          if (globalThis.window !== undefined) {
-            globalThis.localStorage.removeItem('authToken');
-            // Redirigir al login
-            globalThis.location.href = '/login';
+      async (error) => {
+        const config = error.config as RetriableConfig | undefined;
+        const url = config?.url ?? '';
+        const isAuthEndpoint = AUTH_ENDPOINTS.some((path) => url.includes(path));
+
+        if (error.response?.status === 401 && config && !config._retry && !isAuthEndpoint) {
+          config._retry = true; // solo un intento → sin bucles
+          try {
+            const newToken = await refreshAccessToken(); // dedup + axios pelado
+            config.headers.Authorization = `Bearer ${newToken}`;
+            return this.client(config); // reintento → react-query ve éxito
+          } catch {
+            forceLogout(); // refresh falló → cerrar sesión y al login
           }
         }
+
         return Promise.reject(error);
       }
     );
-  }
-
-  setAuthToken(token: string): void {
-    this.authToken = token;
   }
 
   async get<T>(url: string, config?: RequestConfig): Promise<T> {

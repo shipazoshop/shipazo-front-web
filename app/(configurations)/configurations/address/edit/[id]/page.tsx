@@ -19,7 +19,6 @@ export default function EditAddressPage() {
   const addressId = params.id as string;
   const addresses = addressesQuery.data || [];
   const currentAddress = addresses.find((addr) => addr.id === addressId);
-  console.log("🚀 ~ EditAddressPage ~ currentAddress:", currentAddress)
   const updateMutation = updateAddress(currentAddress?.id);
 
   const handleSubmit = (data: AddressFormData) => {

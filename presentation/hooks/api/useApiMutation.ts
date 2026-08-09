@@ -40,8 +40,7 @@ export function useApiMutation<TData = unknown, TVariables = unknown>({
   const queryClient = useQueryClient();
   const showSnackbar = useShowSnackbar();
 
-  // Obtener token de autenticación y estado de hidratación del store
-  const accessToken = useAuthStore((state) => state.accessToken);
+  // Estado de hidratación del store (el token lo lee el cliente HTTP vivo del store)
   const isHydrated = useAuthStore((state) => state.isHydrated);
 
   // Generar mensaje de éxito basado en el método HTTP
@@ -61,10 +60,10 @@ export function useApiMutation<TData = unknown, TVariables = unknown>({
     }
   }, [method, successMessage]);
 
-  // Obtener cliente HTTP con token de autenticación si existe
+  // Cliente HTTP del servicio (el token se adjunta dinámicamente por request)
   const httpClient = useMemo(
-    () => HttpClientFactory.getClient(service, accessToken || ""),
-    [service, accessToken]
+    () => HttpClientFactory.getClient(service),
+    [service]
   );
 
   // Error handler

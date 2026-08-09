@@ -1,7 +1,9 @@
 @use "../abstracts/mixin";
 @use "../abstracts/variable";
 
-form {
+// `:not(.mui-scope *)` evita que estos estilos globales del storefront se filtren
+// a los formularios MUI (admin/configurations/orders). Ver MuiProvider.tsx.
+form:not(.mui-scope *) {
     position: relative;
     z-index: 30;
 
@@ -145,7 +147,7 @@ form {
     }
 }
 
-button {
+button:not(.mui-scope *) {
     @include mixin.transition3;
     border: unset;
 }
