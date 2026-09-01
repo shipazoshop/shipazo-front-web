@@ -130,6 +130,8 @@ git diff --stat
 
 No los agregues al `.gitignore` por tu cuenta: repórtalos y espera instrucción.
 
+> **`.claude/settings.json` y `.claude/settings.local.json` están en `.gitignore` desde el 31/08/2026.** Claude Code les agrega permisos automáticamente con cada comando aprobado, así que se modificaban en medio del propio flujo de publicación: commitearlos generaba el siguiente cambio, en un ciclo que nunca cierra. Son config local de cada máquina, no del proyecto. Si los ves aparecer en `git status`, **no los commitees ni los saques del `.gitignore`**.
+
 ### 5.3 Commit (solo si hay cambios sin commitear)
 
 ```powershell
@@ -212,7 +214,7 @@ Los tres hashes deben ser **idénticos**. Si no lo son, no reportes éxito: repo
 3. **Nunca** cambies de rama, ni hagas `merge`, `rebase` o `reset --hard` como parte de este flujo.
 4. **Nunca** publiques en el clon antes que en el padre.
 5. **Nunca** dejes `origin` apuntando a una URL distinta a la que tenía al empezar. Restaura siempre, incluso al abortar por error.
-6. **Nunca** commitees archivos `-DESKTOP-XXXXXXX`, `.env*` ni builds.
+6. **Nunca** commitees archivos `-DESKTOP-XXXXXXX`, `.env*`, `.claude/settings*.json` ni builds.
 7. **Nunca** modifiques código, formato o dependencias "de paso". Publicar es publicar, no refactorizar.
 8. **Nunca** crees un Pull Request ni un tag salvo que se pida aparte.
 9. Publicar directamente sobre `master` **está autorizado**: es el flujo definido por el usuario. No propongas crear una rama.
@@ -267,7 +269,7 @@ origin restaurado a: <url original>
 
 - [ ] Guardé `$urlOriginal` con `git remote get-url origin`
 - [ ] Identifiqué la rama; no cambié de rama
-- [ ] Revisé el diff: sin `.env`, sin secretos, sin builds, sin archivos `-DESKTOP-*`
+- [ ] Revisé el diff: sin `.env`, sin secretos, sin builds, sin archivos `-DESKTOP-*`, sin `.claude/settings*.json`
 - [ ] Commit hecho (si había cambios) con mensaje en español
 - [ ] `set-url` al **padre** → `push` exitoso
 - [ ] `set-url` al **clon** → `push` exitoso
