@@ -2,16 +2,16 @@
 import React from "react";
 
 const BENEFITS = [
-  {
-    ico: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
-      </svg>
-    ),
-    title: "Envío Express",
-    desc: "Tus compras cruzan el mundo en tiempo récord gracias a nuestras rutas optimizadas.",
-    accent: "orange",
-  },
+  // {
+  //   ico: (
+  //     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+  //       <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
+  //     </svg>
+  //   ),
+  //   title: "Envío Express",
+  //   desc: "Tus compras cruzan el mundo en tiempo récord gracias a nuestras rutas optimizadas.",
+  //   accent: "orange",
+  // },
   {
     ico: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -23,16 +23,16 @@ const BENEFITS = [
     desc: "Monitorea cada paso de tu pedido con precisión en tiempo real, desde la app.",
     accent: "purple",
   },
-  {
-    ico: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
-      </svg>
-    ),
-    title: "Compra Asegurada",
-    desc: "Protección completa contra cualquier imprevisto durante el envío internacional.",
-    accent: "orange",
-  },
+  // {
+  //   ico: (
+  //     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+  //       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+  //     </svg>
+  //   ),
+  //   title: "Compra Asegurada",
+  //   desc: "Protección completa contra cualquier imprevisto durante el envío internacional.",
+  //   accent: "orange",
+  // },
   {
     ico: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">

@@ -330,12 +330,12 @@ export default function Details2({ product }: Readonly<{ product: IImportProduct
                 <span>Envío internacional: <b>Q {fmt(pb.shippingCost)}</b></span>
               </div>
             )}
-            <div className="pd2-buy-row">
+            {/* <div className="pd2-buy-row">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
               </svg>
               <span><b>Compra asegurada</b> 100% protegida</span>
-            </div>
+            </div> */}
 
             {/* Delivery estimate */}
             <div className="pd2-buy-delivery">
@@ -344,7 +344,7 @@ export default function Details2({ product }: Readonly<{ product: IImportProduct
                 <circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" />
               </svg>
               <span>
-                <b>Entrega estimada: 7-9 días hábiles</b>
+                <b>Entrega estimada: 20-30 días hábiles</b>
                 <br /><span className="pd2-delivery-sub">Desde que confirmes tu compra</span>
               </span>
             </div>
@@ -392,15 +392,9 @@ export default function Details2({ product }: Readonly<{ product: IImportProduct
             <div className="pd2-buy-trust">
               <div className="pd2-trust-item">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-4" />
-                </svg>
-                <span><b>Compra asegurada</b> — devolución sin costo</span>
-              </div>
-              <div className="pd2-trust-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0Z" /><circle cx="12" cy="10" r="3" />
                 </svg>
-                <span><b>Tracking en tiempo real</b> · avisos por WhatsApp</span>
+                <span><b>Tracking en tiempo real</b> · avisos por Email</span>
               </div>
               <div className="pd2-trust-item">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -436,23 +430,23 @@ export default function Details2({ product }: Readonly<{ product: IImportProduct
       <section className="pd2-trust-strip">
         <div className="pd2-trust-inner">
           {[
-            {
-              icon: (<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" /></svg>),
-              cls: "orange",
-              title: "Envío Express internacional",
-              desc: "Tu compra cruza el mundo en 7-9 días con rutas optimizadas.",
-            },
+            // {
+            //   icon: (<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" /></svg>),
+            //   cls: "orange",
+            //   title: "Envío Express internacional",
+            //   desc: "Tu compra cruza el mundo en 7-9 días con rutas optimizadas.",
+            // },
             {
               icon: (<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0Z" /><circle cx="12" cy="10" r="3" /></svg>),
               cls: "purple",
               title: "Tracking en tiempo real",
-              desc: "Sigue cada paso y recibe avisos por WhatsApp.",
+              desc: "Sigue cada paso y recibe avisos por Email.",
             },
             {
               icon: (<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /></svg>),
               cls: "orange",
-              title: "Compra 100% asegurada",
-              desc: "Protección total contra imprevistos en el envío.",
+              title: "Recibes lo que compras",
+              desc: "Escoge tu mismo los  productos que deseas importar",
             },
             {
               icon: (<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M3 18a9 9 0 0 1 18 0" /><path d="M21 19a2 2 0 0 1-2 2h-1v-6h1a2 2 0 0 1 2 2z" /><path d="M3 19a2 2 0 0 0 2 2h1v-6h-1a2 2 0 0 0-2 2z" /></svg>),
