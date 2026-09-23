@@ -568,7 +568,10 @@ export default function Checkout() {
             imageUrl: item.productData.images?.[0] || "",
             additionalInfo: {},
             productSpecification: item.productSpecification, // <-- Nuevo
-            priceDetails: item.productData.price_details,
+            priceDetails: {
+              calculatedPriceGtq: item.productData.price_details.calculatedPriceGtq,
+              priceBreakdown: item.productData.price_details.priceBreakdown,
+            },
           },
           quantity: item.quantity,
         })),
