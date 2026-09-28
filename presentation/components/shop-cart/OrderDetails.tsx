@@ -7,13 +7,21 @@ import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrders
 import { formatGTQ } from "@/shared/utils";
 
 /**
- * Descarga automática del PDF de la factura.
- * Hace fetch del PDF como blob y fuerza la descarga. Si el fetch se bloquea
- * (p. ej. CORS del servidor FEL), abre el PDF en una pestaña nueva como fallback.
+ * URL same-origin que proxea el PDF de FEL a través de /api/invoice-pdf.
+ * El navegador no puede hacer fetch directo a FEL (CSP connect-src + sin CORS).
  */
-async function downloadInvoicePdf(url: string, filename: string): Promise<void> {
+function invoiceProxyUrl(url: string, filename: string): string {
+  const params = new URLSearchParams({ url, filename });
+  return `/api/invoice-pdf?${params.toString()}`;
+}
+
+/**
+ * Descarga automática del PDF de la factura vía el proxy same-origin.
+ * Devuelve false si la descarga falla, para no mostrar un éxito falso.
+ */
+async function downloadInvoicePdf(url: string, filename: string): Promise<boolean> {
   try {
-    const response = await fetch(url);
+    const response = await fetch(invoiceProxyUrl(url, filename));
     if (!response.ok) throw new Error("No se pudo obtener el PDF");
 
     const blob = await response.blob();
@@ -25,9 +33,9 @@ async function downloadInvoicePdf(url: string, filename: string): Promise<void> 
     link.click();
     link.remove();
     URL.revokeObjectURL(objectUrl);
+    return true;
   } catch {
-    // Fallback: abrir en pestaña nueva si el navegador/servidor impide el fetch.
-    window.open(url, "_blank", "noopener,noreferrer");
+    return false;
   }
 }
 
@@ -41,6 +49,8 @@ export default function OrderDetails() {
   const certifyMutation = certifyInvoice(order?.orderId ?? "");
   const [invoiceError, setInvoiceError] = useState(false);
   const [invoicePdfUrl, setInvoicePdfUrl] = useState<string | null>(null);
+  const [invoiceFilename, setInvoiceFilename] = useState("factura.pdf");
+  const [invoiceDownloaded, setInvoiceDownloaded] = useState(false);
   const certifiedRef = useRef(false);
 
   useEffect(() => {
@@ -63,8 +73,10 @@ export default function OrderDetails() {
         // Happy path: guardar el PDF y auto-descargar la factura.
         const { pdfUrl, serie, numero } = res.data;
         if (pdfUrl) {
+          const filename = `factura-${serie}-${numero}.pdf`;
           setInvoicePdfUrl(pdfUrl);
-          downloadInvoicePdf(pdfUrl, `factura-${serie}-${numero}.pdf`);
+          setInvoiceFilename(filename);
+          downloadInvoicePdf(pdfUrl, filename).then(setInvoiceDownloaded);
         }
       })
       .catch(() => setInvoiceError(true));
@@ -178,12 +190,12 @@ export default function OrderDetails() {
               }}
             >
               <p className="body-text-3 mb-0" style={{ color: "#15803d", flex: 1 }}>
-                Tu factura fue certificada y se descargó automáticamente. Si la descarga
-                no inició,{" "}
+                {invoiceDownloaded
+                  ? "Tu factura fue certificada y se descargó automáticamente. Si la descarga no inició, "
+                  : "Tu factura fue certificada. "}
                 <a
-                  href={invoicePdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={invoiceProxyUrl(invoicePdfUrl, invoiceFilename)}
+                  download={invoiceFilename}
                   style={{ color: "#15803d", fontWeight: 600, textDecoration: "underline" }}
                 >
                   descárgala aquí
