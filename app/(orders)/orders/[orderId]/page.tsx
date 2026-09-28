@@ -25,10 +25,10 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useState } from "react";
-import { ArrowLeft, Truck, MapPin, CreditCard, X, SignpostBig } from "lucide-react";
+import { ArrowLeft, Truck, MapPin, CreditCard, X, SignpostBig, ReceiptText } from "lucide-react";
 import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
 import { usePaymentRepository } from "@/presentation/hooks/repositories/usePaymentRepository";
-import { formatGTQ } from "@/shared/utils";
+import { formatGTQ, invoiceProxyUrl } from "@/shared/utils";
 
 const paymentStatusConfig: Record<
   string,
@@ -158,7 +158,31 @@ export default function OrderDetailPage() {
             </Typography>
           </Box>
 
-          <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+          <Box sx={{ display: "flex", gap: 1.5, alignItems: "center", flexWrap: "wrap" }}>
+            {order.invoicePdfUrl && (
+              <Button
+                component="a"
+                href={invoiceProxyUrl(order.invoicePdfUrl, `factura-${order.orderNumber}.pdf`)}
+                download={`factura-${order.orderNumber}.pdf`}
+                variant="contained"
+                disableElevation
+                startIcon={<ReceiptText size={18} color="#fff" />}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  bgcolor: "var(--color-brand-orange)",
+                  color: "var(--color-white)",
+                  "&:hover": {
+                    bgcolor: "var(--color-brand-orange)",
+                    color: "var(--color-white)",
+                    filter: "brightness(0.9)",
+                  },
+                }}
+              >
+                Descargar factura
+              </Button>
+            )}
             <Chip
               label={
                 paymentStatusConfig[order.paymentStatus]?.label || order.paymentStatus

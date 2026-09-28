@@ -35,6 +35,7 @@ Nombres de archivo en minúsculas con guiones, igual que la ruta o el módulo.
 
 ### Módulos
 - [auth-sesion](modulos/auth-sesion.md) — Tokens, cookie de sesión del middleware y sincronización entre pestañas
+- [rutas-api](modulos/rutas-api.md) — Convención y registro de rutas internas `app/api/...` (`INTERNAL_API`)
 
 ## Plantilla
 

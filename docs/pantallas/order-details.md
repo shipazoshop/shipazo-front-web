@@ -4,7 +4,7 @@
 **Archivos principales:**
 - [app/(products)/order-details/page.tsx](../../app/(products)/order-details/page.tsx)
 - [presentation/components/shop-cart/OrderDetails.tsx](../../presentation/components/shop-cart/OrderDetails.tsx)
-- [app/api/invoice-pdf/route.ts](../../app/api/invoice-pdf/route.ts)
+- [app/api/invoices/pdf/route.ts](../../app/api/invoices/pdf/route.ts)
 - [presentation/hooks/repositories/useOrdersRepository.ts](../../presentation/hooks/repositories/useOrdersRepository.ts) (`certifyInvoice`)
 - [application/stores/useNewOrderStore.ts](../../application/stores/useNewOrderStore.ts)
 
@@ -30,7 +30,7 @@ Checkout.tsx ──setOrder()──▶ useNewOrderStore ──▶ OrderDetails.t
                      POST /orders/:id/invoice ◀──────┤ (certifyInvoice, una vez)
                                                      │
                                                      ▼  pdfUrl (servidor FEL)
-                     GET /api/invoice-pdf?url&filename  (proxy Next, same-origin)
+                     GET /api/invoices/pdf?url&filename  (proxy Next, same-origin)
                                                      │
                                                      ▼
                                    report.feel.com.gt (server-to-server)
@@ -38,15 +38,16 @@ Checkout.tsx ──setOrder()──▶ useNewOrderStore ──▶ OrderDetails.t
 
 - `OrderDetails` lee la orden de `useNewOrderStore`, que llenó `Checkout` antes de redirigir.
 - Un `useEffect` protegido con `useRef` dispara la certificación **una sola vez** (evita el doble disparo de StrictMode).
-- Con el `pdfUrl` que devuelve la API, se descarga el PDF a través del proxy `/api/invoice-pdf`.
+- Con el `pdfUrl` que devuelve la API, se descarga el PDF a través del proxy `/api/invoices/pdf`.
 
 ## Decisiones técnicas y arquitectónicas
 - **Certificación no bloqueante** — la orden ya está creada y pagada; un fallo de FEL no debe verse como un fallo de compra. Se muestra un aviso y se deriva a soporte.
-- **Proxy server-side para el PDF (`/api/invoice-pdf`)** — el navegador no puede hacer `fetch` directo a FEL: la CSP (`connect-src`) solo permite nuestro dominio y la API, FEL no envía headers CORS, y el atributo `download` no funciona con URLs de otro dominio. El proxy responde desde nuestro dominio con `Content-Disposition: attachment`.
+- **Proxy server-side para el PDF (`/api/invoices/pdf`)** — el navegador no puede hacer `fetch` directo a FEL: la CSP (`connect-src`) solo permite nuestro dominio y la API, FEL no envía headers CORS, y el atributo `download` no funciona con URLs de otro dominio. El proxy responde desde nuestro dominio con `Content-Disposition: attachment`.
   - *Descartado:* agregar FEL a `connect-src` (no resuelve CORS y abre la CSP).
 - **Allowlist de host en el proxy** — el proxy solo acepta `https://` y el host de `FEL_REPORT_HOST`. Sin esto, cualquiera podría usar nuestro servidor para pedir URLs arbitrarias (SSRF).
 - **Host de FEL en variable de entorno server-only** — sin prefijo `NEXT_PUBLIC_` para que no llegue al bundle del cliente. Si falta, el endpoint responde 500 en lugar de permitir cualquier host.
 - **Sin `window.open` como fallback** — después de un `await` ya no hay gesto del usuario y el bloqueador de popups lo detiene sin avisar; con `noopener` ni siquiera se puede detectar. El fallback es el enlace visible, que sí cuenta como gesto.
+- **URL del proxy centralizada** — se arma con `invoiceProxyUrl` ([shared/utils/invoice.ts](../../shared/utils/invoice.ts)) sobre `INTERNAL_API.INVOICES_PDF`. La reutiliza también el botón "Descargar factura" de `/orders/[orderId]`. Ver [rutas-api](../modulos/rutas-api.md).
 - **Mensaje de éxito condicionado a la descarga real** — antes se mostraba "se descargó" aunque la descarga hubiera fallado.
 
 ## Configuración
@@ -62,4 +63,4 @@ La CSP está en [next.config.ts](../../next.config.ts). No hace falta modificarl
 ## Historial de bugs
 | Fecha | Síntoma | Causa raíz | Solución | Commit |
 |---|---|---|---|---|
-| 2026-09-27 | En producción la factura no se descargaba, aunque se mostraba "se descargó automáticamente". | La CSP `connect-src` bloqueaba el `fetch` a FEL (y FEL no tiene CORS); el fallback `window.open` lo bloqueaba el navegador; el mensaje de éxito no dependía del resultado. | Proxy `/api/invoice-pdf` con allowlist por `FEL_REPORT_HOST`; mensaje según el resultado real; enlace manual por el proxy. | `b9c58dd` |
+| 2026-09-27 | En producción la factura no se descargaba, aunque se mostraba "se descargó automáticamente". | La CSP `connect-src` bloqueaba el `fetch` a FEL (y FEL no tiene CORS); el fallback `window.open` lo bloqueaba el navegador; el mensaje de éxito no dependía del resultado. | Proxy `/api/invoices/pdf` con allowlist por `FEL_REPORT_HOST`; mensaje según el resultado real; enlace manual por el proxy. | `b9c58dd` |

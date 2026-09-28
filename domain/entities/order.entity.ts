@@ -69,6 +69,8 @@ export interface OrderDetail {
   totalAmount: number;
   shippingAddress: ShippingAddress;
   deliveryGuide?: string; // "Transporte: numero-de-guia" (si ya fue asignada)
+  /** URL del PDF en el servidor de FEL. Vacía si la factura no se certificó. */
+  invoicePdfUrl?: string;
 }
 
 export interface CreateOrderResponse {

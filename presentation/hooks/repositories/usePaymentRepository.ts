@@ -3,6 +3,7 @@ import { useApiQuery } from '../api/useApiQuery';
 
 import { useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '@/application/stores/useAuthStore';
+import { INTERNAL_API } from '@/infrastructure/config/api.config';
 
 export function usePaymentRepository() {
   /**
@@ -35,7 +36,7 @@ export function usePaymentRepository() {
       mutationFn: async (data: ProcessPaymentRequest) => {
         // Security: llamada same-origin al proxy de Next.js.
         // Los datos de tarjeta nunca son enviados directamente al backend externo.
-        const response = await fetch('/api/v1/payments/process', {
+        const response = await fetch(INTERNAL_API.PAYMENTS_PROCESS, {
           method: 'POST',
           credentials: 'same-origin', // Security: no enviar cookies cross-origin
           headers: {

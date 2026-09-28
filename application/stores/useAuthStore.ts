@@ -5,6 +5,7 @@ import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 // Import directo (no el barrel @/infrastructure) para evitar un ciclo:
 // barrel → security → session.service → useAuthStore → barrel.
 import { encryptionService } from "@/infrastructure/security/encryption.service";
+import { INTERNAL_API } from "@/infrastructure/config/api.config";
 
 interface AuthStore {
   // State
@@ -27,7 +28,7 @@ interface AuthStore {
  */
 function syncSessionCookie(accessToken: string): void {
   if (globalThis.window === undefined) return;
-  fetch("/api/auth/session", {
+  fetch(INTERNAL_API.AUTH_SESSION, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ accessToken }),
@@ -104,7 +105,7 @@ export const useAuthStore = create<AuthStore>()(
         });
 
         // Eliminar cookie de sesión del middleware
-        fetch("/api/auth/session", { method: "DELETE" }).catch(() => { });
+        fetch(INTERNAL_API.AUTH_SESSION, { method: "DELETE" }).catch(() => { });
 
         // Eliminar la cookie de autenticación del cliente
         if (typeof document !== 'undefined') {

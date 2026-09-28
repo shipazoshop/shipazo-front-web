@@ -4,21 +4,9 @@ import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 import { useNewOrderStore } from "@/application/stores/useNewOrderStore";
 import { useOrdersRepository } from "@/presentation/hooks/repositories/useOrdersRepository";
-import { formatGTQ } from "@/shared/utils";
+import { formatGTQ, invoiceProxyUrl } from "@/shared/utils";
 
-/**
- * URL same-origin que proxea el PDF de FEL a través de /api/invoice-pdf.
- * El navegador no puede hacer fetch directo a FEL (CSP connect-src + sin CORS).
- */
-function invoiceProxyUrl(url: string, filename: string): string {
-  const params = new URLSearchParams({ url, filename });
-  return `/api/invoice-pdf?${params.toString()}`;
-}
-
-/**
- * Descarga automática del PDF de la factura vía el proxy same-origin.
- * Devuelve false si la descarga falla, para no mostrar un éxito falso.
- */
+/** Descarga el PDF de la factura vía el proxy. Devuelve false si falla. */
 async function downloadInvoicePdf(url: string, filename: string): Promise<boolean> {
   try {
     const response = await fetch(invoiceProxyUrl(url, filename));

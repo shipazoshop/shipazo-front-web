@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Solo se permite proxear PDFs del servidor de reportes FEL (evita SSRF).
-// Variable server-only (sin NEXT_PUBLIC_) para no exponerla en el bundle del cliente.
 const ALLOWED_HOST = process.env.FEL_REPORT_HOST;
 
-/**
- * GET /api/invoice-pdf?url=<pdfUrl>&filename=<nombre.pdf>
- * Descarga server-side el PDF de la factura FEL y lo reenvía como adjunto.
- * Necesario porque el navegador no puede hacer fetch directo a FEL
- * (CSP connect-src + falta de CORS en el servidor del proveedor).
- */
 export async function GET(req: NextRequest) {
   const rawUrl = req.nextUrl.searchParams.get("url");
   const filename = req.nextUrl.searchParams.get("filename") || "factura.pdf";

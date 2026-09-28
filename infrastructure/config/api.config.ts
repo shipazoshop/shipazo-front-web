@@ -23,3 +23,9 @@ export const URL_DICTIONARY = {
   // Renueva el accessToken a partir del refreshToken (rota ambos tokens).
   AUTH_REFRESH: '/auth/refresh',
 }
+
+export const INTERNAL_API = {
+  AUTH_SESSION: '/api/auth/session',
+  PAYMENTS_PROCESS: '/api/v1/payments/process',
+  INVOICES_PDF: '/api/invoices/pdf',
+} as const;
