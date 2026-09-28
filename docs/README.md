@@ -4,7 +4,7 @@ La documentación vive aquí y **no en comentarios del código**. El código se 
 
 ## Regla de trabajo
 
-Cada vez que se resuelve un bug:
+Cada vez que se resuelve un bug, se agrega una funcionalidad o se cambia una pantalla/módulo:
 
 1. Identifica la pantalla (o módulo transversal) afectada.
 2. Si **no tiene** documento, créalo con la plantilla de abajo.
@@ -26,12 +26,13 @@ docs/
 - **Pantalla**: algo que el usuario ve en una ruta (`/checkout`, `/order-details`).
 - **Módulo**: algo que no es una pantalla pero afecta a muchas (sesión, carrito, cliente HTTP).
 
-Nombres de archivo en minúsculas con guiones, igual que la ruta o el módulo.
+Nombres de archivo en minúsculas con guiones, igual que la ruta o el módulo. Los segmentos dinámicos (`[orderId]`) se escriben como `id`: `/orders/[orderId]` → `orders-id.md`.
 
 ## Índice
 
 ### Pantallas
 - [order-details](pantallas/order-details.md) — Confirmación de orden y descarga de factura FEL
+- [orders-id](pantallas/orders-id.md) — Detalle de una orden (`/orders/[orderId]`): envío, pago, productos y botón de factura
 
 ### Módulos
 - [auth-sesion](modulos/auth-sesion.md) — Tokens, cookie de sesión del middleware y sincronización entre pestañas
