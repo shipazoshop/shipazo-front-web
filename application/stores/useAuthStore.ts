@@ -125,10 +125,18 @@ export const useAuthStore = create<AuthStore>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        state?.setHydrated();
+        // Solo la hidratación inicial tiene efectos. Las rehidrataciones posteriores
+        // (sincronización entre pestañas) solo deben leer: si escribieran, el cifrado
+        // con salt aleatorio cambiaría el valor en localStorage, dispararía "storage"
+        // en las demás pestañas y se crearía un bucle de POST /api/auth/session.
+        // La cookie es compartida entre pestañas, así que la pestaña que cambió el
+        // token ya la renovó.
+        if (!state || state.isHydrated) return;
+
+        state.setHydrated();
 
         // Si el usuario ya tenía sesión, renovar la cookie de middleware
-        if (globalThis.window !== undefined && state?.isAuthenticated && state?.accessToken) {
+        if (globalThis.window !== undefined && state.isAuthenticated && state.accessToken) {
           syncSessionCookie(state.accessToken);
         }
       },
