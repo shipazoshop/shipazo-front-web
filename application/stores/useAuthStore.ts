@@ -104,7 +104,7 @@ export const useAuthStore = create<AuthStore>()(
         });
 
         // Eliminar cookie de sesión del middleware
-        fetch("/api/auth/session", { method: "DELETE" }).catch(() => {});
+        fetch("/api/auth/session", { method: "DELETE" }).catch(() => { });
 
         // Eliminar la cookie de autenticación del cliente
         if (typeof document !== 'undefined') {
@@ -125,12 +125,6 @@ export const useAuthStore = create<AuthStore>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        // Solo la hidratación inicial tiene efectos. Las rehidrataciones posteriores
-        // (sincronización entre pestañas) solo deben leer: si escribieran, el cifrado
-        // con salt aleatorio cambiaría el valor en localStorage, dispararía "storage"
-        // en las demás pestañas y se crearía un bucle de POST /api/auth/session.
-        // La cookie es compartida entre pestañas, así que la pestaña que cambió el
-        // token ya la renovó.
         if (!state || state.isHydrated) return;
 
         state.setHydrated();
